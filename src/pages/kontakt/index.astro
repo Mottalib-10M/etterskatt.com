@@ -1,0 +1,52 @@
+---
+import CalculatorLayout from '../../layouts/CalculatorLayout.astro';
+
+const faqs = [
+  { question: 'Hvor raskt svarer dere?', answer: 'Vi tilstreber å svare på alle henvendelser innen 48 timer på hverdager.' },
+  { question: 'Kan dere hjelpe med skattespørsmål?', answer: 'Vi kan svare på spørsmål om hvordan kalkulatoren fungerer, men vi gir ikke individuell skatterådgivning. Kontakt Skatteetaten eller en autorisert skatterådgiver for personlig veiledning.' },
+  { question: 'Jeg fant en feil i kalkulatoren – hva gjør jeg?', answer: 'Send gjerne en e-post til contact@lonnetterskatt.no med detaljer om feilen. Beskriv hvilken kalkulator du brukte, hvilke verdier du la inn og hva resultatet ble. Vi setter pris på alle feilmeldinger.' },
+];
+---
+
+<CalculatorLayout
+  slug="/kontakt"
+  title="Kontakt"
+  metaTitle="Kontakt Lønn Etter Skatt | Spørsmål om kalkulatoren"
+  metaDescription="Kontakt oss på Lønn Etter Skatt. Spørsmål om skattekalkulatoren, feilmeldinger eller forslag? Nå oss på contact@lonnetterskatt.no. Svar innen 48 timer."
+  h1="Kontakt oss"
+  intro="Har du spørsmål om våre skattekalkulatorer? Vi hjelper deg gjerne."
+  faqs={faqs}
+>
+  <div class="prose prose-lg dark:prose-invert max-w-none">
+    <h2>Slik når du oss</h2>
+    <p>Vi ønsker spørsmål, forslag og feilmeldinger velkommen. Den beste måten å nå oss på er via e-post:</p>
+    <p class="text-xl font-semibold">
+      <a href="mailto:contact@lonnetterskatt.no">contact@lonnetterskatt.no</a>
+    </p>
+    <p>Vi svarer normalt innen 48 timer på hverdager.</p>
+
+    <h2>Vanlige spørsmål vi mottar</h2>
+
+    <h3>Hvorfor stemmer ikke resultatet med lønnsslippen min?</h3>
+    <p>Vår kalkulator beregner lønn etter skatt basert på Skatteetatens offisielle 2025-satser, inkludert trinnskatt, trygdeavgift, minstefradrag og personfradrag. Avvik kan skyldes individuelle fradrag, kapitalinntekter, fagforeningskontingent eller andre personlige forhold som påvirker skatten din.</p>
+
+    <h3>Lagrer dere mine opplysninger?</h3>
+    <p>Nei. Alle beregninger skjer helt i nettleseren din. Ingen lønn eller andre data sendes til våre servere. Les mer i vår <a href="/personvern/">personvernerklæring</a>.</p>
+
+    <h3>Kan jeg bruke kalkulatoren for bedriften min?</h3>
+    <p>Ja, du kan lenke til kalkulatoren fritt. Vi tilbyr også en <a href="/embed/">innbyggingswidget</a> som du kan integrere direkte på din nettside. Kontakt oss hvis du trenger tilpassede løsninger.</p>
+
+    <h2>Feilmeldinger og forslag</h2>
+    <p>Finner du en feil eller har en idé som kan forbedre kalkulatoren? Send en e-post med så mange detaljer som mulig:</p>
+    <ul>
+      <li><strong>Hvilken kalkulator</strong> du brukte</li>
+      <li><strong>Hvilke verdier</strong> du la inn</li>
+      <li><strong>Forventet resultat</strong> versus faktisk resultat</li>
+      <li><strong>Nettleser og enhet</strong> (f.eks. Chrome på iPhone)</li>
+    </ul>
+    <p>Alle feilmeldinger hjelper oss med å holde kalkulatorene nøyaktige og pålitelige.</p>
+
+    <h2>Om Lønn Etter Skatt</h2>
+    <p>Lønn Etter Skatt er laget av <strong>Mottalib Radif</strong>, MBA INSEAD. Nettstedet tilbyr gratis skattekalkulatorer bygget med Skatteetatens offisielle data. Les mer på vår <a href="/om-oss/">om oss-side</a>.</p>
+  </div>
+</CalculatorLayout>

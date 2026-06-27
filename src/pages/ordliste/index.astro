@@ -1,0 +1,179 @@
+---
+import GuideLayout from '../../layouts/GuideLayout.astro';
+
+const defined_terms = [
+  { term: 'AFP (Avtalefestet pensjon)', definition: 'AFP er en pensjonsordning som gir deg mulighet til å gå av med pensjon fra du er 62 år. Den er basert på avtale mellom arbeidsgivere og fagforeninger. AFP-pensjon kommer i tillegg til alderspensjon fra folketrygden og er en livsvarig ytelse.' },
+  { term: 'A-melding', definition: 'A-meldingen er den månedlige rapporten som arbeidsgiver sender til Skatteetaten med opplysninger om lønn, skattetrekk og arbeidsgiveravgift for alle ansatte. Den erstatter flere tidligere rapporteringer og sendes elektronisk via Altinn.' },
+  { term: 'Arbeidsgiveravgift', definition: 'Arbeidsgiveravgift er en avgift arbeidsgiveren betaler til folketrygden, beregnet på bruttolønnen din. Satsen varierer mellom 0% og 14,1% avhengig av hvilken sone virksomheten tilhører. Avgiften finansierer trygdeordninger, men synes ikke på din lønnsslipp.' },
+  { term: 'BSU (Boligsparing for ungdom)', definition: 'BSU er en skattefavorisert spareordning for personer under 34 år. Du kan spare inntil 27 500 kr per år og får 10% skattefradrag på det du sparer. Maksimal total sparing er 300 000 kr. BSU-fradraget trekkes direkte fra skatten din.' },
+  { term: 'Bruttolønn', definition: 'Bruttolønn er din totale lønn før skatt og andre trekk. Det er beløpet som står i arbeidsavtalen din. Fra bruttolønnen trekkes forskuddstrekk (skatt), og det som er igjen er nettolønnen. Beregn din nettolønn med vår <a href="/">lønnskalkulator</a>.' },
+  { term: 'Fagforeningskontingent', definition: 'Fagforeningskontingent er den månedlige avgiften du betaler til fagforeningen din. Du kan få skattefradrag for opptil 7 700 kr per år (2025) i fagforeningskontingent. Fradraget reduserer din alminnelige inntekt og gir 22% lavere skatt på beløpet.' },
+  { term: 'Fellesskatt', definition: 'Fellesskatt er en flat skatt på 22% av alminnelig inntekt (inntekt etter fradrag). Fellesskatten er lik for alle uansett bostedskommune og utgjør hoveddelen av skatten på alminnelig inntekt i Norge.' },
+  { term: 'Feriepenger', definition: 'Feriepenger er den lønnen du får utbetalt når du tar ferie. Arbeidsgiver setter av 10,2% av bruttolønnen din (12% for ansatte over 60 år) til feriepenger. Feriepengene utbetales vanligvis i juni og erstatter lønnen i ferieperioden.' },
+  { term: 'Formueskatt', definition: 'Formueskatt betales av personer med netto formue over fribeløpet på 1 760 000 kr (2025). Satsen er 1,0% til kommunen og 0,3% til staten på formue mellom fribeløpet og 20 000 000 kr, og 0,4% til staten på formue over dette.' },
+  { term: 'Forskuddstrekk', definition: 'Forskuddstrekk er den skatten arbeidsgiver trekker fra lønnen din hver måned og betaler til Skatteetaten. Beløpet beregnes basert på skattekortet ditt, enten som tabelltrekk eller prosenttrekk. Det endelige skatteoppgjøret kommer året etter.' },
+  { term: 'Grunnbeløpet (G)', definition: 'Grunnbeløpet (G) er et beløp som fastsettes av Stortinget hvert år og brukes til å beregne trygdeytelser. Per 1. mai 2025 er 1G = 130 512 kr. Grunnbeløpet regulerer blant annet pensjon, sykepenger, dagpenger og andre NAV-ytelser.' },
+  { term: 'Minstefradrag', definition: 'Minstefradraget er et standardfradrag som alle lønnsmottakere får automatisk. Det er 46% av bruttolønnen, begrenset oppad til 114 950 kr per år (2025). Minstefradraget reduserer din alminnelige inntekt og dermed skatten du betaler.' },
+  { term: 'NAV', definition: 'NAV (Arbeids- og velferdsetaten) administrerer Norges trygdeordninger, arbeidsmarkedstiltak og sosialhjelp. NAV utbetaler blant annet sykepenger, dagpenger, foreldrepenger, alderspensjon og uføretrygd. NAV finansieres delvis gjennom trygdeavgiften.' },
+  { term: 'Nettolønn', definition: 'Nettolønn er det beløpet du faktisk får utbetalt etter at skatt og andre trekk er trukket fra bruttolønnen. Det er nettolønnen som settes inn på bankkontoen din hver måned. Beregn din nettolønn med vår <a href="/">lønnskalkulator</a>.' },
+  { term: 'OTP (Obligatorisk tjenestepensjon)', definition: 'OTP er den lovpålagte pensjonsordningen der arbeidsgiver må spare minst 2% av lønnen din til pensjon. Innskuddet beregnes av lønn mellom 1G og 12G. OTP kommer i tillegg til alderspensjon fra folketrygden og sikrer at alle arbeidstakere får tjenestepensjon.' },
+  { term: 'Overtidstillegg', definition: 'Overtidstillegg er den ekstra kompensasjonen du får for arbeid utover normal arbeidstid. Ifølge arbeidsmiljøloven skal overtidstillegget være minst 40% av avtalt timelønn. Overtidstillegget er skattepliktig inntekt og inngår i beregningsgrunnlaget for trinnskatt.' },
+  { term: 'Pensjonsinnskudd', definition: 'Pensjonsinnskudd er den delen av lønnen som settes av til tjenestepensjon. Arbeidsgiver betaler vanligvis mellom 2% og 7% av lønnen til pensjonsordningen. Innskuddet trekkes før skatt og reduserer dermed den skattepliktige inntekten din.' },
+  { term: 'Personfradrag', definition: 'Personfradraget er et skattefritt beløp som trekkes fra alminnelig inntekt ved beregning av skatt. I 2025 er personfradraget 70 000 kr (klasse 1). Fradraget gis automatisk og reduserer grunnlaget for beregning av fellesskatt på 22%.' },
+  { term: 'Prosenttrekk', definition: 'Prosenttrekk er en metode for skattetrekk der arbeidsgiver trekker en fast prosentsats av bruttolønnen din. Prosenttrekk brukes typisk for biinntekter, korte arbeidsforhold eller når tabelltrekk ikke passer. Prosentsatsen fremgår av skattekortet ditt.' },
+  { term: 'Skattemelding', definition: 'Skattemeldingen (tidligere selvangivelse) er den årlige oversikten over dine inntekter, fradrag og formue som sendes fra Skatteetaten. Du mottar den i mars-april og må levere eventuelle endringer innen 30. april. Skattemeldingen danner grunnlaget for skatteoppgjøret.' },
+  { term: 'Skattefri inntekt', definition: 'Skattefri inntekt er inntekt du ikke betaler skatt av. Eksempler inkluderer barnetrygd, kontantstøtte, bostøtte, stipend fra Lånekassen og gevinst fra salg av egen bolig etter visse regler. Minstefradrag og personfradrag gjør også deler av lønnen skattefri.' },
+  { term: 'Skatteoppgjør', definition: 'Skatteoppgjøret er det endelige oppgjøret fra Skatteetaten som viser om du har betalt for mye eller for lite skatt. Har du betalt for mye, får du penger tilbake. Har du betalt for lite, må du betale restskatt. Oppgjøret kommer vanligvis i juni.' },
+  { term: 'Skatteetaten', definition: 'Skatteetaten er den norske myndigheten som administrerer skattesystemet. De fastsetter skattetabeller, behandler skattemeldinger, beregner skatteoppgjøret og administrerer folkeregisteret. Offisiell nettside: skatteetaten.no.' },
+  { term: 'Skattekort', definition: 'Skattekortet er dokumentet fra Skatteetaten som viser hvor mye skatt arbeidsgiver skal trekke fra lønnen din. Skattekortet inneholder enten en skattetabell (tabelltrekk) eller en prosentsats (prosenttrekk) og hentes elektronisk av arbeidsgiver.' },
+  { term: 'Tabelltrekk', definition: 'Tabelltrekk er den vanligste metoden for skattetrekk fra lønn. Arbeidsgiver bruker Skatteetatens skattetabeller til å beregne riktig skattetrekk basert på månedslønn, skattekommune og fradrag. Tabelltrekket tar hensyn til personfradrag og minstefradrag.' },
+  { term: 'Trinnskatt', definition: 'Trinnskatt er Norges progressive inntektsskatt som beregnes direkte på brutto personinntekt uten fradrag. I 2025 har den fem trinn med satser fra 1,7% til 17,6%. Trinnskatten starter ved inntekt over 217 400 kr. Les mer i vår <a href="/guides/trinnskatt-forklart/">trinnskattguide</a>.' },
+  { term: 'Trygdeavgift', definition: 'Trygdeavgift er en obligatorisk avgift til folketrygden. For lønnsmottakere er satsen 7,9% av brutto personinntekt (2025). Inntekt under 69 650 kr er fritatt. Avgiften finansierer sykepenger, foreldrepenger, dagpenger og alderspensjon. Beregn den med vår <a href="/trygdeavgift-kalkulator/">kalkulator</a>.' },
+];
+
+const defined_terms_schema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'DefinedTermSet',
+  name: 'Norsk skatteordliste 2025',
+  description: 'Ordliste med norske skattebegreper og termer som brukes ved lønnsberegning og skattemelding i Norge.',
+  url: 'https://lonnetterskatt.no/ordliste/',
+  inLanguage: 'nb',
+  hasDefinedTerm: defined_terms.map(t => ({
+    '@type': 'DefinedTerm',
+    name: t.term,
+    description: t.definition.replace(/<[^>]*>/g, ''),
+    inDefinedTermSet: 'https://lonnetterskatt.no/ordliste/',
+  })),
+});
+
+const letters = ['A', 'B', 'F', 'G', 'M', 'N', 'O', 'P', 'S', 'T'];
+---
+
+<GuideLayout
+  title="Norsk skatteordliste 2025 | Lønnsbegreper forklart"
+  description="Ordliste med 30+ norske skattebegreper for 2025. Tydelige forklaringer av trinnskatt, trygdeavgift, minstefradrag, bruttolønn, nettolønn og feriepenger."
+  publishDate="2025-06-01"
+  breadcrumbs={[
+    { label: 'Hjem', href: '/' },
+    { label: 'Guider', href: '/guides/' },
+    { label: 'Skatteordliste' },
+  ]}
+>
+  <script type="application/ld+json" set:html={defined_terms_schema} />
+
+  <h2>Skatteordliste A-Å</h2>
+  <p>Her finner du forklaringer av de vanligste norske skattebegrepene. Ordlisten hjelper deg å forstå din lønnsslipp, skattemelding og hvordan nettolønnen din beregnes. Alle termer er basert på Skatteetatens offisielle definisjoner for skatteåret 2025.</p>
+
+  <nav class="not-prose flex flex-wrap gap-2 my-6" aria-label="Hurtignavigering A-Å">
+    {letters.map(letter => (
+      <a href={`#${letter}`} class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-600 dark:hover:text-brand-400 hover:border-brand-300 transition-colors">
+        {letter}
+      </a>
+    ))}
+  </nav>
+
+  <dl class="not-prose space-y-6 mt-8">
+    <div id="A">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">A</h3>
+      {defined_terms.filter(t => t.term.startsWith('A')).map(t => (
+        <div class="mb-4">
+          <dt class="font-semibold text-gray-900 dark:text-white">{t.term}</dt>
+          <dd class="mt-1 text-gray-600 dark:text-gray-400 leading-relaxed" set:html={t.definition} />
+        </div>
+      ))}
+    </div>
+
+    <div id="B">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">B</h3>
+      {defined_terms.filter(t => t.term.startsWith('B')).map(t => (
+        <div class="mb-4">
+          <dt class="font-semibold text-gray-900 dark:text-white">{t.term}</dt>
+          <dd class="mt-1 text-gray-600 dark:text-gray-400 leading-relaxed" set:html={t.definition} />
+        </div>
+      ))}
+    </div>
+
+    <div id="F">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">F</h3>
+      {defined_terms.filter(t => t.term.startsWith('F')).map(t => (
+        <div class="mb-4">
+          <dt class="font-semibold text-gray-900 dark:text-white">{t.term}</dt>
+          <dd class="mt-1 text-gray-600 dark:text-gray-400 leading-relaxed" set:html={t.definition} />
+        </div>
+      ))}
+    </div>
+
+    <div id="G">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">G</h3>
+      {defined_terms.filter(t => t.term.startsWith('G')).map(t => (
+        <div class="mb-4">
+          <dt class="font-semibold text-gray-900 dark:text-white">{t.term}</dt>
+          <dd class="mt-1 text-gray-600 dark:text-gray-400 leading-relaxed" set:html={t.definition} />
+        </div>
+      ))}
+    </div>
+
+    <div id="M">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">M</h3>
+      {defined_terms.filter(t => t.term.startsWith('M')).map(t => (
+        <div class="mb-4">
+          <dt class="font-semibold text-gray-900 dark:text-white">{t.term}</dt>
+          <dd class="mt-1 text-gray-600 dark:text-gray-400 leading-relaxed" set:html={t.definition} />
+        </div>
+      ))}
+    </div>
+
+    <div id="N">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">N</h3>
+      {defined_terms.filter(t => t.term.startsWith('N')).map(t => (
+        <div class="mb-4">
+          <dt class="font-semibold text-gray-900 dark:text-white">{t.term}</dt>
+          <dd class="mt-1 text-gray-600 dark:text-gray-400 leading-relaxed" set:html={t.definition} />
+        </div>
+      ))}
+    </div>
+
+    <div id="O">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">O</h3>
+      {defined_terms.filter(t => t.term.startsWith('O')).map(t => (
+        <div class="mb-4">
+          <dt class="font-semibold text-gray-900 dark:text-white">{t.term}</dt>
+          <dd class="mt-1 text-gray-600 dark:text-gray-400 leading-relaxed" set:html={t.definition} />
+        </div>
+      ))}
+    </div>
+
+    <div id="P">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">P</h3>
+      {defined_terms.filter(t => t.term.startsWith('P')).map(t => (
+        <div class="mb-4">
+          <dt class="font-semibold text-gray-900 dark:text-white">{t.term}</dt>
+          <dd class="mt-1 text-gray-600 dark:text-gray-400 leading-relaxed" set:html={t.definition} />
+        </div>
+      ))}
+    </div>
+
+    <div id="S">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">S</h3>
+      {defined_terms.filter(t => t.term.startsWith('S')).map(t => (
+        <div class="mb-4">
+          <dt class="font-semibold text-gray-900 dark:text-white">{t.term}</dt>
+          <dd class="mt-1 text-gray-600 dark:text-gray-400 leading-relaxed" set:html={t.definition} />
+        </div>
+      ))}
+    </div>
+
+    <div id="T">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">T</h3>
+      {defined_terms.filter(t => t.term.startsWith('T')).map(t => (
+        <div class="mb-4">
+          <dt class="font-semibold text-gray-900 dark:text-white">{t.term}</dt>
+          <dd class="mt-1 text-gray-600 dark:text-gray-400 leading-relaxed" set:html={t.definition} />
+        </div>
+      ))}
+    </div>
+  </dl>
+
+  <h2>Beregn din lønn etter skatt</h2>
+  <p>Vil du se hvordan disse begrepene påvirker lønnen din i praksis? Bruk vår <a href="/">lønnskalkulator</a> for å beregne nettolønnen din basert på bruttolønnen din. Du kan også bruke vår <a href="/netto-til-brutto/">netto-til-brutto-kalkulator</a> for å regne baklengs fra ønsket nettolønn.</p>
+</GuideLayout>

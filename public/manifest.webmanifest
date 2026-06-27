@@ -1,0 +1,17 @@
+{
+  "name": "Lønn Etter Skatt — Norsk Lønnskalkulator",
+  "short_name": "Lønn Etter Skatt",
+  "description": "Gratis norsk lønnskalkulator for 2025. Beregn nettolønn etter skatt.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#BA0C2F",
+  "lang": "nb",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+---
+import CalculatorLayout from '../../layouts/CalculatorLayout.astro';
+import NettoTilBruttoKalkulator from '../../components/calculators/NettoTilBruttoKalkulator';
+
+const faqs = [
+  { question: 'Hvordan regner jeg ut brutto fra netto?', answer: 'Vår kalkulator gjør en omvendt beregning. Skriv inn ønsket nettolønn og se hvilken bruttolønn du trenger. Beregningen tar hensyn til trinnskatt, trygdeavgift, fellesskatt, minstefradrag og personfradrag.' },
+];
+---
+
+<CalculatorLayout
+  slug="/netto-til-brutto"
+  title="Netto til brutto"
+  metaTitle="Netto til brutto-kalkulator 2025 | Omvendt lønnsberegning"
+  metaDescription="Finn bruttolønnen du trenger for å oppnå ønsket nettolønn i Norge 2025. Omvendt kalkulator med Skatteetatens satser, trinnskatt, trygdeavgift og fellesskatt."
+  h1="Netto til brutto-kalkulator 2025"
+  intro="Skriv inn ønsket nettolønn og se hvilken bruttolønn du trenger."
+  faqs={faqs}
+>
+  <NettoTilBruttoKalkulator client:idle />
+
+  <div slot="content" class="prose prose-lg dark:prose-invert max-w-none mt-12">
+    <h2>Netto til brutto: eksempeltabell</h2>
+    <table>
+      <thead><tr><th>Ønsket netto/år</th><th>Brutto kreves</th><th>Total skatt</th></tr></thead>
+      <tbody>
+        <tr><td>300 000 kr</td><td>~385 000 kr</td><td>~85 000 kr</td></tr>
+        <tr><td>400 000 kr</td><td>~530 000 kr</td><td>~130 000 kr</td></tr>
+        <tr><td>500 000 kr</td><td>~700 000 kr</td><td>~200 000 kr</td></tr>
+        <tr><td>600 000 kr</td><td>~890 000 kr</td><td>~290 000 kr</td></tr>
+      </tbody>
+    </table>
+    <p><em>Omtrentlige beløp. Faktisk skatt avhenger av individuelle fradrag.</em></p>
+  </div>
+</CalculatorLayout>

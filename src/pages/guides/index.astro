@@ -1,0 +1,32 @@
+---
+import CalculatorLayout from '../../layouts/CalculatorLayout.astro';
+
+const guides = [
+  { title: 'Skattesatser 2025', description: 'Komplett guide til norske skattesatser: trinnskatt, trygdeavgift, fellesskatt, minstefradrag og personfradrag.', href: '/guides/skattesatser-2025/', date: '2025-01-01' },
+  { title: 'Trinnskatt forklart', description: 'Hvordan trinnskatten fungerer med alle fem trinn og beregningseksempler.', href: '/guides/trinnskatt-forklart/', date: '2025-01-01' },
+  { title: 'Fradrag i Norge', description: 'Oversikt over minstefradrag, personfradrag og andre fradrag du kan ha rett på.', href: '/guides/fradrag-i-norge/', date: '2025-01-01' },
+];
+
+const faqs = [
+  { question: 'Er guidene oppdatert for 2025?', answer: 'Ja. Alle guider bruker Skatteetatens offisielle satser for inntektsåret 2025.' },
+];
+---
+
+<CalculatorLayout
+  slug="/guides"
+  title="Guider"
+  metaTitle="Skatteguider Norge 2025 | Forstå din lønn og skatt"
+  metaDescription="Dybdegående guider om norske skatter, trinnskatt, trygdeavgift og lønnsberegning. Oppdatert for 2025 med Skatteetatens offisielle satser og beregningseksempler."
+  h1="Skatteguider 2025"
+  intro="Dybdegående guider som hjelper deg forstå din lønn og skatt i Norge."
+  faqs={faqs}
+>
+  <div class="space-y-4">
+    {guides.map((guide) => (
+      <a href={guide.href} class="block group rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-surface p-6 hover:border-brand-500 dark:hover:border-brand-400 hover:shadow-md transition-all">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{guide.title}</h2>
+        <p class="mt-2 text-gray-500 dark:text-gray-400">{guide.description}</p>
+      </a>
+    ))}
+  </div>
+</CalculatorLayout>

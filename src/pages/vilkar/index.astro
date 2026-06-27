@@ -1,0 +1,57 @@
+---
+import CalculatorLayout from '../../layouts/CalculatorLayout.astro';
+
+const faqs = [
+  { question: 'Er beregningene juridisk bindende?', answer: 'Nei. Alle beregninger er estimater og erstatter ikke profesjonell skatterådgivning. Kontakt Skatteetaten eller en autorisert skatterådgiver for bindende informasjon.' },
+  { question: 'Kan jeg bruke kalkulatoren for bedriften min?', answer: 'Ja, du kan bruke kalkulatoren fritt. Du kan også bygge inn vår widget på din nettside. Kontakt oss for tilpassede løsninger.' },
+];
+---
+
+<CalculatorLayout
+  slug="/vilkar"
+  title="Vilkår"
+  metaTitle="Brukervilkår | Lønn Etter Skatt – Kalkulatorvilkår"
+  metaDescription="Brukervilkår for Lønn Etter Skatt. Kalkulatorene gir estimater og erstatter ikke profesjonell skatterådgivning. Les ansvarsfraskrivelse og bruksvilkår."
+  h1="Brukervilkår"
+  intro="Vilkår for bruk av Lønn Etter Skatts kalkulatorer og nettsted."
+  faqs={faqs}
+>
+  <div class="prose prose-lg dark:prose-invert max-w-none">
+    <p><em>Sist oppdatert: 15. januar 2025</em></p>
+
+    <h2>1. Tjenestens formål</h2>
+    <p>Lønn Etter Skatt (lonnetterskatt.no) tilbyr gratis skattekalkulatorer og informasjonsmateriale om det norske skattesystemet. Tjenesten er gratis å bruke og krever ingen registrering.</p>
+
+    <h2>2. Estimater – ikke skatterådgivning</h2>
+    <p>Alle beregninger gjort av våre kalkulatorer er <strong>estimater</strong> og gis kun til informasjonsformål. Resultatene utgjør ikke skatterådgivning, økonomisk rådgivning eller juridisk rådgivning. Din faktiske skatt kan avvike på grunn av:</p>
+    <ul>
+      <li>Individuelle fradrag (minstefradrag, rentefradrag, reisefradrag)</li>
+      <li>Kapitalinntekter eller kapitaltap</li>
+      <li>Fagforeningskontingent og pensjonssparing</li>
+      <li>Endringer i skatteregler i løpet av året</li>
+      <li>Andre personlige forhold</li>
+    </ul>
+    <p>Kontakt alltid Skatteetaten eller en autorisert skatterådgiver for personlig og bindende skatteinformasjon.</p>
+
+    <h2>3. Datagrunnlag</h2>
+    <p>Skattesatser, trinnskattsatser, trygdeavgift og fradrag hentes fra <a href="https://skatteetaten.no" target="_blank" rel="noopener noreferrer">Skatteetaten</a>. Vi tilstreber å holde alle data oppdatert og korrekt, men garanterer ikke feilfrihet.</p>
+
+    <h2>4. Ansvarsbegrensning</h2>
+    <p>Lønn Etter Skatt kan ikke holdes ansvarlig for økonomiske beslutninger, skattemeldinger eller andre handlinger basert på kalkulatorenes resultater. Bruk av tjenesten skjer på eget ansvar.</p>
+
+    <h2>5. Immaterielle rettigheter</h2>
+    <p>Alt innhold på nettstedet – inkludert tekst, design, kalkulatorer og grafikk – er opphavsrettslig beskyttet. Du kan ikke kopiere, reprodusere eller distribuere innholdet uten skriftlig tillatelse, bortsett fra for personlig bruk.</p>
+
+    <h2>6. Tilgjengelighet</h2>
+    <p>Vi tilstreber å holde tjenesten tilgjengelig døgnet rundt, men garanterer ikke uavbrutt drift. Vi kan midlertidig stenge tjenesten for vedlikehold eller oppdateringer uten forvarsel.</p>
+
+    <h2>7. Endringer i vilkårene</h2>
+    <p>Vi forbeholder oss retten til å endre disse vilkårene. Vesentlige endringer varsles ved å oppdatere datoen øverst på denne siden. Fortsatt bruk av tjenesten etter endringer innebærer at du godtar de oppdaterte vilkårene.</p>
+
+    <h2>8. Gjeldende lov</h2>
+    <p>Disse vilkårene er underlagt norsk lov.</p>
+
+    <h2>9. Kontakt</h2>
+    <p>Spørsmål om vilkårene? Kontakt oss på <a href="mailto:contact@lonnetterskatt.no">contact@lonnetterskatt.no</a> eller besøk vår <a href="/kontakt/">kontaktside</a>.</p>
+  </div>
+</CalculatorLayout>

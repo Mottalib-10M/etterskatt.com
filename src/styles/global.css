@@ -1,0 +1,137 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/inter-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/inter-600.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/inter-700.woff2") format("woff2");
+}
+
+@theme {
+  --color-brand-50: #fef2f4;
+  --color-brand-100: #fde6ea;
+  --color-brand-200: #f9c0ca;
+  --color-brand-300: #f5909f;
+  --color-brand-400: #e84a63;
+  --color-brand-500: #BA0C2F;
+  --color-brand-600: #a10b29;
+  --color-brand-700: #880923;
+  --color-brand-800: #6e071c;
+  --color-brand-900: #4d0514;
+  --color-brand-950: #2e030c;
+
+  --color-accent-50: #eef3ff;
+  --color-accent-100: #d9e4ff;
+  --color-accent-200: #b3c9ff;
+  --color-accent-300: #7ba3ff;
+  --color-accent-400: #4a7dff;
+  --color-accent-500: #00205B;
+  --color-accent-600: #001c50;
+  --color-accent-700: #001745;
+  --color-accent-800: #00123a;
+  --color-accent-900: #000d2f;
+
+  --color-charcoal: #1f2937;
+  --color-light-gray: #f3f4f6;
+  --color-medium-gray: #9ca3af;
+
+  --color-dark-bg: #111827;
+  --color-dark-surface: #1f2937;
+  --color-dark-border: #374151;
+  --color-dark-text: #f9fafb;
+  --color-dark-text-muted: #9ca3af;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'SF Mono', ui-monospace, SFMono-Regular, 'Cascadia Code', monospace;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.result-value {
+  transition: opacity 0.15s ease;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: var(--color-brand-500);
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+@keyframes bar-grow {
+  from { width: 0%; }
+  to { width: var(--bar-width); }
+}
+
+.bar-segment {
+  animation: bar-grow 0.4s ease-out forwards;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+}
+
+.skip-link:focus {
+  top: 0;
+}

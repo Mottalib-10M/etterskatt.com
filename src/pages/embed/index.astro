@@ -1,0 +1,62 @@
+---
+import '../../styles/global.css';
+import LonnsKalkulator from '../../components/calculators/LonnsKalkulator';
+---
+
+<!doctype html>
+<html lang="nb">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lønnskalkulator Widget - LønnEtterSkatt.no</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <style>body { margin: 0; padding: 16px; background: #ffffff; }</style>
+  </head>
+  <body>
+    <div class="max-w-3xl mx-auto">
+      <LonnsKalkulator client:idle />
+      <div class="mt-6 pt-4 border-t border-gray-200 text-center">
+        <p class="text-xs text-gray-400">
+          Drevet av <a href="https://lonnetterskatt.no" target="_blank" rel="noopener noreferrer" class="text-brand-600 hover:underline">LønnEtterSkatt.no</a>
+        </p>
+      </div>
+    </div>
+
+    <script is:inline>
+      if (window.self === window.top) {
+        const el = document.getElementById('embed-instructions');
+        if (el) el.style.display = 'block';
+      }
+    </script>
+
+    <div id="embed-instructions" style="display:none" class="max-w-3xl mx-auto mt-10 p-6 bg-gray-50 rounded-2xl border border-gray-200">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Bygg inn lønnskalkulator på din nettside</h2>
+      <p class="text-sm text-gray-600 mb-4">Kopier koden nedenfor og lim den inn i HTML-en din for å bygge inn lønnskalkulatoren på nettsiden din.</p>
+      <div class="relative">
+        <pre class="bg-gray-900 text-green-400 text-sm p-4 rounded-xl overflow-x-auto"><code id="embed-code">&lt;iframe src="https://lonnetterskatt.no/embed/" width="100%" height="600" style="border: 1px solid #e5e7eb; border-radius: 12px;" title="Lønnskalkulator Widget" loading="lazy"&gt;&lt;/iframe&gt;</code></pre>
+        <button id="copy-embed-btn" class="absolute top-3 right-3 px-3 py-1.5 text-xs font-medium bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition-colors">Kopier</button>
+      </div>
+      <script is:inline>
+        document.getElementById('copy-embed-btn')?.addEventListener('click', function() {
+          const code = document.getElementById('embed-code')?.textContent || '';
+          navigator.clipboard.writeText(code).then(() => {
+            this.textContent = 'Kopiert!';
+            setTimeout(() => { this.textContent = 'Kopier'; }, 2000);
+          });
+        });
+      </script>
+      <div class="mt-6 space-y-3">
+        <h3 class="text-sm font-semibold text-gray-700">Tilpasning</h3>
+        <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+          <li>Juster <code>height</code>-verdien etter behov for å passe innholdet ditt.</li>
+          <li>Bredden er satt til 100% og tilpasser seg automatisk til overordnet element.</li>
+        </ul>
+      </div>
+      <div class="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+        <p class="text-sm text-blue-800">
+          <strong>Vi setter pris på en lenke tilbake:</strong> Hvis du bruker vår widget, setter vi pris på om du inkluderer en lenke til <a href="https://lonnetterskatt.no" class="underline">lonnetterskatt.no</a> på nettsiden din.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

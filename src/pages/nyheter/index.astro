@@ -1,0 +1,27 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { buildCanonical } from '../../lib/seo';
+
+const canonical = buildCanonical('/nyheter/');
+---
+
+<Layout title="Skattenyheter Norge | Lonn Etter Skatt" description="Siste nytt om norske skatteendringer, Skatteetatens satser, statsbudsjettet og loennsoppdateringer som paavirker din nettloenn." canonical={canonical}>
+  <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12">
+    <nav class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+      <a href="/" class="hover:text-brand transition-colors">Hjem</a>
+      <span class="mx-2">/</span>
+      <span class="text-gray-900 dark:text-white">Nyheter</span>
+    </nav>
+
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Skattenyheter</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">De siste endringene i skattesatser, statsbudsjettet og andre oppdateringer som p&aring;virker norske l&oslash;nnsmottakere.</p>
+
+    <div class="space-y-4">
+      <a href="/nyheter/skattesatser-2025-endringer/" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-surface p-5 hover:border-brand hover:shadow-md transition-all">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-brand transition-colors">Skattesatsene 2025: Hva som er endret</h2>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Full oversikt over endringene i trinnskatt, trygdeavgift, personfradrag og minstefradrag for skatte&aring;ret 2025 og hva det betyr for din nettol&oslash;nn.</p>
+        <p class="mt-2 text-xs text-gray-400 dark:text-gray-500">Publisert 26. juni 2025</p>
+      </a>
+    </div>
+  </div>
+</Layout>

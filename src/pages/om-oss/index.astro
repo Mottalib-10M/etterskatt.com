@@ -1,0 +1,31 @@
+---
+import CalculatorLayout from '../../layouts/CalculatorLayout.astro';
+const faqs = [
+  { question: 'Hvem driver Lønn Etter Skatt?', answer: 'Lønn Etter Skatt er laget av Mottalib Radif, MBA fra INSEAD. Alle kalkulatorer bruker Skatteetatens offisielle satser.' },
+];
+---
+
+<CalculatorLayout
+  slug="/om-oss"
+  title="Om oss"
+  metaTitle="Om Lønn Etter Skatt | Gratis norske skattekalkulatorer"
+  metaDescription="Lønn Etter Skatt tilbyr gratis og nøyaktige skattekalkulatorer med Skatteetatens 2025-satser. Skapt av Mottalib Radif, MBA INSEAD. Beregninger i nettleseren."
+  h1="Om Lønn Etter Skatt"
+  intro="Gratis, nøyaktige skattekalkulatorer for norske lønnsmottakere."
+  faqs={faqs}
+>
+  <div class="prose prose-lg dark:prose-invert max-w-none">
+    <h2>Vårt oppdrag</h2>
+    <p>Lønn Etter Skatt gir gratis, nøyaktige skattekalkulatorer slik at alle norske lønnsmottakere kan forstå lønnen sin.</p>
+    <h2>Om skaperen</h2>
+    <p><strong>Mottalib Radif</strong> har en MBA fra INSEAD. Med bakgrunn innen finans og teknologi laget han Lønn Etter Skatt for å gjøre skatteberegninger tilgjengelige og gratis for alle.</p>
+    <h2>Hvordan kalkulatorene fungerer</h2>
+    <ul>
+      <li><strong>100% klientside:</strong> Alle beregninger skjer i nettleseren din.</li>
+      <li><strong>Skatteetatens data:</strong> Offisielle 2025-satser.</li>
+      <li><strong>Oppdateres årlig:</strong> Kalkulatorene oppdateres hvert inntektsår.</li>
+    </ul>
+    <h2>Ansvarsfraskrivelse</h2>
+    <p>Lønn Etter Skatt gir estimater kun til informasjonsformål. Kontakt en autorisert skatterådgiver for personlig veiledning.</p>
+  </div>
+</CalculatorLayout>

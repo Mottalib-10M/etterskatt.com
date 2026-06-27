@@ -1,0 +1,36 @@
+---
+import CalculatorLayout from '../../layouts/CalculatorLayout.astro';
+
+const calculators = [
+  { title: 'Lønnskalkulator', href: '/', description: 'Beregn din nettolønn etter trinnskatt, trygdeavgift og fellesskatt.' },
+  { title: 'Trinnskattkalkulator', href: '/trinnskatt-kalkulator/', description: 'Se din trinnskatt trinn for trinn (1,7%–17,6%).' },
+  { title: 'Trygdeavgiftkalkulator', href: '/trygdeavgift-kalkulator/', description: 'Beregn din trygdeavgift (7,9% av personinntekt).' },
+  { title: 'Netto til brutto', href: '/netto-til-brutto/', description: 'Finn bruttolønnen du trenger for ønsket nettolønn.' },
+  { title: 'Timelønnkalkulator', href: '/timelonn-kalkulator/', description: 'Omregn timelønn til årslønn og se nettolønn per time.' },
+];
+
+const faqs = [
+  { question: 'Hvilken kalkulator bør jeg bruke?', answer: 'Start med Lønnskalkulator hvis du kjenner bruttolønnen din. Bruk Netto til brutto hvis du vet hva du vil ha utbetalt.' },
+  { question: 'Er kalkulatorene oppdatert for 2025?', answer: 'Ja. Alle kalkulatorer bruker Skatteetatens offisielle skattesatser for 2025, inkludert trinnskatt, trygdeavgift, minstefradrag og personfradrag.' },
+];
+---
+
+<CalculatorLayout
+  slug="/kalkulatorer"
+  title="Alle kalkulatorer"
+  metaTitle="Skattekalkulatorer Norge 2025 | Lønn, skatt og avgifter"
+  metaDescription="Gratis norske skattekalkulatorer for 2025. Beregn nettolønn, trinnskatt, trygdeavgift, netto til brutto og timelønn. Basert på Skatteetatens offisielle satser."
+  h1="Norske skattekalkulatorer 2025"
+  intro="Gratis, nøyaktige skattekalkulatorer for norske lønnsmottakere. Oppdatert med Skatteetatens 2025-satser."
+  faqs={faqs}
+>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {calculators.map((calc) => (
+      <a href={calc.href} class="group rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-surface p-6 hover:border-brand-300 dark:hover:border-brand-700 hover:shadow-md transition-all">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{calc.title}</h2>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{calc.description}</p>
+        <span class="mt-3 inline-block text-sm font-medium text-brand-600 dark:text-brand-400">Bruk kalkulator &rarr;</span>
+      </a>
+    ))}
+  </div>
+</CalculatorLayout>

@@ -5,7 +5,7 @@ import GuideLayout from '../../../layouts/GuideLayout.astro';
 <GuideLayout
   title="Var metode - Slik beregner vi lonn etter skatt"
   description="Detaljert forklaring av var beregningsmetodikk for lonn etter skatt i Norge. Datakilder fra Skatteetaten, beregningstrinn, noeyaktighet og oppdateringsrutiner."
-  publishDate="2025-01-01"
+  publishDate="2026-01-01"
   breadcrumbs={[
     { label: 'Hjem', href: '/' },
     { label: 'Guider', href: '/guides/' },
@@ -22,13 +22,13 @@ import GuideLayout from '../../../layouts/GuideLayout.astro';
 
   <h3>Skatteetaten</h3>
   <p>Skatteetaten er den norske myndigheten som er ansvarlig for skatt, avgifter og folkeregistrering. Fra Skatteetaten henter vi de sentrale skatteparametrene som styrer beregningen av inntektsskatten. Det inkluderer trinnskattesatser og innslagspunkter, trygdeavgiftssatser, satsen for skatt pa alminnelig inntekt (fellesskatten), personfradragets storrelse og minstefradragets satser og ovre grenser. Skatteetaten publiserer disse opplysningene arlig, vanligvis i forbindelse med statsbudsjettet om hosten, og vi oppdaterer var kalkulator sa snart de nye verdiene offentliggjores.</p>
-  <p>For 2025 er de viktigste parametrene: trinnskatten har fem trinn med satser fra 1,7 prosent til 17,6 prosent, trygdeavgiften for lonnsmottakere er 7,9 prosent, satsen for skatt pa alminnelig inntekt er 22 prosent, personfradraget er 88 250 kroner, og minstefradraget er 46 prosent av bruttolonnen med et ovre tak pa 118 850 kroner.</p>
+  <p>For 2026 er de viktigste parametrene: trinnskatten har fem trinn med satser fra 1,7 prosent til 17,6 prosent, trygdeavgiften for lonnsmottakere er 7,9 prosent, satsen for skatt pa alminnelig inntekt er 22 prosent, personfradraget er 88 250 kroner, og minstefradraget er 46 prosent av bruttolonnen med et ovre tak pa 118 850 kroner.</p>
 
   <h3>Trinnskatt</h3>
   <p>Trinnskatten er den progressive skattekomponenten i det norske skattesystemet og beregnes direkte pa personinntekt (bruttolonn) uten fradrag. Den har fem trinn med okende satser: trinn 1 (1,7 prosent for inntekt mellom 217 400 og 306 050 kroner), trinn 2 (4,0 prosent for inntekt mellom 306 050 og 697 150 kroner), trinn 3 (13,6 prosent for inntekt mellom 697 150 og 942 400 kroner), trinn 4 (16,6 prosent for inntekt mellom 942 400 og 1 410 750 kroner) og trinn 5 (17,6 prosent for inntekt over 1 410 750 kroner). Vi implementerer den noyaktige marginale beregningen for hvert trinn i var kalkulator.</p>
 
   <h3>Trygdeavgift</h3>
-  <p>Trygdeavgiften er en avgift som finansierer folketrygden og beregnes pa personinntekten. For lonnsmottakere er satsen 7,9 prosent i 2025. For selvstendig naeringsdrivende er satsen hoyere, og for pensjonister er den lavere. Var kalkulator lar brukeren velge mellom disse kategoriene for a fa en korrekt beregning. Trygdeavgiften har en nedre grense (frikortgrensen) pa 69 650 kroner, og for inntekt rett over denne grensen beregnes avgiften med en lavere innsatssats pa 25 prosent av beloppet over grensen, inntil den normale satsen gir et lavere belop.</p>
+  <p>Trygdeavgiften er en avgift som finansierer folketrygden og beregnes pa personinntekten. For lonnsmottakere er satsen 7,9 prosent i 2026. For selvstendig naeringsdrivende er satsen hoyere, og for pensjonister er den lavere. Var kalkulator lar brukeren velge mellom disse kategoriene for a fa en korrekt beregning. Trygdeavgiften har en nedre grense (frikortgrensen) pa 69 650 kroner, og for inntekt rett over denne grensen beregnes avgiften med en lavere innsatssats pa 25 prosent av beloppet over grensen, inntil den normale satsen gir et lavere belop.</p>
 
   <h2>Beregningstrinn</h2>
   <p>Var kalkulator folger en bestemt rekkefOlge av beregningstrinn som gjenspeiler hvordan den faktiske skatteberegningen gjores i Norge. Her gar vi igjennom hvert trinn i detalj.</p>
@@ -37,7 +37,7 @@ import GuideLayout from '../../../layouts/GuideLayout.astro';
   <p>Forste trinn er a fastsette den arlige bruttolonnen. Hvis brukeren oppgir en manedslonn, multipliseres denne med 12 for a fa arslonn. Hvis brukeren oppgir en timelonn, multipliseres den med antall arbeidstimer per ar (normalt 1 950 timer basert pa 37,5 timer per uke og 52 uker per ar). Bruttolonnen er utgangspunktet for alle pafolgende beregninger og tilsvarer den totale lonnen for eventuelle fradrag og skatter.</p>
 
   <h3>Trinn 2: Beregn minstefradrag</h3>
-  <p>Minstefradraget er et standardfradrag som alle lonnsmottakere har rett pa. Det beregnes som 46 prosent av bruttolonnen, men har et ovre tak pa 118 850 kroner og en nedre grense pa 31 800 kroner for 2025. Minstefradraget reduserer grunnlaget for skatt pa alminnelig inntekt, men pavirker ikke grunnlaget for trinnskatt eller trygdeavgift. Det er et forenklende fradrag som er ment a dekke utgifter knyttet til arbeidet, som reisekostnader, arbeidskleer og fagforeningskontingent.</p>
+  <p>Minstefradraget er et standardfradrag som alle lonnsmottakere har rett pa. Det beregnes som 46 prosent av bruttolonnen, men har et ovre tak pa 118 850 kroner og en nedre grense pa 31 800 kroner for 2026. Minstefradraget reduserer grunnlaget for skatt pa alminnelig inntekt, men pavirker ikke grunnlaget for trinnskatt eller trygdeavgift. Det er et forenklende fradrag som er ment a dekke utgifter knyttet til arbeidet, som reisekostnader, arbeidskleer og fagforeningskontingent.</p>
 
   <h3>Trinn 3: Beregn alminnelig inntekt</h3>
   <p>Alminnelig inntekt beregnes som bruttolonnen minus minstefradraget og eventuelle andre fradrag. Personfradraget pa 88 250 kroner trekkes deretter fra for a komme frem til den skattepliktige alminnelige inntekten. Skatten pa alminnelig inntekt (fellesskatten) beregnes med en flat sats pa 22 prosent av dette grunnlaget. Hvis den skattepliktige alminnelige inntekten er negativ (for eksempel ved svart lav inntekt), settes skatten pa alminnelig inntekt til null.</p>

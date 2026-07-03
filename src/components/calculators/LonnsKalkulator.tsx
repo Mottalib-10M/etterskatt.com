@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { calculateTakeHome, type TaxInput } from '../../lib/tax-engine-no';
-import { KOMMUNE_RATES, ALL_KOMMUNER } from '../../data/tax-2025';
+import { KOMMUNE_RATES, ALL_KOMMUNER } from '../../data/tax-2026';
 import { readUrlParams, writeUrlParams } from '../../lib/url-state';
 import { formatCurrency, formatPercent } from '../../lib/format';
 import InputField from '../ui/InputField';

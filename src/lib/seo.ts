@@ -80,7 +80,7 @@ export function personSchema() {
     '@type': 'Person',
     name: 'Mottalib Radif',
     jobTitle: 'Finansekspert og utvikler',
-    description: 'MBA fra INSEAD, spesialisert innen personlig økonomi-verktøy',
+    description: 'MBA fra INSEAD, lidenskapelig opptatt av norsk privatøkonomi. Spesialisert i trinnskatt, trygdeavgift og skatteberegning.',
     alumniOf: {
       '@type': 'EducationalOrganization',
       name: 'INSEAD',

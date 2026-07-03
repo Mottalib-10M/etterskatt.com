@@ -1,5 +1,5 @@
 /**
- * Norwegian tax engine for 2025
+ * Norwegian tax engine for 2026
  * Calculates income tax based on Skatteetaten rules
  */
 
@@ -9,7 +9,7 @@ import {
   FELLESSKATT_RATE,
   MINSTEFRADRAG,
   PERSONFRADRAG,
-} from '../data/tax-2025';
+} from '../data/tax-2026';
 
 export interface TaxInput {
   bruttoAarlig: number;        // Gross annual salary in NOK

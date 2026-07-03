@@ -3,7 +3,7 @@ import CalculatorLayout from '../../layouts/CalculatorLayout.astro';
 import LonnsKalkulator from '../../components/calculators/LonnsKalkulator';
 
 const faqs = [
-  { question: 'Hva er trinnskatt?', answer: 'Trinnskatt er en progressiv skatt på personinntekt (bruttolønn). Den har fem trinn i 2025 med satser fra 1,7% til 17,6%. Trinnskatten beregnes på bruttoinntekt uten fradrag.' },
+  { question: 'Hva er trinnskatt?', answer: 'Trinnskatt er en progressiv skatt på personinntekt (bruttolønn). Den har fem trinn i 2026 med satser fra 1,7% til 17,6%. Trinnskatten beregnes på bruttoinntekt uten fradrag.' },
   { question: 'Hvordan beregnes trinnskatt?', answer: 'Du betaler kun den høyere satsen på inntekt over grensen for hvert trinn. For eksempel: Med 600 000 kr i brutto betaler du 0% på de første 217 400 kr, 1,7% på 217 400–306 050 kr, og 4,0% på 306 050–600 000 kr.' },
 ];
 ---
@@ -11,16 +11,16 @@ const faqs = [
 <CalculatorLayout
   slug="/trinnskatt-kalkulator"
   title="Trinnskattkalkulator"
-  metaTitle="Trinnskattkalkulator Norge 2025 | Beregn din trinnskatt"
-  metaDescription="Beregn din trinnskatt for 2025 med alle fem trinn fra 1,7% til 17,6%. Se nøyaktig hvor mye trinnskatt du betaler basert på din bruttolønn. Gratis kalkulator."
-  h1="Trinnskattkalkulator 2025"
-  intro="Se din trinnskatt trinn for trinn med Skatteetatens satser for 2025."
+  metaTitle="Trinnskattkalkulator Norge 2026 | Beregn din trinnskatt"
+  metaDescription="Beregn din trinnskatt for 2026 med alle fem trinn fra 1,7% til 17,6%. Se nøyaktig hvor mye trinnskatt du betaler basert på din bruttolønn. Gratis kalkulator."
+  h1="Trinnskattkalkulator 2026"
+  intro="Se din trinnskatt trinn for trinn med Skatteetatens satser for 2026."
   faqs={faqs}
 >
   <LonnsKalkulator client:idle />
 
   <div slot="content" class="prose prose-lg dark:prose-invert max-w-none mt-12">
-    <h2>Trinnskatt-satser 2025</h2>
+    <h2>Trinnskatt-satser 2026</h2>
     <table>
       <thead><tr><th>Trinn</th><th>Inntektsintervall</th><th>Sats</th></tr></thead>
       <tbody>

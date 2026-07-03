@@ -21,11 +21,11 @@ const formattedMonthly = formatCurrency(result.nettoMaanedlig);
 const faqs = [
   {
     question: `Hvor mye skatt betaler man på ${formattedAmount} kr i årslønn?`,
-    answer: `Med en årslønn på ${formattedAmount} kr betaler du ca. ${formatCurrency(result.totalSkatt)} i total skatt for 2025. Dette inkluderer trinnskatt (${formatCurrency(result.trinnskatt)}), trygdeavgift (${formatCurrency(result.trygdeavgift)}) og fellesskatt (${formatCurrency(result.fellesskatt)}). Din effektive skattesats er ${formatPercent(result.effektivSkattesats)}.`,
+    answer: `Med en årslønn på ${formattedAmount} kr betaler du ca. ${formatCurrency(result.totalSkatt)} i total skatt for 2026. Dette inkluderer trinnskatt (${formatCurrency(result.trinnskatt)}), trygdeavgift (${formatCurrency(result.trygdeavgift)}) og fellesskatt (${formatCurrency(result.fellesskatt)}). Din effektive skattesats er ${formatPercent(result.effektivSkattesats)}.`,
   },
   {
     question: `Hva er nettolønn på ${formattedAmount} kr?`,
-    answer: `Med en bruttolønn på ${formattedAmount} kr per år sitter du igjen med ca. ${formattedNet} etter skatt i 2025. Det tilsvarer ${formattedMonthly} per måned. Beregningen inkluderer minstefradrag på ${formatCurrency(result.minstefradrag)} og personfradrag på ${formatCurrency(result.personfradrag)}.`,
+    answer: `Med en bruttolønn på ${formattedAmount} kr per år sitter du igjen med ca. ${formattedNet} etter skatt i 2026. Det tilsvarer ${formattedMonthly} per måned. Beregningen inkluderer minstefradrag på ${formatCurrency(result.minstefradrag)} og personfradrag på ${formatCurrency(result.personfradrag)}.`,
   },
   {
     question: `Hva er marginalskatten på ${formattedAmount} kr?`,
@@ -33,7 +33,7 @@ const faqs = [
   },
   {
     question: `Hva er effektiv skattesats på ${formattedAmount} kr?`,
-    answer: `Den effektive skattesatsen på ${formattedAmount} kr er ${formatPercent(result.effektivSkattesats)} i 2025. Det betyr at du i gjennomsnitt betaler ${formatPercent(result.effektivSkattesats)} av bruttolønnen din i skatt. Resterende ${formatPercent(100 - result.effektivSkattesats)} beholder du som nettolønn.`,
+    answer: `Den effektive skattesatsen på ${formattedAmount} kr er ${formatPercent(result.effektivSkattesats)} i 2026. Det betyr at du i gjennomsnitt betaler ${formatPercent(result.effektivSkattesats)} av bruttolønnen din i skatt. Resterende ${formatPercent(100 - result.effektivSkattesats)} beholder du som nettolønn.`,
   },
   {
     question: `Hvordan fordeles skatten på ${formattedAmount} kr?`,
@@ -45,18 +45,18 @@ const faqs = [
 <CalculatorLayout
   slug={`/lonn/${amount}-kr`}
   title={`${formattedAmount} kr lønn etter skatt`}
-  metaTitle={`${formattedAmount} kr lønn etter skatt 2025 | Netto ${formattedNet}`}
-  metaDescription={`Se hva du sitter igjen med av ${formattedAmount} kr i årslønn etter skatt i Norge 2025. Nettolønn: ca. ${formattedNet}. Trinnskatt, trygdeavgift og fellesskatt beregnet.`}
-  h1={`${formattedAmount} kr lønn etter skatt 2025`}
-  intro={`Med en bruttolønn på ${formattedAmount} kr per år sitter du igjen med ca. ${formattedNet} etter skatt. Det tilsvarer ${formattedMonthly} per måned. Beregnet med Skatteetatens satser for 2025.`}
+  metaTitle={`${formattedAmount} kr lønn etter skatt 2026 | Netto ${formattedNet}`}
+  metaDescription={`Se hva du sitter igjen med av ${formattedAmount} kr i årslønn etter skatt i Norge 2026. Nettolønn: ca. ${formattedNet}. Trinnskatt, trygdeavgift og fellesskatt beregnet.`}
+  h1={`${formattedAmount} kr lønn etter skatt 2026`}
+  intro={`Med en bruttolønn på ${formattedAmount} kr per år sitter du igjen med ca. ${formattedNet} etter skatt. Det tilsvarer ${formattedMonthly} per måned. Beregnet med Skatteetatens satser for 2026.`}
   faqs={faqs}
 >
   <LonnsKalkulator client:idle defaultGross={amount} />
 
   <section class="mt-12 prose prose-gray dark:prose-invert max-w-none" slot="content">
-    <h2>Skatteberegning for {formattedAmount} kr i 2025</h2>
+    <h2>Skatteberegning for {formattedAmount} kr i 2026</h2>
     <p>
-      En årslønn på {formattedAmount} kr gir en nettolønn på ca. {formattedNet} etter alle skatter i Norge for 2025. Den effektive skattesatsen er {formatPercent(result.effektivSkattesats)}, noe som betyr at du betaler {formatCurrency(result.totalSkatt)} i total skatt. Marginalskatten er {formatPercent(result.marginalsats)}, som viser hva du betaler i skatt på den neste kronen du tjener.
+      En årslønn på {formattedAmount} kr gir en nettolønn på ca. {formattedNet} etter alle skatter i Norge for 2026. Den effektive skattesatsen er {formatPercent(result.effektivSkattesats)}, noe som betyr at du betaler {formatCurrency(result.totalSkatt)} i total skatt. Marginalskatten er {formatPercent(result.marginalsats)}, som viser hva du betaler i skatt på den neste kronen du tjener.
     </p>
 
     <h3>Detaljert skattefordeling</h3>

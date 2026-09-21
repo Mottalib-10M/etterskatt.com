@@ -80,7 +80,7 @@ export function personSchema() {
     '@type': 'Organization',
     name: 'Radif Partners',
     jobTitle: 'Finansekspert og utvikler',
-    description: 'MBA fra Éditeur de calculateurs et de guides pratiques, lidenskapelig opptatt av norsk privatøkonomi. Spesialisert i trinnskatt, trygdeavgift og skatteberegning.',
+    description: 'Utgiver av kalkulatorer og praktiske guider, med søkelys på norsk privatøkonomi. Spesialisert i trinnskatt, trygdeavgift og skatteberegning.',
     worksFor: {
       '@type': 'Organization',
       name: SITE_NAME,

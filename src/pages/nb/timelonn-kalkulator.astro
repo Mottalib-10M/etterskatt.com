@@ -1,0 +1,29 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { compute, hourlyToAnnual, feriepenger } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatNumber } from '../../lib/format';
+const lang = 'nb';
+const h = 280; const g = hourlyToAnnual(h); const e = compute({ gross: g });
+const rows = [220, 250, 280, 320, 380, 450].map((x) => { const y = hourlyToAnnual(x); const r = compute({ gross: y }); return [formatMoney(x), formatMoney(y), formatMoney(y / 12), formatMoney(r.annual.net / 12), formatMoney(feriepenger({ basis: y }).total)]; });
+const faqs = [
+  { q: 'Hvordan regner jeg timelønn om til månedslønn?', a: `Gang timelønnen med antall timer i året og del på tolv. Med 37,5 timer i uken er det ${formatNumber(P.overtid.hours_year)} timer i året, og ${formatMoney(h)} i timen blir ${formatMoney(g)} i året eller ${formatMoney(g / 12)} i måneden. Mange tariffavtaler bruker 1 950 timer som deler, andre 1 850.` },
+  { q: 'Får timelønnede betalt ferie?', a: 'Nei, ikke som lønn. Timelønnede får feriepenger på minst 10,2 % av det de tjente året før, utbetalt før ferien, og feriepengene erstatter lønnen for feriedagene. Derfor bør du sette av penger hvis du begynner i jobb midt i året: det første året har du ingen opptjente feriepenger.' },
+  { q: 'Trekkes det skatt av timelønn på samme måte?', a: 'Ja. Timelønn er lønn som alle andre, og arbeidsgiveren trekker skatt etter skattekortet. Varierer timetallet mye fra måned til måned, kan tabelltrekket bli skjevt, og et prosentkort gir ofte et jevnere og mer treffsikkert trekk. Skatteoppgjøret retter opp eventuelle avvik.' },
+];
+---
+<ToolPage id="timelonn" title="Timelønn etter skatt 2026: månedslønn, årslønn og ferie" h1="Timelønn etter skatt: fra timesats til utbetaling"
+  description="Regn om timelønn til månedslønn og årslønn etter skatt for 2026. Velg timer per uke og se nettolønn og feriepenger for timelønnede. Satsene gjelder 2026."
+  intro="Skriv inn timelønnen og hvor mange timer du jobber i uken. Kalkulatoren regner om til årslønn og viser lønnen etter skatt per måned, uke eller år."
+  mode="timelonn" initialHourly={280} faqs={faqs} related={['home', 'overtid', 'feriepenger', 'minimumslonn', 'lonn', 'snittlonn']}
+  sources={[SRC.minstelonn, SRC.ferieloven, SRC.forskudd_2026]}>
+  <p>Med {formatMoney(h)} i timen og 37,5 timer i uken blir årslønnen {formatMoney(g)}, som tilsvarer {formatMoney(g / 12)} i måneden. Skatten for 2026 er {formatMoney(e.annual.totalTax)}, og nettolønnen {formatMoney(e.annual.net / 12)} i snitt per måned. Timelønnede skiller seg fra fast ansatte med månedslønn på to måter. For det første får du bare betalt for timene du arbeider, så en måned med fem uker gir mer enn en med fire. For det andre er ferien ikke betalt som lønn: du får feriepenger på minst 10,2 % av fjorårets lønn, i dette eksemplet {formatMoney(feriepenger({ basis: g }).total)}, som skal dekke ferien. Arbeider du deltid, legger du inn færre timer, og kalkulatoren beregner skatten på den lavere årsinntekten. Personfradraget og minstefradraget gjør at de første rundt {formatMoney(200000)} i lønn gir lav skatt, og under {formatMoney(P.frikort_limit)} kan du ha frikort uten skattetrekk.</p>
+  <h2>Timelønn, månedslønn og feriepenger</h2>
+  <ContentTable headers={['Timelønn', 'Årslønn', 'Brutto per måned', 'Netto per måned', 'Feriepenger året etter']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Tabellen forutsetter 37,5 timer i uken hele året. Feriepengene er beregnet med lovens 10,2 %.</p>
+  <h2>Tillegg og overtid</h2>
+  <p>Mange timelønnede har tillegg for kveld, natt og helg, som er skattepliktige som vanlig lønn og regnes med i feriepengegrunnlaget. Overtid gir minst 40 % tillegg etter arbeidsmiljøloven. Fordi tillegg og overtid kommer på toppen av den faste lønnen, beskattes de med marginalskatten, og <a href={route('overtid', lang)}>overtidskalkulatoren</a> viser hva de gir etter skatt. Er du usikker på om timelønnen din er lovlig, viser guiden om <a href={route('minimumslonn', lang)}>minstelønn</a> satsene i de allmenngjorte bransjene.</p>
+</ToolPage>

@@ -1,0 +1,29 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { selfEmployed, compute } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const s = selfEmployed({ profit: 650000 }); const w = compute({ gross: 650000 }).annual;
+const rows = [300000, 500000, 650000, 900000, 1200000].map((p) => { const r = selfEmployed({ profit: p }); return [formatMoney(p), formatMoney(r.trygdeavgift), formatMoney(r.total), formatMoney(r.perTerm), formatPercent(r.total / p)]; });
+const faqs = [
+  { q: 'Når betales forskuddsskatt i 2026?', a: `I fire terminer: ${P.forskuddsskatt_terms.join(', ')}. Beløpene står på skattekortet for forskuddsskatt, som Skatteetaten lager ut fra anslaget over inntekten. Betaler du for sent, påløper forsinkelsesrenter. Har du betalt for lite, kan du betale et tilleggsforskudd innen 31. mai året etter for å unngå renter på restskatten.` },
+  { q: 'Hvem må betale forskuddsskatt?', a: 'Personer med inntekt det ikke trekkes skatt av, først og fremst selvstendig næringsdrivende med enkeltpersonforetak, men også de som har store inntekter fra utleie eller andre kilder uten forskuddstrekk. Lønnstakere betaler ikke forskuddsskatt; de har forskuddstrekk i lønnen. Skatteetaten sender skattekort for forskuddsskatt.' },
+  { q: 'Hvorfor betaler næringsdrivende mer trygdeavgift?', a: `Trygdeavgiften på næringsinntekt er ${formatPercent(P.trygdeavgift.business, 1)} i 2026, mot ${formatPercent(P.trygdeavgift.wage, 1)} på lønn. Forskjellen henger sammen med at næringsdrivende ikke har en arbeidsgiver som betaler arbeidsgiveravgift. For fiske, fangst og barnepass i eget hjem gjelder den lave satsen. Satsen gjelder overskuddet, ikke omsetningen.` },
+];
+---
+<ToolPage id="forskudd" title="Forskuddsskatt 2026: beregn skatt for enkeltpersonforetak" h1="Forskuddsskatt 2026: hva skal enkeltpersonforetaket betale?"
+  description="Beregn forskuddsskatten for 2026 på overskudd i enkeltpersonforetak: skatt, trygdeavgift på 10,8 % og trinnskatt, fordelt på fire terminer. Satser for 2026."
+  intro="Legg inn forventet overskudd og eventuelle fradrag. Kalkulatoren viser skatten for året og beløpet per termin."
+  mode="forskudd" initialGross={650000} faqs={faqs} related={['selvstendig', 'skattekort', 'trygdeavgift', 'trinnskatt', 'aga', 'skatt']}
+  sources={[SRC.forskuddsskatt, SRC.trygdeavgift, SRC.forskudd_2026]}>
+  <p>Som selvstendig næringsdrivende har du ingen arbeidsgiver som trekker skatt. I stedet betaler du forskuddsskatt i fire terminer, {P.forskuddsskatt_terms.join(', ')}. Med et overskudd på {formatMoney(650000)} i enkeltpersonforetaket blir skatten for 2026 omtrent {formatMoney(s.total)}, eller {formatMoney(s.perTerm)} per termin. Beregningen skiller seg fra lønn på tre punkter. Det gis ikke minstefradrag, fordi du i stedet trekker fra de faktiske kostnadene i næringen, så overskuddet er allerede etter kostnader. Trygdeavgiften er {formatPercent(P.trygdeavgift.business, 1)} i stedet for {formatPercent(P.trygdeavgift.wage, 1)}, her {formatMoney(s.trygdeavgift)}. Og hele overskuddet regnes som personinntekt i trinnskatten, {formatMoney(s.trinnskatt)}. Til sammenligning betaler en lønnstaker med samme beløp i lønn {formatMoney(w.totalTax)} i skatt. Forskjellen skyldes minstefradraget og den lavere trygdeavgiften, men lønnstakeren har også en arbeidsgiver som betaler arbeidsgiveravgift, feriepenger og pensjon.</p>
+  <h2>Forskuddsskatt etter overskudd</h2>
+  <ContentTable headers={['Overskudd', 'Trygdeavgift', 'Skatt i alt', 'Per termin', 'Andel']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Beløpene forutsetter at overskuddet er eneste inntekt, og at du ikke har andre fradrag. Har du også lønn, beregnes trinnskatten av samlet personinntekt.</p>
+  <h2>Endre forskuddsskatten</h2>
+  <p>Skatteetaten fastsetter forskuddsskatten ut fra fjorårets resultat eller et anslag du selv legger inn. Går det bedre eller dårligere enn ventet, bør du endre skattekortet, slik at de resterende terminene blir riktige. Guiden om <a href={route('selvstendig', lang)}>skatt for næringsdrivende</a> forklarer fradrag, sykepenger og pensjon, og <a href={route('trinnskatt', lang)}>guiden om trinnskatt</a> viser trinnene som gjelder for personinntekten.</p>
+</ToolPage>

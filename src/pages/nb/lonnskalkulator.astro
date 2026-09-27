@@ -1,0 +1,28 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { ex, P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney } from '../../lib/format';
+const lang = 'nb';
+const m = 48000; const g = m * 12; const e = ex(g);
+const rows = [35000, 42000, 48000, 55000, 65000, 80000].map((mm) => { const r = ex(mm * 12); return [formatMoney(mm), formatMoney(mm * 12), formatMoney(r.annual.totalTax / 12), formatMoney(r.annual.net / 12), formatMoney(r.tabell.normalMonthNet)]; });
+const faqs = [
+  { q: 'Hvordan regner jeg ut månedslønn etter skatt?', a: `Gang månedslønnen med tolv for å finne årslønnen, beregn skatten for året og del nettobeløpet på tolv. For ${formatMoney(m)} i måneden blir årslønnen ${formatMoney(g)}, skatten ${formatMoney(e.annual.totalTax)} og nettolønnen ${formatMoney(e.annual.net / 12)} i snitt. I en vanlig måned med tabelltrekk får du litt mindre, fordi juni og desember har lavere trekk.` },
+  { q: 'Hvorfor varierer utbetalingen fra måned til måned?', a: 'Tabelltrekket fordeler årsskatten på 10,5 måneder: ingen skatt i juni og halv skatt i desember. I tillegg kan overtid, tillegg, ferietrekk og feriepenger endre utbetalingen. Summen over året blir likevel den samme, og skatteoppgjøret retter eventuelle avvik. Lønnsslippen viser hvert trekk.' },
+  { q: 'Er feriepengene med i årslønnen?', a: 'For en fast ansatt med månedslønn er ferien betalt gjennom feriepengene, som utbetales i juni mens lønnen for feriedagene trekkes. Årslønnen i arbeidsavtalen omfatter derfor i praksis ferien. For en timelønnet kommer feriepengene i tillegg til timene som arbeides. Arbeidsavtalen sier hvordan det er ordnet hos deg.' },
+];
+---
+<ToolPage id="lonn" title="Lønnskalkulator per måned 2026: månedslønn etter skatt" h1="Lønnskalkulator: fra månedslønn til utbetaling"
+  description="Regn om månedslønnen til lønn etter skatt for 2026, med tabelltrekk for en vanlig måned, juni uten trekk og halv skatt i desember. Gratis og oppdatert."
+  intro="De fleste i Norge forhandler og tenker i månedslønn. Skriv inn årslønnen, velg visning per måned, og se hva som blir igjen etter skatt."
+  mode="lonn" initialGross={576000} initialPeriod="monthly" faqs={faqs} related={['home', 'etterSkatt', 'netto', 'timelonn', 'skattekort', 'feriepenger']}
+  sources={[SRC.forskudd_2026, SRC.feriepenger_trekk, SRC.ssb_lonn]}>
+  <p>En månedslønn på {formatMoney(m)} tilsvarer {formatMoney(g)} i året. Skatten for 2026 blir {formatMoney(e.annual.totalTax)}, og nettolønnen {formatMoney(e.annual.net)} i året, eller {formatMoney(e.annual.net / 12)} i snitt per måned. Men lønnsslippen viser sjelden gjennomsnittet. Arbeidsgiveren trekker skatt etter tabellen på skattekortet, og tabellene er laget slik at årets skatt trekkes over 10,5 måneder. I en vanlig måned trekkes derfor rundt {formatMoney(e.tabell.normalMonthTax)}, og du får {formatMoney(e.tabell.normalMonthNet)} utbetalt. I juni trekkes ingen skatt av feriepengene, og i desember bare halvparten. Det betyr at du får mer utbetalt i de to månedene enn gjennomsnittet tilsier, og litt mindre i de andre ti. Lønnskalkulatoren viser begge tallene, slik at du kan planlegge budsjettet ut fra det som faktisk kommer inn på kontoen i en vanlig måned.</p>
+  <h2>Månedslønn og utbetaling i 2026</h2>
+  <ContentTable headers={['Månedslønn', 'Årslønn', 'Skatt per måned i snitt', 'Netto snitt', 'Vanlig måned']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>SSB oppgir en gjennomsnittlig månedslønn på {formatMoney(P.ssb.avg_month_nov2025)} for heltidsekvivalenter i november 2025. Tabellen viser at nettolønnen vokser langsommere enn bruttolønnen, fordi trinnskatten øker med inntekten.</p>
+  <h2>Andre trekk på lønnsslippen</h2>
+  <p>Skattetrekket er det største trekket, men ikke det eneste. Mange har trekk for fagforeningskontingent, pensjonsinnskudd de betaler selv, firmahytte, kantine eller parkering. Noen har også naturalytelser som mobiltelefon eller firmabil, som øker skattegrunnlaget uten å gi penger på konto. Kalkulatoren tar bare med skatten. Vil du se hva en bestemt nettolønn krever i brutto, bruker du <a href={route('netto', lang)}>kalkulatoren fra netto til brutto</a>.</p>
+</ToolPage>

@@ -1,39 +1,9 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { route, DEFAULT_LOCALE } from '../i18n/routes';
+import { t } from '../i18n/ui';
+const ui = t(DEFAULT_LOCALE);
 ---
-
-<Layout
-  title="404 | Siden ble ikke funnet | Lønn Etter Skatt"
-  description="Beklager, vi finner ikke siden du leter etter. Gå tilbake til forsiden for å bruke vår gratis lønnskalkulator."
-  canonical="https://lonnetterskatt.no/404/"
->
-  <div class="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-24 text-center">
-    <p class="text-6xl font-bold text-brand-500 mb-4">404</p>
-    <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
-      Siden ble ikke funnet
-    </h1>
-    <p class="mt-4 text-lg text-gray-500 dark:text-gray-400">
-      Beklager, vi kan ikke finne siden du leter etter. Den kan ha blitt flyttet eller fjernet. Prøv en av lenkene nedenfor for å finne det du leter etter.
-    </p>
-
-    <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-      <a href="/" class="inline-flex items-center justify-center rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-600 transition-colors">
-        Til lønnskalkulatoren
-      </a>
-      <a href="/kalkulatorer/" class="inline-flex items-center justify-center rounded-xl border border-gray-200 dark:border-gray-700 px-6 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-        Alle kalkulatorer
-      </a>
-    </div>
-
-    <div class="mt-12 text-sm text-gray-400 dark:text-gray-500">
-      <p>Populære sider:</p>
-      <div class="mt-2 flex flex-wrap justify-center gap-4">
-        <a href="/" class="text-brand-600 dark:text-brand-400 hover:underline">Lønnskalkulator</a>
-        <a href="/trinnskatt-kalkulator/" class="text-brand-600 dark:text-brand-400 hover:underline">Trinnskattkalkulator</a>
-        <a href="/trygdeavgift-kalkulator/" class="text-brand-600 dark:text-brand-400 hover:underline">Trygdeavgiftkalkulator</a>
-        <a href="/netto-til-brutto/" class="text-brand-600 dark:text-brand-400 hover:underline">Netto til brutto</a>
-        <a href="/guides/skattesatser-2026/" class="text-brand-600 dark:text-brand-400 hover:underline">Skattesatser 2026</a>
-      </div>
-    </div>
-  </div>
-</Layout>
+<BaseLayout title="404" description="404" lang={DEFAULT_LOCALE} noindex={true}>
+  <div class="mx-auto max-w-3xl px-4 py-16 text-center"><h1 class="text-3xl font-bold text-navy-900">404</h1><p class="mt-4 text-navy-600">{ui.notFound}</p><p class="mt-6"><a href={route('home', DEFAULT_LOCALE)} class="rounded-lg bg-accent-600 px-5 py-2.5 font-semibold text-white hover:bg-accent-700">{ui.breadcrumbHome}</a></p></div>
+</BaseLayout>

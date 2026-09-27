@@ -1,0 +1,52 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { breadcrumbSchema, webPageSchema } from '../../lib/seo';
+import { P, ex } from '../../lib/tables';
+import { trinnskatt, trygdeavgift, minstefradrag, feriepenger, employerCost, formuesskatt } from '../../lib/engine/no';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const title = 'Skatteberegningen: metode, kilder, tester og begrensninger';
+const description = 'Slik beregner lonnetterskatt.no skatt, trygdeavgift, trinnskatt, tabelltrekk, feriepenger og arbeidsgiverkostnad for 2026: kilder, tester og begrensninger.';
+const checks = [
+  ['Minstefradrag, 600 000 kr', formatMoney(minstefradrag(600000)), 'Taket 95 700 kr'],
+  ['Skatt alminnelig inntekt, 600 000 kr', formatMoney(ex(600000).annual.skattAlminnelig), '(504 300 − 114 540) × 22 %'],
+  ['Trygdeavgift, 600 000 kr', formatMoney(trygdeavgift(600000)), '7,6 %'],
+  ['Trygdeavgift, 100 000 kr', formatMoney(trygdeavgift(100000)), '25 % av 350 kr'],
+  ['Trinnskatt, 600 000 kr', formatMoney(trinnskatt(600000)), '92 200 × 1,7 % + 281 700 × 4,0 %'],
+  ['Trinnskatt, 1 000 000 kr', formatMoney(trinnskatt(1000000)), 'Fire trinn'],
+  ['Feriepenger, 600 000 kr, over 60', formatMoney(feriepenger({ basis: 600000, over60: true }).total), '10,2 % + 2,3 %'],
+  ['Arbeidsgiverkostnad, 600 000 kr, sone 1', formatMoney(employerCost({ gross: 600000 }).total), 'Lønn + 2 % OTP + 14,1 %'],
+  ['Formuesskatt, 3 000 000 kr', formatMoney(formuesskatt({ netWealth: 3000000 }).tax), '1 % av 1 100 000'],
+];
+const jsonLd = [webPageSchema({ name: title, description, path: route('method', lang), lang }), breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Metode', path: route('method', lang) }])];
+---
+<PageLayout title={title} description={description} lang={lang} jsonLd={jsonLd} breadcrumbs={[{ label: 'Metode' }]} sources={Object.values(SRC)}>
+  <header class="mb-6"><h1 class="text-3xl font-bold text-navy-900 md:text-4xl">Slik er beregningene gjort</h1>
+    <p class="mt-3 text-lg text-navy-600">Alle tall på nettstedet kommer fra én motor, skrevet som rene funksjoner som kjører i nettleseren, og alle parametere den bruker, ligger i én fil med verdier for 2026 og kilden hver verdi er hentet fra.</p></header>
+  <div class="prose prose-slate max-w-none">
+    <h2>Kilder og oppdatering</h2>
+    <p>Personfradrag, minstefradrag, trinnskatt, trygdeavgift, frikortgrense og øvrige beløpsgrenser er hentet fra Skatteetatens forskuddsutskriving for 2026. Der Skatteetatens satssider viser ulike år, er det forskuddsutskrivingen som gjelder. Arbeidsgiveravgiften per sone og fribeløpet er hentet fra Skatteetatens satsside, formuesskatten fra siden om formuesskatt, grunnbeløpet fra NAV, feriepengereglene fra ferieloven på Lovdata, minstelønnssatsene fra Arbeidstilsynet og lønnsstatistikken fra SSB. Alle verdier ble sist lest {P.retrieved_at}. De gjennomgås når statsbudsjettet er vedtatt, når grunnbeløpet justeres 1. mai, og når nye satser publiseres.</p>
+    <h2>Skatt på lønn</h2>
+    <p>Motoren beregner minstefradraget som 46 % av lønnen med tak på {formatMoney(P.minstefradrag.max)}, trekker fra fradragene du legger inn, der fagforeningskontingent begrenses til {formatMoney(P.fagforening_max)}, og beregner 22 % skatt av det som overstiger personfradraget. Trygdeavgiften er {formatPercent(P.trygdeavgift.wage, 1)} av bruttolønnen, men null under {formatMoney(P.trygdeavgift.lower_limit)} og aldri mer enn 25 % av det som ligger over. Trinnskatten beregnes trinn for trinn av bruttolønnen. BSU-fradraget trekkes fra i skatten, begrenset til skatten på alminnelig inntekt. Hver skattepost avrundes til hele kroner. Marginalskatten beregnes som endringen i samlet skatt når lønnen øker med 1 000 kr, delt på 1 000.</p>
+    <h2>Tabelltrekk</h2>
+    <p>Trekket i en vanlig måned beregnes som årsskatten delt på 10,5, fordi tabellkortet trekker fullt i ti måneder, ingenting i juni og halvt i desember. Skatteetatens trekktabeller er bygget på samme prinsipp, men har trinnvise intervaller, så trekket på lønnsslippen kan avvike med noen kroner eller noen titalls kroner. Prosentsatsen tilsvarer gjennomsnittsskatten.</p>
+    <h2>Feriepenger, overtid og arbeidsgiverkostnad</h2>
+    <p>Feriepenger er 10,2 % eller 12 % av grunnlaget, pluss 2,3 % for arbeidstakere over 60 år av grunnlaget opp til 6 G. Overtid beregnes av timelønnen, årslønnen delt på {P.overtid.hours_year} timer, med valgt tillegg, og skatten på overtiden er forskjellen i årsskatt med og uten overtiden. Arbeidsgiverkostnaden er lønn, pensjonsinnskudd av lønnen opp til 12 G, eventuelle feriepenger for timelønnede og arbeidsgiveravgift av summen.</p>
+    <h2>Kontroll mot håndberegninger</h2>
+    <p>Tilfellene under er en del av de automatiske testene som kjøres før hver publisering, og bygget ut fra satsene for 2026; bygget feiler hvis et resultat endrer seg.</p>
+    <ContentTable headers={['Tilfelle', 'Motoren', 'Håndberegning']} align={['l', 'r', 'l']} rows={checks} />
+    <h2>Begrensninger</h2>
+    <ul>
+      <li>Skattefradraget for pensjonsinntekt og skattebegrensningsregelen for pensjonister er ikke med.</li>
+      <li>Reisefradrag, foreldrefradrag og gaver kan legges inn som andre fradrag i noen kalkulatorer, men beregnes ikke automatisk.</li>
+      <li>Kapitalinntekter, utbytte og gevinster er ikke med.</li>
+      <li>Personer som bare er bosatt i Norge deler av året, sjøfolk, pendlere og kildeskatt for utenlandske arbeidstakere er ikke med.</li>
+      <li>Arbeidsgiveravgift med fribeløp i sone 1a er forenklet til redusert sats på hele beløpet.</li>
+      <li>Formuesskatten beregnes av nettoformue etter skattemessige verdier; verdsettingen av aksjer og næringseiendom gjøres ikke.</li>
+    </ul>
+    <p>Resultatene er anslag. Skattekortet og skatteoppgjøret gjelder. Finner du et avvik som begrensningene ikke forklarer, skriv til oss via <a href={route('contact', lang)}>kontaktsiden</a>; rettelser dateres slik det står i den <a href={route('editorial', lang)}>redaksjonelle policyen</a>.</p>
+  </div>
+</PageLayout>

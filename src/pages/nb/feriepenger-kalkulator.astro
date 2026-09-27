@@ -1,0 +1,30 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { feriepenger } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney } from '../../lib/format';
+const lang = 'nb';
+const G = P.grunnbelop.from_2026_05_01;
+const b = 540000; const f = feriepenger({ basis: b }); const f5 = feriepenger({ basis: b, fiveWeeks: true }); const f60 = feriepenger({ basis: b, over60: true });
+const rows = [300000, 450000, 540000, 700000, 900000].map((x) => [formatMoney(x), formatMoney(feriepenger({ basis: x }).total), formatMoney(feriepenger({ basis: x, fiveWeeks: true }).total), formatMoney(feriepenger({ basis: x, over60: true }).total)]);
+const faqs = [
+  { q: 'Hvor mye er feriepengene i prosent?', a: 'Minst 10,2 % av feriepengegrunnlaget etter ferieloven, som gir fire uker og én dag ferie. Har du fem ukers ferie etter tariffavtale eller arbeidsavtale, er satsen 12 %. Fyller du 60 år i ferieåret, får du én ekstra ferieuke og 2,3 prosentpoeng i tillegg, beregnet av grunnlaget opp til 6 G.' },
+  { q: 'Hva regnes med i feriepengegrunnlaget?', a: 'All arbeidsvederlag som er opptjent i opptjeningsåret: fast lønn, timelønn, overtid, tillegg og provisjon. Feriepenger regnes ikke med, og heller ikke de fleste ytelser fra NAV, som sykepenger ut over arbeidsgiverperioden. Bonus som ikke er knyttet til arbeidsinnsatsen, kan falle utenfor.' },
+  { q: 'Når utbetales feriepengene?', a: 'Etter ferieloven skal feriepengene utbetales siste vanlige lønningsdag før ferien. De fleste arbeidsgivere betaler dem i juni. Slutter du i jobben, skal feriepengene som er opptjent, utbetales med sluttoppgjøret, både for året før og for det inneværende året. Tidspunktet står ofte i tariffavtalen.' },
+];
+---
+<ToolPage id="feriepenger" title="Feriepenger kalkulator 2026: 10,2 %, 12 % og over 60 år" h1="Feriepengekalkulator: hvor mye feriepenger får du?"
+  description="Beregn feriepenger med 10,2 % eller 12 %, og tillegget på 2,3 % for deg over 60 år med tak på 6 G. Se når de utbetales og hvorfor juni er uten skattetrekk."
+  intro="Skriv inn lønnen du tjener i opptjeningsåret og velg ferieordning. Kalkulatoren viser feriepengene som utbetales før ferien året etter."
+  mode="feriepenger" initialGross={540000} faqs={faqs} related={['etterSkatt', 'halvSkatt', 'timelonn', 'lonn', 'kostnad', 'home']}
+  sources={[SRC.ferieloven, SRC.feriepenger_trekk, SRC.grunnbelop]}>
+  <p>Feriepenger er lønnen for ferien, opptjent året før. Etter ferieloven er satsen minst 10,2 % av feriepengegrunnlaget, altså det du tjente i opptjeningsåret. Med {formatMoney(b)} i grunnlag blir feriepengene {formatMoney(f.total)}. Har du fem ukers ferie gjennom tariffavtale, noe de fleste i offentlig sektor og mange i privat sektor har, er satsen 12 %, og beløpet blir {formatMoney(f5.total)}. Fyller du 60 år i løpet av ferieåret, får du en ekstra ferieuke og et tillegg på 2,3 prosentpoeng, her {formatMoney(f60.extra)}. Tillegget beregnes bare av grunnlaget opp til seks ganger grunnbeløpet per 31. desember i opptjeningsåret; for 2026 er G {formatMoney(G)}, og taket {formatMoney(6 * G)}. Feriepengene er skattepliktige, men med tabellkort trekkes det ingen skatt av dem i juni, fordi skatten allerede er fordelt på de andre månedene. For en fast ansatt trekkes samtidig lønnen for feriedagene, så overskuddet i juni er mindre enn feriepengebeløpet.</p>
+  <h2>Feriepenger etter grunnlag og ordning</h2>
+  <ContentTable headers={['Grunnlag', '10,2 %', '12 %', '10,2 % og 60 år']} align={['r', 'r', 'r', 'r']} rows={rows} />
+  <p>Kolonnen for 60 år og over viser at tillegget flater ut over {formatMoney(6 * G)}.</p>
+  <h2>Fast ansatt eller timelønnet</h2>
+  <p>For en fast ansatt med månedslønn erstatter feriepengene lønnen i ferien: arbeidsgiveren trekker lønn for feriedagene og betaler feriepenger i stedet. Differansen er det mange kaller ekstra lønn i juni. For en timelønnet er feriepengene den eneste inntekten i ferien, og de bør settes av. Det første året i en ny jobb har du ofte ikke opptjent feriepenger hos arbeidsgiveren, men du har likevel rett til ferie uten lønn. <a href={route('etterSkatt', lang)}>Kalkulatoren for lønn etter skatt</a> viser utbetalingene resten av året.</p>
+</ToolPage>

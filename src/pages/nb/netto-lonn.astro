@@ -1,0 +1,29 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { grossForNet } from '../../lib/engine/no';
+import { ex } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const target = 40000 * 12; const need = grossForNet(target);
+const rows = [25000, 30000, 35000, 40000, 45000, 55000].map((n) => { const g = grossForNet(n * 12); return [formatMoney(n), formatMoney(g), formatMoney(g / 12), formatPercent(1 - (n * 12) / g)]; });
+const faqs = [
+  { q: 'Hvor mye må jeg tjene for å få 40 000 kr netto i måneden?', a: `Omtrent ${formatMoney(need)} i året, eller ${formatMoney(need / 12)} i måneden brutto, i 2026. Tallet gjelder snittet over året; i en vanlig måned med tabelltrekk blir utbetalingen litt lavere, og i juni og desember høyere. Beregningen forutsetter skatteklasse 1 uten andre fradrag.` },
+  { q: 'Hvorfor øker bruttolønnen mer enn nettolønnen?', a: 'Fordi skatten er progressiv. Hver ekstra krone beskattes med marginalskatten, som stiger fra rundt 31 % til 47 % når lønnen passerer trinnene i trinnskatten. For å få 5 000 kr mer netto i måneden trengs derfor en økning i brutto på 7 500 til 9 500 kr.' },
+  { q: 'Kan jeg bruke kalkulatoren i en lønnsforhandling?', a: 'Ja, men forhandle alltid om bruttolønn, siden det er den som står i arbeidsavtalen og danner grunnlag for pensjon, feriepenger og ytelser fra NAV. Nettotallet hjelper deg å vurdere hva et tilbud faktisk betyr for budsjettet, og å sammenligne to tilbud med ulik pensjon eller ulike goder.' },
+];
+---
+<ToolPage id="netto" title="Netto lønn 2026: fra ønsket nettolønn til bruttolønn" h1="Netto lønn: hvilken bruttolønn gir den nettolønnen du trenger?"
+  description="Regn baklengs fra ønsket netto lønn til bruttolønn for 2026. Kalkulatoren finner årslønnen som gir beløpet etter trinnskatt, trygdeavgift og annen skatt."
+  intro="Vet du hva du trenger i måneden, men ikke hva du bør be om? Skriv inn nettolønnen for året, så finner kalkulatoren bruttolønnen som gir den."
+  mode="netto" faqs={faqs} related={['home', 'lonn', 'etterSkatt', 'skatt', 'snittlonn', 'kostnad']}
+  sources={[SRC.forskudd_2026, SRC.trinnskatt, SRC.trygdeavgift]}>
+  <p>Den vanligste grunnen til å regne baklengs er et budsjett eller en lønnsforhandling. Trenger du {formatMoney(40000)} i måneden etter skatt, altså {formatMoney(target)} i året, må bruttolønnen være omtrent {formatMoney(need)} i 2026, eller {formatMoney(need / 12)} i måneden. Kalkulatoren finner beløpet ved å prøve seg fram: den beregner skatten for mange bruttolønner og stopper når nettolønnen treffer målet innenfor en krone. Metoden tar hensyn til alt som gjør skatten progressiv, altså minstefradraget som har et tak, personfradraget som gjør den første delen av inntekten skattefri, og trinnskatten som øker i fem trinn. Derfor stiger den nødvendige bruttolønnen raskere enn nettolønnen: fra et visst nivå går nesten halvparten av hver ekstra krone til skatt. Tallene er snitt over året. Med tabellkort får du litt mindre i en vanlig måned og mer i juni og desember.</p>
+  <h2>Nødvendig bruttolønn for en gitt nettolønn</h2>
+  <ContentTable headers={['Netto per måned', 'Brutto per år', 'Brutto per måned', 'Andel til skatt']} align={['r', 'r', 'r', 'r']} rows={rows} />
+  <p>Andelen til skatt er gjennomsnittsskatten. For {formatMoney(55000)} netto i måneden er bruttolønnen over innslagspunktet for trinn 3, og skatteandelen passerer {formatPercent(1 - (55000 * 12) / grossForNet(55000 * 12), 0)}.</p>
+  <h2>Hva kalkulatoren ikke tar med</h2>
+  <p>Beregningen gjelder lønn som eneste inntekt og ingen andre fradrag enn standardfradragene. Har du boliglån, blir skatten lavere og den nødvendige bruttolønnen litt mindre. Arbeidsgiveren betaler i tillegg arbeidsgiveravgift og pensjon, så det du koster en bedrift, er høyere enn bruttolønnen. <a href={route('kostnad', lang)}>Kalkulatoren for kostnad per ansatt</a> viser beløpet, og <a href={route('lonn', lang)}>lønnskalkulatoren</a> går den andre veien, fra brutto til netto.</p>
+</ToolPage>

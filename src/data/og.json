@@ -1,0 +1,13 @@
+{
+ "accent": "#BA0C2F",
+ "symbol": "kr",
+ "variants": [
+  {
+   "file": "og-nb.png",
+   "title": "Skattekalkulator 2026\nlønn etter skatt",
+   "subtitle": "Trinnskatt · trygdeavgift 7,6 % · skattekort · feriepenger",
+   "badge": "Skatteetatens satser for 2026",
+   "brand": "Lønn etter skatt"
+  }
+ ]
+}

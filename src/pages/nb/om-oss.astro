@@ -1,0 +1,27 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { route } from '../../i18n/routes';
+import { breadcrumbSchema, profilePageSchema, organizationSchema } from '../../lib/seo';
+import { CONTACT_EMAIL, SITE_FOUNDED } from '../../data/site-config';
+import { P } from '../../lib/tables';
+const lang = 'nb';
+const title = 'Om Lønn etter skatt: hvem som står bak og hvordan vi jobber';
+const description = 'Lønn etter skatt utgis av Radif Partners. Les hvorfor vi laget en skatte- og lønnskalkulator for Norge, hvordan den finansieres og hvordan du melder feil.';
+const jsonLd = [profilePageSchema({ path: route('about', lang), lang }), organizationSchema(lang), breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Om oss', path: route('about', lang) }])];
+---
+<PageLayout title={title} description={description} lang={lang} jsonLd={jsonLd} breadcrumbs={[{ label: 'Om oss' }]} showAuthor={false}>
+  <header class="mb-6"><h1 class="text-3xl font-bold text-navy-900 md:text-4xl">Om nettstedet</h1></header>
+  <div class="prose prose-slate max-w-none" data-author="Radif Partners">
+    <p>Lønn etter skatt utgis av <strong>Radif Partners</strong>, en uavhengig utgiver av gratis lønns- og skattekalkulatorer for flere land. Nettstedet ble startet i {SITE_FOUNDED} for å gi lønnstakere, arbeidsgivere og næringsdrivende i Norge en kalkulator som følger Skatteetatens satser for inntektsåret linje for linje, og som forklarer hvert steg: trinnskatt, trygdeavgift, minstefradrag, personfradrag, tabelltrekk og feriepenger.</p>
+    <h2>Hvorfor vi laget kalkulatoren</h2>
+    <p>Mange kalkulatorer viser bare ett tall, lønn etter skatt, uten å vise hvordan det er beregnet eller hva som skjer i juni og desember. Vi ville lage en kalkulator der hver skattepost står for seg, der tabelltrekket i en vanlig måned vises ved siden av snittet for året, og der satsene er hentet direkte fra Skatteetaten med dato for når de ble kontrollert.</p>
+    <h2>Slik jobber vi</h2>
+    <p>Hver sats ligger i én parameterfil med kilde og kontrolldato, og skrives aldri inn for hånd i en side. Sidene som viser et beløp, beregner det med den samme motoren som kalkulatoren. Satsene ble sist kontrollert {P.retrieved_at}. Metoden, testene og begrensningene står på <a href={route('method', lang)}>metodesiden</a>, og reglene vi følger for å skrive og rette, står i den <a href={route('editorial', lang)}>redaksjonelle policyen</a>.</p>
+    <h2>Finansiering</h2>
+    <p>Nettstedet er gratis og krever ingen innlogging. Det kan vise annonser i framtiden, plassert under kalkulatorene og aldri inne i dem. Vi selger ingen data, og det finnes ingen å selge: kalkulatorene kjører i nettleseren din, og ingenting du skriver, sendes til oss. Ingen bank, arbeidsgiver eller offentlig etat betaler for eller godkjenner innholdet.</p>
+    <h2>Hva vi ikke er</h2>
+    <p>Vi er ikke regnskapsførere eller skatterådgivere, og har ingen tilknytning til Skatteetaten, NAV eller Arbeidstilsynet. Resultatene er anslag til hjelp i planleggingen; skattekortet, lønnsslippen og skatteoppgjøret er dokumentene som gjelder.</p>
+    <h2>Meld fra om feil</h2>
+    <p>Ser et tall feil ut, skriv til <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> med siden, tallene du la inn og hva du forventet. Vi sjekker alle henvendelser mot den offisielle kilden og publiserer rettelser med dato.</p>
+  </div>
+</PageLayout>

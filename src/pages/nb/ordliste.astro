@@ -1,0 +1,40 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { route } from '../../i18n/routes';
+import { breadcrumbSchema, webPageSchema } from '../../lib/seo';
+import { P } from '../../lib/tables';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const title = 'Ordliste for skatt og lønn: trinnskatt, tabelltrekk, G';
+const description = 'Enkle forklaringer på ordene i skattekortet, lønnsslippen og skatteoppgjøret: alminnelig inntekt, personinntekt, trinnskatt, tabelltrekk, G, OTP og mer.';
+const terms: Array<[string, string, string?]> = [
+  ['Alminnelig inntekt', 'Inntekt etter fradrag. Beskattes med 22 %, eller 18,5 % i Finnmark og Nord-Troms, etter personfradraget.', 'fradrag'],
+  ['Arbeidsgiveravgift', `Avgift arbeidsgiveren betaler av lønn og pensjonsinnskudd, fra 0 til ${formatPercent(P.aga.zones['1'], 1)} etter sone.`, 'aga'],
+  ['BSU', `Boligsparing for ungdom: 10 % av inntil ${formatMoney(P.bsu.max_year)} i året går til fratrekk i skatten, til og med året du fyller 33.`, 'fradrag'],
+  ['Feriepenger', 'Lønn for ferien, minst 10,2 % av lønnen året før, utbetalt før ferien.', 'feriepenger'],
+  ['Forskuddsskatt', 'Skatt som næringsdrivende betaler i fire terminer i løpet av året.', 'forskudd'],
+  ['Forskuddstrekk', 'Skatten arbeidsgiveren trekker av lønnen etter skattekortet.', 'skattekort'],
+  ['Frikort', `Skattekort uten trekk for inntekt opp til ${formatMoney(P.frikort_limit)} i året.`, 'frikort'],
+  ['Grunnbeløpet (G)', `Beløp i folketrygden som justeres hvert år, ${formatMoney(P.grunnbelop.from_2026_05_01)} fra 1. mai 2026.`, 'feriepenger'],
+  ['Marginalskatt', 'Skatten på den neste kronen du tjener.', 'trinnskatt'],
+  ['Minstefradrag', `Standardfradrag på 46 % av lønnen, maks ${formatMoney(P.minstefradrag.max)}.`, 'minstefradrag'],
+  ['Obligatorisk tjenestepensjon (OTP)', 'Arbeidsgiverens plikt til å spare minst 2 % av lønnen opp til 12 G til pensjon.', 'kostnad'],
+  ['Personfradrag', `Bunnfradrag i alminnelig inntekt, ${formatMoney(P.personfradrag)} i 2026.`, 'personfradrag'],
+  ['Personinntekt', 'Lønn, pensjon og næringsinntekt før fradrag. Grunnlaget for trinnskatt og trygdeavgift.', 'trinnskatt'],
+  ['Prosentkort', 'Skattekort der samme prosent trekkes av alle utbetalinger.', 'skattekort'],
+  ['Restskatt', 'Skatt du må betale etter skatteoppgjøret fordi forskuddstrekket var for lavt.', 'skattekort'],
+  ['Skatteoppgjør', 'Skatteetatens endelige beregning av skatten for året, som kommer våren eller sommeren etter.', 'skatt'],
+  ['Tabellkort', 'Skattekort der trekket følger en tabell over 10,5 måneder, med skattefri juni og halv skatt i desember.', 'halvSkatt'],
+  ['Tiltakssonen', 'Finnmark og sju kommuner i Nord-Troms med lavere skatt på alminnelig inntekt og null arbeidsgiveravgift.', 'aga'],
+  ['Trinnskatt', 'Progressiv skatt på personinntekt i fem trinn, fra 1,7 til 17,8 %.', 'trinnskatt'],
+  ['Trygdeavgift', `Avgift til folketrygden, ${formatPercent(P.trygdeavgift.wage, 1)} av lønn.`, 'trygdeavgift'],
+];
+const jsonLd = [webPageSchema({ name: title, description, path: route('glossary', lang), lang }), breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Ordliste', path: route('glossary', lang) }])];
+---
+<PageLayout title={title} description={description} lang={lang} jsonLd={jsonLd} breadcrumbs={[{ label: 'Ordliste' }]}>
+  <header class="mb-6"><h1 class="text-3xl font-bold text-navy-900 md:text-4xl">Ordliste for skatt og lønn</h1>
+    <p class="mt-3 text-lg text-navy-600">Ordene på lønnsslippen, skattekortet og i skatteoppgjøret, hver med lenke til siden som forklarer dem i detalj.</p></header>
+  <dl class="prose prose-slate max-w-none">
+    {terms.map(([t, d, id]) => <><dt class="font-semibold text-navy-900">{id ? <a href={route(id, lang)}>{t}</a> : t}</dt><dd>{d}</dd></>)}
+  </dl>
+</PageLayout>

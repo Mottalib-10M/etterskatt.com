@@ -1,0 +1,52 @@
+---
+import Guide from '../../components/Guide.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { compute, minstefradrag } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney } from '../../lib/format';
+const lang = 'nb';
+const PF = P.personfradrag;
+const zero = Math.round(PF / (1 - P.minstefradrag.rate));
+const rows = [150000, 200000, zero, 250000, 400000, 800000].map((g) => { const a = compute({ gross: g }).annual; return [formatMoney(g), formatMoney(minstefradrag(g)), formatMoney(a.alminnelig), formatMoney(Math.max(0, a.alminnelig - PF)), formatMoney(a.skattAlminnelig)]; });
+const faqs = [
+  { q: 'Hvor stort er personfradraget i 2026?', a: `${formatMoney(PF)} for alle skattytere i 2026. Fradraget trekkes fra den alminnelige inntekten før skatten på 22 % beregnes, og er verdt ${formatMoney(PF * 0.22)} i lavere skatt for alle som har alminnelig inntekt over fradraget. Det gis automatisk og står ikke som egen post du må føre opp.` },
+  { q: 'Finnes skatteklasse 2 fortsatt?', a: 'Nei. Skatteklasse 2, som ga dobbelt personfradrag til enkelte forsørgere, er avviklet. I dag har alle samme personfradrag, og skattekortet viser ikke lenger en skatteklasse som gir ulikt fradrag. Ektefeller får hvert sitt personfradrag, men kan ikke overføre ubrukt fradrag mellom seg.' },
+  { q: 'Får jeg personfradrag hvis jeg bare har bodd i Norge deler av året?', a: 'Personer som blir skattemessig bosatt eller flytter ut i løpet av året, får personfradraget redusert forholdsmessig etter antall måneder de har vært bosatt. Begrenset skattepliktige som ikke er bosatt, får også forholdsmessig fradrag etter hvor lenge de har arbeidet i Norge.' },
+  { q: 'Påvirker personfradraget trygdeavgift og trinnskatt?', a: 'Nei. Personfradraget reduserer bare den alminnelige inntekten, som beskattes med 22 %. Trygdeavgiften og trinnskatten beregnes av bruttoinntekten og har egne regler for lave inntekter: nedre grense for trygdeavgiften og innslagspunktet for trinn 1 i trinnskatten. Fradraget gir derfor lik kronegevinst for alle.' },
+  { q: 'Hvor mye er personfradraget verdt i kroner?', a: `Det er verdt 22 % av fradraget i lavere skatt, altså rundt ${formatMoney(PF * P.alminnelig.rate)} i 2026, for alle som har alminnelig inntekt over fradraget. I Finnmark og Nord-Troms er satsen 18,5 %, og fradraget er verdt litt mindre. For dem med lavere alminnelig inntekt er verdien lik skatten de ellers ville betalt.` },
+];
+---
+<Guide id="personfradrag" title="Personfradrag 2026: 114 540 kr og hva det er verdt" h1="Personfradrag 2026: den skattefrie delen av inntekten"
+  description="Personfradraget er 114 540 kr i 2026. Se hvordan det virker sammen med minstefradraget, hvor mye det er verdt, og når inntekten blir helt fri for skatt."
+  intro="Personfradraget er grunnen til at de første kronene du tjener, ikke gir skatt på alminnelig inntekt. For 2026 er det økt betydelig."
+  resume={`Personfradraget er et bunnfradrag i alminnelig inntekt som alle skattytere får automatisk. For 2026 er det ${formatMoney(PF)}, en økning fra ${formatMoney(P.personfradrag_2025)} i 2025. Det trekkes fra etter minstefradraget og andre fradrag, og bare det som ligger over personfradraget, beskattes med 22 %. For alle som har alminnelig inntekt over fradraget, er det verdt ${formatMoney(PF * 0.22)} i lavere skatt, uansett inntekt. Sammen med minstefradraget på 46 % gjør personfradraget at en lønn på opptil rundt ${formatMoney(zero)} ikke gir skatt på alminnelig inntekt i det hele tatt. Personfradraget påvirker ikke trygdeavgiften eller trinnskatten. Den gamle skatteklasse 2, som ga dobbelt fradrag til enkelte, er avviklet, så alle har i dag samme personfradrag. Personer som bare har vært bosatt i Norge deler av året, får fradraget redusert forholdsmessig.`}
+  faqs={faqs} related={['minstefradrag', 'fradrag', 'frikort', 'skatt', 'satser', 'home']} sources={[SRC.forskudd_2026, SRC.alminnelig, SRC.frikort]}>
+  <h2>Slik virker personfradraget</h2>
+  <p>Beregningen av skatt på alminnelig inntekt går i tre steg. Først trekkes minstefradraget fra lønnen. Deretter trekkes andre fradrag fra, som renter og fagforeningskontingent. Til slutt trekkes personfradraget fra, og det som er igjen, beskattes med 22 %. Tabellen viser stegene for ulike lønninger uten andre fradrag.</p>
+  <ContentTable headers={['Lønn', 'Minstefradrag', 'Alminnelig inntekt', 'Over personfradraget', 'Skatt 22 %']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Ved en lønn på rundt {formatMoney(zero)} er alminnelig inntekt lik personfradraget, og skatten på alminnelig inntekt er null. Over dette beløpet øker skatten med 22 øre for hver krone i alminnelig inntekt.</p>
+
+  <h2>Utviklingen i personfradraget</h2>
+  <p>Personfradraget justeres hvert år i statsbudsjettet. For 2026 økte det fra {formatMoney(P.personfradrag_2025)} til {formatMoney(PF)}, mer enn den ventede lønnsveksten. Økningen var et bevisst grep for å gi lavere skatt til dem med lave og middels inntekter, fordi et høyere bunnfradrag er like mye verdt for alle i kroner, men utgjør en større andel av skatten for dem som tjener minst. For en lønnstaker gir økningen {formatMoney((PF - P.personfradrag_2025) * P.alminnelig.rate)} lavere skatt i 2026 enn med fjorårets fradrag.</p>
+
+  <h2>Personfradrag og frikort</h2>
+  <p>Frikortgrensen, {formatMoney(P.frikort_limit)} i 2026, bygger på at personfradraget og minstefradraget sammen gjør inntekten under grensen nesten skattefri. Studenter og andre med lav inntekt får derfor frikort i stedet for skattekort med trekk. Passerer du frikortgrensen i løpet av året, trekker arbeidsgiveren 50 % av det som overstiger, til du har fått nytt skattekort. <a href={route('frikort', lang)}>Guiden om frikort</a> forklarer hvordan du unngår det.</p>
+
+  <h2>Ektefeller og samboere</h2>
+  <p>Hver ektefelle og samboer har sitt eget personfradrag. Har den ene ingen inntekt, går fradraget tapt; det kan ikke overføres til den andre. Det samme gjelder minstefradraget. Derimot kan ektefeller fordele fradrag for renter på felles gjeld fritt mellom seg, og det kan lønne seg å legge rentefradraget hos den som har alminnelig inntekt over personfradraget. Formuesskatten beregnes med felles bunnfradrag for ektefeller.</p>
+
+  <h2>Personfradrag i Finnmark og Nord-Troms</h2>
+  <p>Personfradraget er det samme i hele landet, men satsen det sparer skatt med, er lavere i tiltakssonen, der alminnelig inntekt beskattes med 18,5 %. Der er fradraget verdt {formatMoney(PF * P.alminnelig.rate_tiltakssone)}. Beboere i Finnmark og i de sju kommunene i Nord-Troms som hører til tiltakssonen, velger dette i <a href={route('skatt', lang)}>skattekalkulatoren</a>.</p>
+
+  <h2>Personfradrag for pensjonister</h2>
+  <p>Pensjonister får det samme personfradraget, men minstefradraget på pensjon er {formatMoney(P.minstefradrag.pension_max)} i stedet for {formatMoney(P.minstefradrag.max)}, med en sats på 40 %. I tillegg har pensjonister et eget skattefradrag for pensjonsinntekt som gjør at lave pensjoner blir skattefrie. Denne siden gjelder lønnstakere; reglene for pensjon er ikke med i kalkulatorene.</p>
+  <h2>Et eksempel</h2>
+  <p>En lønnstaker med {formatMoney(500000)} i lønn har en alminnelig inntekt på {formatMoney(500000 - minstefradrag(500000))} etter minstefradraget. Personfradraget trekkes fra, og {formatMoney(500000 - minstefradrag(500000) - PF)} beskattes med 22 %, som gir {formatMoney(compute({ gross: 500000 }).annual.skattAlminnelig)}. Uten personfradraget ville skatten på alminnelig inntekt vært {formatMoney((500000 - minstefradrag(500000)) * 0.22)}, altså {formatMoney(PF * 0.22)} mer. Det er det samme beløpet for alle som har alminnelig inntekt over fradraget, enten de tjener {formatMoney(300000)} eller {formatMoney(3000000)}.</p>
+
+  <h2>Personfradraget på skattekortet</h2>
+  <p>Trekktabellene tar hensyn til personfradraget, slik at trekket fordeles jevnt over de 10,5 månedene med trekk. Har du flere arbeidsgivere, er det bare hovedarbeidsgiveren som bruker tabellen og dermed personfradraget; de andre trekker en prosentsats. Begynner du å jobbe midt i året, får du fullt personfradrag for året, men tabellen fordeler det bare over månedene du jobber. Det gir ofte for høyt trekk og tilgode i skatteoppgjøret.</p>
+  <h2>Personfradrag og BSU</h2>
+  <p>Personfradraget og BSU-fradraget virker ulikt. Personfradraget reduserer inntekten som beskattes, og er verdt 22 % av beløpet. BSU-fradraget trekkes direkte fra skatten, 10 % av årets sparing. Begge forutsetter at du har skatt å trekke fra: en ung person med lav lønn og alminnelig inntekt under personfradraget får ikke utnyttet BSU-fradraget, fordi det ikke er skatt på alminnelig inntekt å redusere. Det er en grunn til at BSU først blir lønnsomt skattemessig når inntekten er over rundt {formatMoney(Math.round((PF + P.bsu.max_year * P.bsu.rate / 0.22) / (1 - P.minstefradrag.rate)))} i året.</p>
+</Guide>

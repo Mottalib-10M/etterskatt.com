@@ -1,0 +1,27 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { route } from '../../i18n/routes';
+import { breadcrumbSchema, webPageSchema } from '../../lib/seo';
+import { REVIEW_CYCLE_MONTHS } from '../../data/site-config';
+const lang = 'nb';
+const title = 'Redaksjonell policy, Lønn etter skatt: kilder og rettelser';
+const description = 'Slik velger Lønn etter skatt kildene sine, kontrollerer hver skattesats, daterer oppdateringer og retter feil, og hvor ofte hele nettstedet gjennomgås.';
+const jsonLd = [webPageSchema({ name: title, description, path: route('editorial', lang), lang }), breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Redaksjonell policy', path: route('editorial', lang) }])];
+---
+<PageLayout title={title} description={description} lang={lang} jsonLd={jsonLd} breadcrumbs={[{ label: 'Redaksjonell policy' }]}>
+  <header class="mb-6"><h1 class="text-3xl font-bold text-navy-900 md:text-4xl">Redaksjonell policy</h1></header>
+  <div class="prose prose-slate max-w-none">
+    <h2>Kilder</h2>
+    <p>Satser og regler hentes bare fra primærkilder: Skatteetaten, NAV, Arbeidstilsynet, SSB og lovtekstene på Lovdata. Avisartikler og andre kalkulatorer brukes aldri som kilde for et tall. Hver side viser kildene den bygger på, og hver parameter i motoren har adressen den er hentet fra.</p>
+    <h2>Tall</h2>
+    <p>Beløpene på sidene beregnes av den samme motoren som kalkulatorene, fra den samme parameterfilen, slik at en rettet sats oppdaterer alle sider samtidig. Testene, som er regnet ut for hånd fra Skatteetatens satser, kjøres før hver publisering.</p>
+    <h2>Gjennomgang</h2>
+    <p>Alle sider gjennomgås minst hver {REVIEW_CYCLE_MONTHS}. måned, og alle satser når statsbudsjettet er vedtatt i desember og når grunnbeløpet justeres 1. mai. Datoen øverst og nederst på hver side er datoen for siste kontroll.</p>
+    <h2>Rettelser</h2>
+    <p>Når vi finner eller får melding om en feil, retter vi den, kjører testene på nytt og noterer datoen. Vesentlige rettelser beskrives på siden det gjelder. Meldinger sendes via <a href={route('contact', lang)}>kontaktsiden</a>.</p>
+    <h2>Uavhengighet</h2>
+    <p>Ingen bank, arbeidsgiver eller offentlig etat betaler for eller godkjenner innholdet. Eventuelle annonser vises aldri inne i en kalkulator og påvirker aldri det vi skriver.</p>
+    <h2>Bruk av programvare</h2>
+    <p>Vi bruker programvare, blant annet språkmodeller, til å skrive utkast og kontrollere tekst. Hvert tall kommer fra den testede motoren, og hver regel kontrolleres mot den offisielle kilden før publisering.</p>
+  </div>
+</PageLayout>

@@ -1,0 +1,50 @@
+---
+import Guide from '../../components/Guide.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { compute, feriepenger } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney } from '../../lib/format';
+const lang = 'nb';
+const g = 540000; const r = compute({ gross: g }); const T = r.tabell;
+const rows = [350000, 540000, 750000, 1000000].map((x) => { const t = compute({ gross: x }).tabell; const even = Math.round(compute({ gross: x }).annual.totalTax / 12); return [formatMoney(x), formatMoney(even), formatMoney(t.normalMonthTax), formatMoney(t.decemberTax), formatMoney(t.normalMonthTax - even)]; });
+const faqs = [
+  { q: 'Hvorfor er det skattefritt i juni?', a: 'Det er ikke skattefritt, men det trekkes ikke skatt i juni når du har tabellkort. Feriepengene er skattepliktige, men skatten på dem er fordelt på de andre månedene gjennom trekktabellene. Ordningen gir mer penger til ferien, uten at skatten for året endres.' },
+  { q: 'Får alle halv skatt i desember?', a: 'Alle med tabellkort får halvt trekk i én måned på slutten av året. De fleste arbeidsgivere legger det i desember, men noen gir halv skatt i november i stedet, for eksempel når desemberlønnen utbetales tidlig. Med prosentkort trekkes samme prosent hele året, uten halv skatt.' },
+  { q: 'Lønner det seg å få bonus i desember?', a: 'Utbetalingen blir høyere, fordi bonusen får halvt trekk i desember, men skatten for året blir den samme. Det du slipper i desember, betaler du i skatteoppgjøret eller har allerede betalt gjennom tabellene. Ser du at trekket blir for lavt, bør du endre skattekortet for å unngå restskatt.' },
+  { q: 'Hvorfor er trekket høyere enn en tolvtedel av skatten?', a: 'Fordi årets skatt skal trekkes over 10,5 måneder i stedet for 12. Trekket i en vanlig måned blir derfor rundt 14 % høyere enn en tolvtedel av årsskatten. Det er prisen for skattefri juni og halv skatt i desember. Summen for året blir den samme.' },
+  { q: 'Får jeg halv skatt på feriepengene i desember?', a: 'Nei. Feriepengene utbetales normalt i juni uten trekk. Halv skatt i desember gjelder lønnen og andre utbetalinger den måneden, som bonus og overtid. Får du feriepenger ved sluttoppgjør i en annen måned, trekkes det skatt av dem etter vanlige regler for sluttoppgjør.' },
+];
+---
+<Guide id="halvSkatt" title="Halv skatt i desember 2026: slik virker tabelltrekket" h1="Skattefri juni og halv skatt i desember: slik fungerer det"
+  description="Hvorfor det ikke trekkes skatt i juni og bare halv skatt i desember, hvordan tabelltrekket fordeler skatten over 10,5 måneder, og hva det betyr for bonus."
+  intro="To måneder i året gir mer på konto enn de andre. Det er ikke en skattelette, men en måte å fordele skatten på."
+  resume={`Med tabellkort trekkes skatten for året over 10,5 måneder. I juni trekkes det ingen skatt, fordi feriepengene utbetales da, og i desember trekkes bare halv skatt, eller i november hos enkelte arbeidsgivere. De andre ti månedene trekkes det fullt. Skatten som ikke trekkes i juni og desember, er bygget inn i trekktabellene og fordelt på resten av året. For en lønn på ${formatMoney(g)} er skatten for 2026 ${formatMoney(r.annual.totalTax)}. Delt jevnt på tolv måneder ville det vært ${formatMoney(r.annual.totalTax / 12)} i måneden, men med tabelltrekk trekkes rundt ${formatMoney(T.normalMonthTax)} i en vanlig måned og ${formatMoney(T.decemberTax)} i desember. Samlet over året blir trekket det samme. Ordningen gjelder bare tabellkort. Med prosentkort trekkes samme prosentsats av alle utbetalinger, også feriepenger. Skatteoppgjøret våren etter viser om trekket har vært riktig, uansett hvilken ordning du har.`}
+  faqs={faqs} related={['etterSkatt', 'feriepenger', 'skattekort', 'lonn', 'skatt', 'home']} sources={[SRC.feriepenger_trekk, SRC.skattekort, SRC.ferieloven]}>
+  <h2>Månedlig trekk sammenlignet med jevn fordeling</h2>
+  <ContentTable headers={['Lønn', 'Jevnt over 12 måneder', 'Vanlig måned', 'Desember', 'Ekstra i vanlig måned']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Den siste kolonnen viser hvor mye mer som trekkes i en vanlig måned for å finansiere skattefri juni og halv skatt i desember.</p>
+
+  <h2>Juni: feriepenger uten trekk</h2>
+  <p>Feriepengene utbetales normalt i juni, siste vanlige lønningsdag før ferien. For en fast ansatt trekkes samtidig lønnen for feriedagene, og feriepengene kommer i stedet. Med {formatMoney(g)} i lønn året før blir feriepengene {formatMoney(feriepenger({ basis: g }).total)}. Uten skattetrekk i juni blir utbetalingen den måneden ofte høyere enn vanlig, selv om lønnen for ferien er trukket. For en som har byttet jobb, kan juni bli uventet: feriepengene fra forrige arbeidsgiver ble utbetalt da du sluttet, og den nye arbeidsgiveren har ikke opptjente feriepenger å betale.</p>
+
+  <h2>Desember: halv skatt</h2>
+  <p>Halv skatt i desember er et gammelt trekk i det norske systemet, ment å gi litt mer til jul. Det halve trekket gjelder hele utbetalingen i desember, også bonus, overtid og etterbetalinger. Mange arbeidsgivere legger derfor bonusen til desember. Det gir en høyere utbetaling, men ikke lavere skatt: skatten for året beregnes i skatteoppgjøret, og har trekket vært for lavt, kommer det restskatt. En bonus på {formatMoney(50000)} gir omtrent {formatMoney(50000 * r.annual.marginal)} i endelig skatt med marginalskatten på denne lønnen, uansett hvilken måned den utbetales.</p>
+
+  <h2>Når ordningen gir overraskelser</h2>
+  <p>Begynner du i ny jobb i august, får du fullt trekk i månedene som er igjen, halv skatt i desember og ingen juni. Tabellene antar et helt år, så trekket kan bli litt for høyt, og du får penger tilbake. Slutter du i juni, får du sluttoppgjør med feriepenger, og trekket følger de vanlige reglene for sluttoppgjør. Har du ulønnet permisjon deler av året, gir tabelltrekket ofte for høyt trekk. I alle slike tilfeller kan du endre skattekortet, eller vente på skatteoppgjøret.</p>
+
+  <h2>Prosentkort</h2>
+  <p>Med prosentkort trekkes samme prosent av all lønn og alle feriepenger, og det er ingen skattefri juni eller halv skatt i desember. Prosentkort brukes blant annet når du har flere arbeidsgivere eller ujevn inntekt, og for bi-arbeidsgivere. <a href={route('skattekort', lang)}>Skattekort-kalkulatoren</a> viser både prosentsatsen og tabelltrekket, og <a href={route('etterSkatt', lang)}>kalkulatoren for lønn etter skatt</a> viser utbetalingen måned for måned.</p>
+  <h2>Et helt år med tabellkort</h2>
+  <p>Med {formatMoney(g)} i årslønn er bruttolønnen {formatMoney(g / 12)} i måneden. Fra januar til mai trekkes rundt {formatMoney(T.normalMonthTax)} hver måned, og det samme fra juli til november. I juni utbetales feriepengene uten trekk, mens lønnen for feriedagene trekkes. I desember er trekket omtrent {formatMoney(T.decemberTax)}. Legger du sammen trekket for de ti fulle månedene og halvparten i desember, blir det {formatMoney(T.normalMonthTax * 10.5)}, som er tilnærmet årsskatten på {formatMoney(r.annual.totalTax)}. Differansen skyldes avrunding og at Skatteetatens tabeller bruker intervaller.</p>
+
+  <h2>Halv skatt i november</h2>
+  <p>Noen arbeidsgivere gir halv skatt i november i stedet for desember, for eksempel fordi desemberlønnen utbetales før jul og regnskapet for året skal lukkes. Det er arbeidsgiveren som velger, og reglene er de samme: én måned med halvt trekk på slutten av året. Får du halv skatt i november, trekkes det fullt i desember. Sjekk lønnsslippen hvis du er usikker.</p>
+
+  <h2>Feriepenger og skatteoppgjøret</h2>
+  <p>At feriepengene utbetales uten trekk, betyr ikke at de er skattefrie. De er skattepliktig lønn, og skatten på dem er regnet inn i trekket de andre månedene. Har du fått feriepenger fra en tidligere arbeidsgiver i tillegg til full lønn hos en ny, kan trekket for året bli for lavt, fordi ingen av arbeidsgiverne trakk skatt av feriepengene. Da kommer det restskatt. Et tillegg på skattekortet eller et prosenttrekk på feriepengene kan hindre det.</p>
+  <h2>Tabellkort for pensjonister</h2>
+  <p>Pensjonister har egne trekktabeller, og for dem er det ingen skattefri juni, fordi pensjon ikke gir feriepenger. Til gjengjeld er trekket i desember ofte halvt også for pensjonister, avhengig av tabellen. Har du både lønn og pensjon, bruker lønnen og pensjonen hver sin tabell eller prosentsats, og reglene om juni og desember gjelder bare for lønnen. Er du i tvil om trekket, er det enklest å se på skattekortet hos Skatteetaten, der tabellen og prosentsatsen står.</p>
+</Guide>

@@ -1,0 +1,28 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { ex, P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const e = ex(560000);
+const rows = [250000, 400000, 560000, 750000, 1000000].map((g) => { const r = ex(g); return [formatMoney(g), formatPercent(r.annual.effective), formatMoney(r.tabell.normalMonthTax), formatMoney(r.tabell.decemberTax), formatPercent(r.annual.marginal)]; });
+const faqs = [
+  { q: 'Hva er forskjellen på tabellkort og prosentkort?', a: 'Med tabellkort trekker arbeidsgiveren skatt etter en tabell som tar hensyn til skattefri juni og halv skatt i desember, slik at årsskatten trekkes over 10,5 måneder. Med prosentkort trekkes samme prosent av alt du får utbetalt. Tabellkort passer for fast lønn, prosentkort for ujevn inntekt eller flere arbeidsgivere.' },
+  { q: 'Hva skjer hvis arbeidsgiveren ikke har skattekortet mitt?', a: 'Da skal arbeidsgiveren trekke 50 % av lønnen i skatt. Skattekortet sendes elektronisk fra Skatteetaten når arbeidsgiveren ber om det, så det er sjelden et problem for folk som er registrert i Norge. Har du fått for høyt trekk, får du pengene tilbake i skatteoppgjøret.' },
+  { q: 'Når bør jeg endre skattekortet?', a: 'Når inntekten eller fradragene endrer seg merkbart: ny jobb, lønnsøkning, permisjon, nytt boliglån, barn i barnehage eller sluttpakke. Endringen gjøres på Skatteetatens nettsider, og arbeidsgiveren henter det nye kortet automatisk. Et riktig skattekort gir et skatteoppgjør nær null. Det tar bare noen minutter.' },
+];
+---
+<ToolPage id="skattekort" title="Skattekort 2026: prosentsats og tabelltrekk for lønn" h1="Skattekort 2026: hvilken prosentsats og hvilket trekk får du?"
+  description="Anslå prosentsatsen på skattekortet ditt for 2026 og det månedlige tabelltrekket. Se hva som skjer i juni og desember, og når du bør endre skattekortet."
+  intro="Skattekortet forteller arbeidsgiveren hvor mye skatt som skal trekkes. Kalkulatoren anslår prosentsatsen og tabelltrekket ut fra lønn og fradrag."
+  mode="skattekort" initialGross={560000} faqs={faqs} related={['skatt', 'etterSkatt', 'halvSkatt', 'frikort', 'forskudd', 'fradrag']}
+  sources={[SRC.skattekort, SRC.feriepenger_trekk, SRC.forskudd_2026]}>
+  <p>Skattekortet er ikke en skatteregning, men en instruks til arbeidsgiveren om hvor mye som skal trekkes i forskudd. Skatteetaten lager det ut fra det de vet om inntekten og fradragene dine, ofte fjorårets skatteoppgjør. På {formatMoney(560000)} i lønn uten andre fradrag er årsskatten for 2026 {formatMoney(e.annual.totalTax)}, som tilsvarer en prosentsats på {formatPercent(e.annual.effective)}. Har du prosentkort, trekkes denne prosenten av hver utbetaling. Har du tabellkort, som er det vanligste for lønnstakere, trekkes skatten over 10,5 måneder: omtrent {formatMoney(e.tabell.normalMonthTax)} i en vanlig måned, ingenting i juni og {formatMoney(e.tabell.decemberTax)} i desember. Legger du inn renteutgifter og fagforeningskontingent i kalkulatoren, ser du hvor mye lavere satsen blir. Tabellnummeret på skattekortet ditt er Skatteetatens måte å velge riktig tabell på; kalkulatoren regner direkte ut trekket i stedet for å slå opp i tabellene.</p>
+  <h2>Prosentsats og trekk etter lønn</h2>
+  <ContentTable headers={['Lønn', 'Prosentsats', 'Vanlig måned', 'Desember', 'Marginalskatt']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Prosentsatsen er gjennomsnittsskatten for året. Marginalskatten er satsen på neste krone, og den brukes også når arbeidsgiveren trekker skatt av en bonus med prosenttrekk.</p>
+  <h2>Frikort og flere arbeidsgivere</h2>
+  <p>Tjener du under {formatMoney(P.frikort_limit)} i løpet av året, kan du få frikort, og da trekkes ingen skatt før du passerer grensen. Har du flere arbeidsgivere, bruker de samme skattekort: hovedarbeidsgiveren trekker etter tabellen, og de andre trekker prosentsatsen som står på kortet, slik at den samlede inntekten beskattes riktig. Forklaringen står i guiden om <a href={route('frikort', lang)}>frikort</a>. Er du selvstendig næringsdrivende, betaler du <a href={route('forskudd', lang)}>forskuddsskatt</a> i fire terminer i stedet for trekk i lønn.</p>
+</ToolPage>

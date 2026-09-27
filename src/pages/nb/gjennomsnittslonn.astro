@@ -1,0 +1,56 @@
+---
+import Guide from '../../components/Guide.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { compute, employerCost } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const S = P.ssb;
+const cases: Array<[string, number]> = [['Alle', S.avg_month_nov2025], ['Menn', S.avg_month_men], ['Kvinner', S.avg_month_women]];
+const rows = cases.map(([l, m]) => { const g = m * 12; const r = compute({ gross: g }); return [l, formatMoney(m), formatMoney(g), formatMoney(r.annual.totalTax), formatMoney(r.annual.net / 12), formatMoney(r.tabell.normalMonthNet)]; });
+const g = S.avg_month_nov2025 * 12; const r = compute({ gross: g }).annual;
+const gap = 1 - S.avg_month_women / S.avg_month_men;
+const faqs = [
+  { q: 'Hva er gjennomsnittslønnen i Norge?', a: `${formatMoney(S.avg_month_nov2025)} i måneden for heltidsekvivalenter i november 2025, ifølge SSB. Det tilsvarer ${formatMoney(g)} i året. Tallet omfatter alle sektorer og inkluderer avtalt lønn, uregelmessige tillegg og bonus, men ikke overtid. Lønningene økte med ${formatPercent(S.growth)} fra året før.` },
+  { q: 'Hva er gjennomsnittslønnen etter skatt?', a: `Omtrent ${formatMoney(r.net / 12)} i måneden i snitt over året, og ${formatMoney(compute({ gross: g }).tabell.normalMonthNet)} i en vanlig måned med tabelltrekk, beregnet med skattereglene for 2026. Skatten for året blir ${formatMoney(r.totalTax)}, en gjennomsnittsskatt på ${formatPercent(r.effective)}. Tallene gjelder skatteklasse 1.` },
+  { q: 'Hvorfor er gjennomsnittet høyere enn medianen?', a: 'Fordi et mindretall med svært høy lønn trekker gjennomsnittet opp. Medianen er lønnen til den som står i midten når alle er sortert etter lønn, og den er lavere enn gjennomsnittet i Norge. For å vurdere om din egen lønn er vanlig, er medianen i ditt yrke et bedre sammenligningsgrunnlag.' },
+  { q: 'Hvor stor er lønnsforskjellen mellom kvinner og menn?', a: `Kvinner hadde i snitt ${formatMoney(S.avg_month_women)} i måneden og menn ${formatMoney(S.avg_month_men)} i november 2025. Kvinner tjente altså ${formatPercent(S.avg_month_women / S.avg_month_men)} av det menn tjente i gjennomsnitt. Forskjellen skyldes i stor grad ulike yrker og sektorer, og SSB viser at den økte noe siste år.` },
+  { q: 'Hvor mye øker lønningene i 2026?', a: 'Lønnsveksten avgjøres i lønnsoppgjøret, der frontfaget setter en ramme som resten av arbeidslivet følger. SSB publiserer den faktiske lønnsveksten etter at året er over. Bruk rammen for årets oppgjør som anslag for din egen lønnsøkning, og husk at en del av økningen går til skatt med marginalskatten din.' },
+];
+---
+<Guide id="snittlonn" title={`Gjennomsnittslønn i Norge 2026: ${formatMoney(S.avg_month_nov2025)} i måneden`} h1="Gjennomsnittslønn i Norge: tall fra SSB og lønn etter skatt"
+  description={`Gjennomsnittslønnen i Norge var ${formatMoney(S.avg_month_nov2025)} i måneden i november 2025 ifølge SSB. Se tallene for kvinner og menn, lønn etter skatt i 2026 og hva snittet betyr.`}
+  intro="Gjennomsnittslønnen er et utgangspunkt for lønnsforhandlinger og budsjetter. Her er de siste tallene fra SSB, regnet om til lønn etter skatt for 2026."
+  resume={`Ifølge SSB var gjennomsnittlig månedslønn for heltidsekvivalenter ${formatMoney(S.avg_month_nov2025)} i november 2025, en økning på ${formatPercent(S.growth)} fra året før. Omregnet til år tilsvarer det ${formatMoney(g)}. Menn hadde i snitt ${formatMoney(S.avg_month_men)} og kvinner ${formatMoney(S.avg_month_women)}. Med skattereglene for 2026 gir gjennomsnittslønnen ${formatMoney(r.totalTax)} i skatt og ${formatMoney(r.net)} etter skatt i året, eller ${formatMoney(r.net / 12)} i snitt per måned. Gjennomsnittslønnen ligger så vidt over innslagspunktet for trinn 3 i trinnskatten, så marginalskatten er ${formatPercent(r.marginal)}. Tallet omfatter avtalt lønn, uregelmessige tillegg og bonus for alle sektorer, men ikke overtid. Fordi gjennomsnittet trekkes opp av høye lønninger, tjener flertallet mindre enn snittet. For å sammenligne din egen lønn er medianen og statistikken for ditt yrke mer treffende.`}
+  faqs={faqs} related={['lonn', 'netto', 'minimumslonn', 'skatt', 'kostnad', 'home']} sources={[SRC.ssb_lonn, SRC.forskudd_2026, SRC.trinnskatt]}>
+  <h2>Gjennomsnittslønn og lønn etter skatt</h2>
+  <ContentTable headers={['Gruppe', 'Per måned', 'Per år', 'Skatt 2026', 'Netto snitt', 'Vanlig måned']} align={['l', 'r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Skatten er beregnet for 2026 med skatteklasse 1 uten andre fradrag. Lønnstallene er fra november 2025, så lønnen i 2026 vil for de fleste være høyere etter årets lønnsoppgjør.</p>
+
+  <h2>Hva tallet måler</h2>
+  <p>SSB bygger lønnsstatistikken på a-meldingen, der alle arbeidsgivere rapporterer lønn for hver ansatt hver måned. Månedslønnen omfatter avtalt lønn, uregelmessige tillegg som kvelds- og helgetillegg, og bonus og provisjon. Overtidsbetaling er ikke med. Tallene er regnet om til heltidsekvivalenter, slik at deltidsansatte teller som om de jobbet full tid. Det gjør det mulig å sammenligne lønnsnivå på tvers av grupper med ulik arbeidstid, men betyr også at gjennomsnittslønnen er høyere enn det mange faktisk får utbetalt.</p>
+
+  <h2>Kvinner og menn</h2>
+  <p>I november 2025 tjente kvinner i snitt {formatPercent(1 - gap)} av det menn tjente. Forskjellen skyldes i stor grad at kvinner og menn jobber i ulike yrker og sektorer, og at flere menn har lederstillinger og jobber i høytlønte næringer som olje og finans. SSB peker på at lønnsveksten det siste året var størst blant de høytlønte, noe som bidro til at forskjellene økte noe.</p>
+
+  <h2>Hva arbeidsgiveren betaler</h2>
+  <p>For en ansatt med gjennomsnittslønn betaler arbeidsgiveren {formatMoney(employerCost({ gross: g }).total)} i året i sone 1 med minimum tjenestepensjon og arbeidsgiveravgift. <a href={route('kostnad', lang)}>Kalkulatoren for kostnad per ansatt</a> viser beløpet for andre soner og pensjonssatser.</p>
+
+  <h2>Bruk gjennomsnittet med omtanke</h2>
+  <p>Gjennomsnittslønnen er nyttig som referanse, men sier lite om hva som er normalt i et bestemt yrke. En sykepleier, en elektriker og en ingeniør har svært ulike lønnsnivåer, og alder, erfaring og bosted betyr mye. SSB publiserer lønn etter yrke, næring, utdanning og alder, og mange fagforeninger har egen lønnsstatistikk. Til en lønnsforhandling er det mest nyttig å kjenne lønnsnivået for din stilling. <a href={route('netto', lang)}>Kalkulatoren fra netto til brutto</a> viser hvilken bruttolønn som gir den nettolønnen du trenger.</p>
+
+  <h2>Utviklingen over tid</h2>
+  <p>Lønnsveksten fra november 2024 til november 2025 var {formatPercent(S.growth)} ifølge SSB. Personfradraget og innslagspunktene i trinnskatten justeres hvert år, omtrent i takt med lønnsveksten, slik at skatten på en gjennomsnittslønn holder seg nokså stabil som andel av lønnen.</p>
+  <h2>Gjennomsnittslønnen gjennom året</h2>
+  <p>Med tabellkort får en lønnstaker med gjennomsnittslønn rundt {formatMoney(compute({ gross: g }).tabell.normalMonthNet)} utbetalt i en vanlig måned, av en bruttolønn på {formatMoney(S.avg_month_nov2025)}. Trekket er omtrent {formatMoney(compute({ gross: g }).tabell.normalMonthTax)}. I juni kommer feriepengene uten skattetrekk, og i desember trekkes halv skatt, rundt {formatMoney(compute({ gross: g }).tabell.decemberTax)}. Samlet over året blir nettolønnen {formatMoney(r.net)}. Fordi gjennomsnittslønnen ligger i trinn 3 i trinnskatten, beskattes en lønnsøkning med {formatPercent(r.marginal)}, og en økning på {formatMoney(2000)} i måneden gir omtrent {formatMoney(2000 * (1 - r.marginal))} mer utbetalt.</p>
+
+  <h2>Tallet i en lønnsforhandling</h2>
+  <p>Gjennomsnittslønnen brukes ofte som argument i lønnsforhandlinger, men den er et svakt argument alene. Arbeidsgiveren vil sammenligne med lønnen for samme stilling i samme bransje og region. Et sterkere utgangspunkt er lønnsstatistikken for yrket, lønnsveksten i bransjen og hva du bidrar med. Gjennomsnittet er likevel nyttig for å vurdere hvor du står i det norske lønnsbildet, og for å forstå hvorfor skatten din er som den er: de fleste med lønn rundt gjennomsnittet har marginalskatt i trinn 3.</p>
+
+  <h2>Deltid og heltidsekvivalenter</h2>
+  <p>SSB regner om lønnen til heltidsekvivalenter, slik at en deltidsansatt i 50 % stilling med {formatMoney(30000)} i måneden telles som {formatMoney(60000)}. Det gjør tallene sammenlignbare, men betyr at mange faktisk får mindre utbetalt enn statistikken viser, særlig i yrker med mye deltid, som helse, omsorg og varehandel.</p>
+  <h2>Gjennomsnitt og median</h2>
+  <p>SSB publiserer både gjennomsnitt og median for månedslønnen. Gjennomsnittet er summen av alle lønninger delt på antall ansatte, mens medianen er lønnen til den som står midt i fordelingen. I Norge ligger medianen under gjennomsnittet, fordi noen få svært høye lønninger drar gjennomsnittet opp, mens det er en nedre grense for hvor lave lønningene blir. Når nyheter omtaler at lønnsforskjellene øker, betyr det at gjennomsnittet vokser raskere enn medianen. For de fleste lønnstakere er medianen det tallet som best beskriver en vanlig lønn. Sammenligner du din egen lønn med statistikken, bør du også se på alder, utdanning og yrke, som SSB fordeler tallene etter.</p>
+</Guide>

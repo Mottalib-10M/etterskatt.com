@@ -1,0 +1,61 @@
+---
+import Guide from '../../components/Guide.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { compute } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const R = P.reisefradrag; const F = P.foreldrefradrag;
+const list = [
+  ['Minstefradrag', `46 % av lønnen, maks ${formatMoney(P.minstefradrag.max)}`, 'Automatisk'],
+  ['Personfradrag', formatMoney(P.personfradrag), 'Automatisk'],
+  ['Renter på lån', 'Hele beløpet', 'Forhåndsutfylt'],
+  ['Fagforeningskontingent', `Inntil ${formatMoney(P.fagforening_max)}`, 'Forhåndsutfylt'],
+  ['Reisefradrag hjem–arbeid', `${formatMoney(R.rate_per_km, 2)} per km, over ${formatMoney(R.threshold)}`, 'Må sjekkes'],
+  ['Foreldrefradrag', `${formatMoney(F.first)} for ett barn, ${formatMoney(F.each_additional)} per ekstra barn`, 'Forhåndsutfylt'],
+  ['BSU', `10 % av inntil ${formatMoney(P.bsu.max_year)} i skatten`, 'Forhåndsutfylt'],
+];
+const g = 600000; const base = compute({ gross: g }).annual; const withAll = compute({ gross: g, interest: 45000, union: P.fagforening_max, otherDeductions: F.first }).annual;
+const faqs = [
+  { q: 'Hvor mye er et fradrag verdt i skatt?', a: 'Et fradrag i alminnelig inntekt er verdt 22 % av beløpet, eller 18,5 % i Finnmark og Nord-Troms. Et fradrag på 10 000 kr gir altså 2 200 kr lavere skatt. Fradrag påvirker ikke trygdeavgiften eller trinnskatten, fordi de beregnes av bruttoinntekten. BSU er et unntak: det gis direkte i skatten.' },
+  { q: 'Hvordan får jeg reisefradrag i 2026?', a: `Reisefradraget beregnes med ${formatMoney(R.rate_per_km, 2)} per kilometer for reiser mellom hjem og fast arbeidssted. Bare kostnader over ${formatMoney(R.threshold)} i året gir fradrag, og det samlede fradraget er begrenset. Med 200 arbeidsdager kreves det rundt 32 km reisevei tur-retur for å komme over grensen.` },
+  { q: 'Må jeg føre opp fradragene selv?', a: 'Mange fradrag er forhåndsutfylt i skattemeldingen, som renter, fagforeningskontingent, foreldrefradrag for barnehage og BSU. Reisefradrag, gaver til organisasjoner utenfor rapporteringsordningen og enkelte andre fradrag må du kontrollere og eventuelt føre opp selv. Sjekk alltid skattemeldingen før fristen. Endringer kan gjøres etter fristen også.' },
+  { q: 'Kan jeg få fradragene med på skattekortet?', a: 'Ja. Legg inn forventede renter og andre fradrag når du endrer skattekortet hos Skatteetaten, så blir trekket lavere gjennom året. Ellers får du effekten som tilgode i skatteoppgjøret. Ta med bare fradrag du er rimelig sikker på, for å unngå restskatt.' },
+];
+---
+<Guide id="fradrag" title="Fradrag i skatten 2026: renter, reise, fagforening og barn" h1="Fradrag i skatten 2026: de viktigste fradragene for lønnstakere"
+  description="Oversikt over fradrag for 2026: minstefradrag, personfradrag, renter, reisefradrag, fagforening, foreldrefradrag og BSU, med beløp og hva fradraget er verdt."
+  intro="Fradrag senker skatten, men mindre enn mange tror. Her er fradragene som betyr noe for lønnstakere i 2026, og hva de faktisk er verdt."
+  resume={`Et fradrag reduserer den alminnelige inntekten, som beskattes med 22 %, eller 18,5 % i Finnmark og Nord-Troms. Hver krone i fradrag gir derfor 22 øre lavere skatt, ikke en krone. To fradrag får alle lønnstakere automatisk: minstefradraget på 46 % av lønnen, inntil ${formatMoney(P.minstefradrag.max)}, og personfradraget på ${formatMoney(P.personfradrag)}. De viktigste andre fradragene er renter på lån, som trekkes fra fullt ut, fagforeningskontingent inntil ${formatMoney(P.fagforening_max)}, reisefradrag for lang reisevei til jobben, og foreldrefradrag for barnehage og SFO. BSU gir et fradrag direkte i skatten på 10 % av sparingen. For en lønnstaker med ${formatMoney(g)} i lønn, ${formatMoney(45000)} i renter, full fagforeningskontingent og ett barn i barnehage blir skatten ${formatMoney(withAll.totalTax)} i stedet for ${formatMoney(base.totalTax)}, altså ${formatMoney(base.totalTax - withAll.totalTax)} lavere. Fradragene påvirker ikke trinnskatten eller trygdeavgiften.`}
+  faqs={faqs} related={['skatt', 'minstefradrag', 'personfradrag', 'skattekort', 'satser', 'formue']} sources={[SRC.forskudd_2026, SRC.fagforening, SRC.bsu]}>
+  <h2>Fradragene i 2026</h2>
+  <ContentTable headers={['Fradrag', 'Beløp', 'I skattemeldingen']} align={['l', 'l', 'l']} rows={list} />
+
+  <h2>Minstefradrag og personfradrag</h2>
+  <p>Minstefradraget er et standardfradrag for kostnader knyttet til arbeidet. Det beregnes som 46 % av lønnen, men har et tak på {formatMoney(P.minstefradrag.max)}, som nås ved en lønn på rundt {formatMoney(Math.round(P.minstefradrag.max / P.minstefradrag.rate))}. Personfradraget er et bunnfradrag som alle får, og som gjør at den første delen av inntekten er fri for skatt på alminnelig inntekt. Sammen gjør de at en lønn på {formatMoney(200000)} gir svært lite skatt utover trygdeavgiften. Begge er forklart i egne guider: <a href={route('minstefradrag', lang)}>minstefradrag</a> og <a href={route('personfradrag', lang)}>personfradrag</a>.</p>
+
+  <h2>Renter på lån</h2>
+  <p>Renter på boliglån, billån, studielån og forbrukslån er fradragsberettiget. Fradraget er det største for mange, og med høyere renter de siste årene har det fått større betydning. Betaler du {formatMoney(80000)} i renter i året, gir det {formatMoney(80000 * 0.22)} lavere skatt. Renter på studielån i Lånekassen er også fradragsberettiget. Har dere felles lån, fordeles fradraget etter hvem som eier lånet, og ektefeller kan fordele det fritt mellom seg.</p>
+
+  <h2>Reisefradrag</h2>
+  <p>Reisefradraget beregnes ut fra avstanden mellom hjem og arbeid og antall arbeidsdager, med {formatMoney(R.rate_per_km, 2)} per kilometer i 2026, uansett hvordan du reiser. Du får bare fradrag for den delen som overstiger {formatMoney(R.threshold)}, og samlet fradrag har en øvre grense. Pendlere som bor borte fra hjemmet, kan i tillegg ha rett til fradrag for besøksreiser og merkostnader. Reisefradraget er ikke forhåndsutfylt, så det må du selv føre opp.</p>
+
+  <h2>Foreldrefradrag</h2>
+  <p>Foreldre med barn under 12 år kan få fradrag for dokumenterte utgifter til barnehage, SFO og dagmamma. Fradraget er inntil {formatMoney(F.first)} for ett barn og {formatMoney(F.each_additional)} for hvert ekstra barn. Kostpenger i barnehagen gir ikke fradrag. Barnehager og SFO rapporterer beløpene, så fradraget er vanligvis forhåndsutfylt og fordelt mellom foreldrene.</p>
+
+  <h2>Fagforening og BSU</h2>
+  <p>Fagforeningskontingent gir fradrag inntil {formatMoney(P.fagforening_max)} i 2026, og arbeidsgiveren rapporterer ofte beløpet når kontingenten trekkes i lønn. BSU er ordningen for unge som sparer til bolig: 10 % av inntil {formatMoney(P.bsu.max_year)} i årlig sparing går direkte til fratrekk i skatten, til og med året du fyller 33. Gaver til godkjente frivillige organisasjoner gir også fradrag innenfor et årlig tak.</p>
+
+  <h2>Fradrag som ikke finnes</h2>
+  <p>Utgifter til klær, mat, reiser i jobben som arbeidsgiveren ikke dekker, og vanlige hjemmekontorutgifter er i hovedsak dekket av minstefradraget og gir ikke eget fradrag for lønnstakere. Det samme gjelder avdrag på lån, som ikke er en kostnad, men nedbetaling av gjeld. <a href={route('skatt', lang)}>Skattekalkulatoren</a> lar deg legge inn renter og fagforeningskontingent og se effekten med en gang.</p>
+  <h2>Et eksempel med boliglån og barn</h2>
+  <p>Ta en lønnstaker med {formatMoney(g)} i lønn, {formatMoney(45000)} i renter på boliglånet, fagforeningskontingent på {formatMoney(P.fagforening_max)} og ett barn i barnehage med utgifter over {formatMoney(F.first)}. Uten andre fradrag enn standardfradragene er skatten {formatMoney(base.totalTax)}. Renter, kontingent og foreldrefradrag trekkes fra i alminnelig inntekt, og skatten blir {formatMoney(withAll.totalTax)}. Forskjellen, {formatMoney(base.totalTax - withAll.totalTax)}, er 22 % av de samlede fradragene. Trinnskatten og trygdeavgiften er uendret, fordi de beregnes av bruttolønnen. Legger lønnstakeren fradragene inn på skattekortet, får hun effekten jevnt gjennom året i stedet for som tilgode i skatteoppgjøret.</p>
+
+  <h2>Gaver og andre fradrag</h2>
+  <p>Gaver til frivillige organisasjoner som er godkjent av Skatteetaten, gir fradrag når gaven er minst 500 kroner og organisasjonen rapporterer den med fødselsnummeret ditt. Det finnes et årlig tak for fradraget. Andre fradrag som kan være aktuelle, er fradrag for innbetaling til individuell pensjonssparing, underskudd ved utleie og tap ved salg av aksjer. Pendlere som bor borte fra hjemmet på grunn av arbeidet, kan få fradrag for merutgifter til kost og losji og for besøksreiser hjem. Sjøfolk, fiskere og arbeidstakere på sokkelen har egne fradrag. Felles for alle er at de reduserer alminnelig inntekt og derfor er verdt 22 % av beløpet.</p>
+
+  <h2>Fradrag og marginalskatt</h2>
+  <p>Mange tror et fradrag er verdt like mye som marginalskatten, men det gjelder bare skatten på alminnelig inntekt. For en lønnstaker med marginalskatt på over 40 % er et rentefradrag fortsatt bare verdt 22 %, fordi trinnskatten og trygdeavgiften ikke påvirkes. Det er en grunn til at nedbetaling av lån og sparing ofte er like lønnsomt som å beholde lånet for fradragets skyld.</p>
+</Guide>

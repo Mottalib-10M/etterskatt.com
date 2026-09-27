@@ -1,27 +1,45 @@
-/**
- * Bidirectional route mapping between Norwegian (nb) and English (en) pages.
- * Used to generate hreflang alternate links.
- */
-
-const nbToEn: Record<string, string> = {
-  '/': '/en/',
-  '/ordliste/': '/en/glossary/',
-};
-
-const enToNb: Record<string, string> = {};
-for (const [nb, en] of Object.entries(nbToEn)) {
-  enToNb[en] = nb;
-}
-
-/**
- * Given the current page path and its language, returns the path of the
- * alternate-language version, or null if no mapping exists.
- */
-export function getAlternatePath(
-  currentPath: string,
-  currentLang: 'nb' | 'en',
-): string | null {
-  const path = currentPath.endsWith('/') ? currentPath : currentPath + '/';
-  if (currentLang === 'nb') return nbToEn[path] ?? null;
-  return enToNb[path] ?? null;
-}
+import { makeRouter, type RouteDef } from './routes-core';
+export const LOCALES = ['nb'] as const;
+export type Locale = (typeof LOCALES)[number];
+export const DEFAULT_LOCALE: Locale = 'nb';
+/** Pages par montant : årslønn et timelønn, chacune adossée à un seuil propre (lib/amount-angles.ts). */
+export const ANNUAL = [300000, 350000, 400000, 450000, 500000, 550000, 600000, 650000, 700000, 750000, 800000, 900000, 1000000, 1500000] as const;
+export const HOURLY = [200, 250, 300, 350, 400, 500] as const;
+export const ROUTES: RouteDef<Locale>[] = [
+  { id: 'home', paths: { nb: '/nb/' } },
+  { id: 'skatt', paths: { nb: '/nb/skattekalkulator/' } },
+  { id: 'lonn', paths: { nb: '/nb/lonnskalkulator/' } },
+  { id: 'etterSkatt', paths: { nb: '/nb/lonn-etter-skatt/' } },
+  { id: 'netto', paths: { nb: '/nb/netto-lonn/' } },
+  { id: 'timelonn', paths: { nb: '/nb/timelonn-kalkulator/' } },
+  { id: 'skattekort', paths: { nb: '/nb/skattekort/' } },
+  { id: 'feriepenger', paths: { nb: '/nb/feriepenger-kalkulator/' } },
+  { id: 'overtid', paths: { nb: '/nb/overtid-kalkulator/' } },
+  { id: 'kostnad', paths: { nb: '/nb/kostnad-ansatt/' } },
+  { id: 'aga', paths: { nb: '/nb/arbeidsgiveravgift/' } },
+  { id: 'forskudd', paths: { nb: '/nb/forskuddsskatt/' } },
+  { id: 'formue', paths: { nb: '/nb/formuesskatt/' } },
+  { id: 'satser', paths: { nb: '/nb/skattesatser/' } },
+  { id: 'trinnskatt', paths: { nb: '/nb/trinnskatt/' } },
+  { id: 'trygdeavgift', paths: { nb: '/nb/trygdeavgift/' } },
+  { id: 'fradrag', paths: { nb: '/nb/fradrag/' } },
+  { id: 'personfradrag', paths: { nb: '/nb/personfradrag/' } },
+  { id: 'minstefradrag', paths: { nb: '/nb/minstefradrag/' } },
+  { id: 'frikort', paths: { nb: '/nb/frikort/' } },
+  { id: 'halvSkatt', paths: { nb: '/nb/halv-skatt-desember/' } },
+  { id: 'selvstendig', paths: { nb: '/nb/selvstendig-naeringsdrivende-skatt/' } },
+  { id: 'minimumslonn', paths: { nb: '/nb/minimumslonn/' } },
+  { id: 'snittlonn', paths: { nb: '/nb/gjennomsnittslonn/' } },
+  ...ANNUAL.map((a) => ({ id: `y-${a}`, paths: { nb: `/nb/lonn-${a}-etter-skatt/` } })),
+  ...HOURLY.map((a) => ({ id: `h-${a}`, paths: { nb: `/nb/timelonn-${a}-kr/` } })),
+  { id: 'glossary', paths: { nb: '/nb/ordliste/' } },
+  { id: 'method', paths: { nb: '/nb/metode/' } },
+  { id: 'widget', paths: { nb: '/nb/widget/' }, noindex: true },
+  { id: 'about', paths: { nb: '/nb/om-oss/' } },
+  { id: 'contact', paths: { nb: '/nb/kontakt/' } },
+  { id: 'editorial', paths: { nb: '/nb/redaksjonell-policy/' } },
+  { id: 'privacy', paths: { nb: '/nb/personvern/' }, noindex: true },
+  { id: 'terms', paths: { nb: '/nb/vilkar/' }, noindex: true },
+  { id: 'cookies', paths: { nb: '/nb/informasjonskapsler/' }, noindex: true },
+];
+export const { NOINDEX_PATHS, route, hasRoute, altPaths } = makeRouter(LOCALES, ROUTES);

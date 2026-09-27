@@ -1,0 +1,53 @@
+---
+import Guide from '../../components/Guide.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { compute } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney } from '../../lib/format';
+const lang = 'nb';
+const L = P.frikort_limit;
+const rows = [60000, 90000, L, 120000, 150000].map((g) => { const a = compute({ gross: g }).annual; return [formatMoney(g), formatMoney(a.skattAlminnelig), formatMoney(a.trygdeavgift), formatMoney(a.totalTax)]; });
+const over = 130000; const trekk = (over - L) * 0.5; const real = compute({ gross: over }).annual.totalTax;
+const faqs = [
+  { q: 'Hva er frikortgrensen i 2026?', a: `${formatMoney(L)}. Med frikort trekkes det ingen skatt av lønn og feriepenger før samlet utbetaling passerer grensen. Frikortet gjelder alle arbeidsgivere du har i løpet av året, og hver utbetaling registreres slik at grensen følges opp på tvers av dem.` },
+  { q: 'Hva skjer hvis jeg tjener mer enn frikortgrensen?', a: 'Da skal arbeidsgiveren trekke 50 % skatt av det som overstiger grensen, til du har fått et nytt skattekort. Trekket er et forskudd, og det meste kommer tilbake i skatteoppgjøret hvis inntekten ikke er mye over grensen. Endre skattekortet så snart du vet at du vil tjene mer.' },
+  { q: 'Hvem får frikort?', a: 'Skatteetaten gir frikort til personer som ventes å tjene under grensen, typisk elever og studenter med deltidsjobb eller sommerjobb. Har du hatt frikort tidligere og fortsatt tjener lite, får du det ofte automatisk. Du kan også bestille det selv når du endrer skattekortet.' },
+  { q: 'Må jeg levere skattemelding med frikort?', a: 'Ja, alle får skattemelding. For de fleste med frikort er den forhåndsutfylt og riktig, og du trenger ikke gjøre noe. Har du hatt inntekt fra flere steder, eller tjent over grensen, bør du sjekke at alt stemmer. Skatteoppgjøret viser om du får tilbake noe av det som er trukket.' },
+];
+---
+<Guide id="frikort" title="Frikort 2026: grense på 100 000 kr og hva som skjer over" h1="Frikort 2026: skattefri inntekt opp til 100 000 kr"
+  description="Frikortgrensen er 100 000 kr i 2026. Se hvorfor inntekten under grensen er nesten skattefri, hva som skjer over grensen, og når du bør bytte til skattekort."
+  intro="Frikort er skattekortet for dem som tjener lite. Det gjør at det ikke trekkes skatt før grensen er nådd, men det har noen feller."
+  resume={`Frikort er et skattekort uten skattetrekk, for personer som ventes å tjene lite i løpet av året. Grensen for 2026 er ${formatMoney(L)}. Så lenge samlet lønn og feriepenger fra alle arbeidsgivere holder seg under grensen, trekkes det ingen skatt. Grensen er satt slik at inntekten under den gir liten eller ingen skatt: minstefradraget og personfradraget gjør at ${formatMoney(L)} i lønn ikke gir skatt på alminnelig inntekt, og trygdeavgiften blir bare ${formatMoney(compute({ gross: L }).annual.trygdeavgift)} på grunn av opptrappingsregelen. Overstiger du grensen, skal arbeidsgiveren trekke 50 % av det som ligger over, til du har fått nytt skattekort. Frikort passer for elever, studenter med deltidsjobb og andre med lav inntekt. Tjener du mer enn grensen, gir et vanlig skattekort med tabelltrekk et mer treffsikkert trekk.`}
+  faqs={faqs} related={['skattekort', 'personfradrag', 'minstefradrag', 'trygdeavgift', 'timelonn', 'skatt']} sources={[SRC.frikort, SRC.forskudd_2026, SRC.trygdeavgift]}>
+  <h2>Skatt på lave inntekter i 2026</h2>
+  <ContentTable headers={['Lønn', 'Skatt alminnelig inntekt', 'Trygdeavgift', 'Samlet skatt']} align={['r', 'r', 'r', 'r']} rows={rows} />
+  <p>Tabellen viser skatten som blir fastsatt i skatteoppgjøret. Med frikort trekkes ingenting gjennom året, og det lille som skal betales ved inntekt like over {formatMoney(P.trygdeavgift.lower_limit)}, kommer som restskatt. Beløpet er så lite at det sjelden merkes.</p>
+
+  <h2>Når grensen passeres</h2>
+  <p>Tenk deg en student som tjener {formatMoney(over)} i løpet av året, men har frikort. Når utbetalingene passerer {formatMoney(L)}, trekker arbeidsgiveren 50 % av resten, altså {formatMoney(trekk)}. Den virkelige skatten for året er {formatMoney(real)}. Differansen kommer tilbake i skatteoppgjøret, men pengene er borte fra kontoen i mange måneder. Med et vanlig skattekort ville trekket vært fordelt over året og nær den virkelige skatten. Vet du at du vil tjene mer enn grensen, for eksempel på grunn av sommerjobb og deltid ved siden av studiene, er det lurt å endre til skattekort tidlig.</p>
+
+  <h2>Flere arbeidsgivere</h2>
+  <p>Frikortgrensen gjelder samlet inntekt, ikke per arbeidsgiver. Arbeidsgiverne rapporterer utbetalingene gjennom a-meldingen, og Skatteetaten holder oversikt over hvor mye som er brukt av grensen. Når den er brukt opp, får alle arbeidsgivere beskjed om å trekke 50 %. Mange unge med flere småjobber opplever dette i løpet av høsten.</p>
+
+  <h2>Hva som regnes med</h2>
+  <p>Grensen gjelder lønn, feriepenger og andre skattepliktige ytelser fra arbeidsgivere, samt enkelte ytelser fra NAV. Stipend fra Lånekassen er skattefritt og regnes ikke med. Utgiftsgodtgjørelser som er skattefrie, for eksempel reiseregning etter statens satser, regnes heller ikke med. Renteinntekter og gevinster påvirker ikke frikortet, men kan gi skatt i skatteoppgjøret.</p>
+
+  <h2>Frikort eller skattekort</h2>
+  <p>Frikort er enklest når du er sikker på å tjene under grensen. Er du usikker, gir et skattekort med tabelltrekk et lite trekk på lave lønninger, fordi tabellene tar hensyn til personfradraget og minstefradraget. <a href={route('skattekort', lang)}>Skattekort-kalkulatoren</a> viser trekket for en gitt inntekt, og <a href={route('timelonn', lang)}>timelønnskalkulatoren</a> hjelper deg å anslå årsinntekten fra timelønn og timer.</p>
+
+  <h2>Frikort for pensjonister og andre</h2>
+  <p>Frikort gis også til andre med lav inntekt, for eksempel personer med små pensjoner eller som er i arbeid bare deler av året. Reglene for pensjon er annerledes, med eget skattefradrag, og beløpene her gjelder lønn. <a href={route('personfradrag', lang)}>Guiden om personfradrag</a> forklarer hvorfor lav inntekt gir lite skatt.</p>
+  <h2>Et eksempel: student med sommerjobb</h2>
+  <p>En student tjener {formatMoney(40000)} på deltid gjennom studieåret og {formatMoney(45000)} i sommerjobb, til sammen {formatMoney(85000)}. Med frikort trekkes ingen skatt av noen av jobbene, og skatten for året blir {formatMoney(compute({ gross: 85000 }).annual.totalTax)}, fordi inntekten er under både frikortgrensen og den nedre grensen for trygdeavgift. Får studenten en ekstra jobb i desember som gir {formatMoney(30000)}, passerer samlet inntekt {formatMoney(L)}, og arbeidsgiveren trekker 50 % av det som overstiger. Den virkelige skatten på {formatMoney(115000)} er bare {formatMoney(compute({ gross: 115000 }).annual.totalTax)}, så nesten hele trekket kommer tilbake i skatteoppgjøret neste år.</p>
+
+  <h2>Slik bestiller du frikort</h2>
+  <p>Du bestiller eller endrer frikort på Skatteetatens nettsider, på samme sted som du endrer skattekortet. Du oppgir hvor mye du regner med å tjene i året, og Skatteetaten avgjør om du får frikort eller skattekort. Arbeidsgiveren henter kortet elektronisk, så du trenger ikke levere noe selv. Unge som får sin første jobb, får ofte frikort automatisk. Har du hatt frikort og vet at inntekten blir høyere, bør du bytte med en gang: endringen gjelder fra neste lønnsutbetaling.</p>
+
+  <h2>Frikort og feriepenger</h2>
+  <p>Feriepenger regnes med i frikortgrensen. En student som har tjent godt på sommerjobb, får feriepengene utbetalt året etter, og de kommer i tillegg til årets lønn. Det kan være nok til at grensen passeres i et år der lønnen ellers ville vært under. Husk derfor å ta med feriepengene når du anslår inntekten.</p>
+  <h2>Frikort og flere år</h2>
+  <p>Frikortet gjelder for ett inntektsår om gangen. Skatteetaten lager nytt skattekort hvert år ut fra det de vet om inntekten din, og har du tjent mer enn grensen året før, får du som regel et vanlig skattekort. Går inntekten ned igjen, for eksempel fordi du begynner å studere, må du selv be om frikort. Det samme gjelder hvis du har vært i fast jobb og blir permittert eller går over i deltid. Et riktig kort fra januar er enklere enn å rette opp trekk i skatteoppgjøret. Husk også at det du får tilbake i skatteoppgjøret, utbetales først sommeren etter, så for mye trekk betyr at pengene er bundet i mange måneder.</p>
+</Guide>

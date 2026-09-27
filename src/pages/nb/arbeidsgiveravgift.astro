@@ -1,0 +1,30 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { employerCost, type Zone } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const Z = P.aga.zones as Record<Zone, number>;
+const where: Record<string, string> = { '1': 'Sentrale strøk, blant annet Oslo, Bergen, Trondheim og Stavanger', '1a': 'Enkelte kommuner med redusert sats inntil et fribeløp', '2': 'Deler av Sør-Norge og Midt-Norge', '3': 'Distriktskommuner i Sør-Norge og Midt-Norge', '4': 'Nordland og deler av Troms', '4a': 'Tromsø og Bodø', '5': 'Finnmark og Nord-Troms (tiltakssonen)' };
+const rows = (Object.keys(Z) as Zone[]).map((z) => [`Sone ${z.toUpperCase()}`, where[z], formatPercent(Z[z], 1), formatMoney(employerCost({ gross: 600000, zone: z }).aga)]);
+const faqs = [
+  { q: 'Hva er arbeidsgiveravgift?', a: 'En avgift som arbeidsgiveren betaler til folketrygden av lønn og andre ytelser til ansatte, som pensjonsinnskudd og skattepliktige naturalytelser. Den trekkes ikke fra lønnen din, men kommer i tillegg. Satsen avhenger av hvilken sone virksomheten hører til, og er 14,1 % i sone 1.' },
+  { q: 'Hvilken sone gjelder for bedriften?', a: 'Hovedregelen er at sonen bestemmes av hvor virksomheten er registrert, ofte underenheten der den ansatte arbeider. For ansatte som jobber i en annen sone enn der virksomheten er registrert, finnes egne regler. Skatteetaten har en oversikt over hvilke kommuner som hører til hvilken sone.' },
+  { q: 'Hva er fribeløpet i sone 1a?', a: `Virksomheter i sone 1a kan betale den reduserte satsen på 10,6 % inntil et fribeløp på ${formatMoney(P.aga.fribelop_1a)} per foretak i 2026. Fribeløpet er en statsstøtte, og når det er brukt opp, betales full sats som i sone 1. Enkelte bransjer er unntatt fra ordningen.` },
+];
+---
+<ToolPage id="aga" title="Arbeidsgiveravgift 2026: satser per sone og kalkulator" h1="Arbeidsgiveravgift 2026: sats etter sone og beløp per ansatt"
+  description="Arbeidsgiveravgift for 2026 fra 0 til 14,1 % etter sone. Beregn avgiften av lønn, pensjon og feriepenger, og se hvilke områder som har lav sats. Oppdatert."
+  intro="Arbeidsgiveravgiften er den største kostnaden ved en ansatt etter lønnen. Velg sone og se beløpet for lønn og pensjonsinnskudd i 2026."
+  mode="aga" initialGross={600000} faqs={faqs} related={['kostnad', 'selvstendig', 'trygdeavgift', 'netto', 'satser', 'home']}
+  sources={[SRC.aga, SRC.otp, SRC.forskudd_2026]}>
+  <p>Arbeidsgiveravgiften er differensiert etter geografi for å gjøre det billigere å ha ansatte i distriktene. I sone 1, som omfatter de sentrale strøkene, er satsen 14,1 % i 2026. I sone 2 og 1a er den 10,6 %, i sone 3 6,4 %, i sone 4 5,1 % og i sone 4a, som gjelder Tromsø og Bodø, 7,9 %. I sone 5, Finnmark og Nord-Troms, er satsen null. Avgiften beregnes av alt som regnes som lønn og godtgjørelse: fast lønn, timelønn, overtid, bonus, feriepenger, skattepliktige naturalytelser og arbeidsgiverens innskudd til tjenestepensjon. For en ansatt med {formatMoney(600000)} i lønn og 2 % pensjon er avgiften {formatMoney(employerCost({ gross: 600000 }).aga)} i sone 1 og ingenting i sone 5. Avgiften rapporteres i a-meldingen hver måned og betales annenhver måned. Den tidligere ekstra arbeidsgiveravgiften på høye lønninger er ikke lenger en del av satsene for 2026.</p>
+  <h2>Satser for 2026, {formatMoney(600000)} i lønn</h2>
+  <ContentTable headers={['Sone', 'Område', 'Sats', 'Avgift']} align={['l', 'l', 'r', 'r']} rows={rows} />
+  <p>Beskrivelsen av områdene er forenklet. Sonen fastsettes kommune for kommune, og Skatteetatens oversikt er den som gjelder.</p>
+  <h2>Avgift og kostnad</h2>
+  <p>Arbeidsgiveravgiften er ikke det samme som trygdeavgiften, som arbeidstakeren betaler av sin egen lønn. Begge går til folketrygden, men de betales av hver sin part. Den samlede kostnaden ved en ansatt, med lønn, pensjon, feriepenger og avgift, ser du i <a href={route('kostnad', lang)}>kalkulatoren for kostnad per ansatt</a>. Enkeltpersonforetak betaler ikke arbeidsgiveravgift av eget uttak, men høyere <a href={route('trygdeavgift', lang)}>trygdeavgift</a> på næringsinntekten.</p>
+</ToolPage>

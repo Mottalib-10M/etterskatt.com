@@ -1,0 +1,29 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { ex, P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const e = ex(680000); const t = e.tabell;
+const months = ['Januar–mai', 'Juni', 'Juli–november', 'Desember'];
+const rows = [[months[0], formatMoney(680000 / 12), formatMoney(t.normalMonthTax), formatMoney(t.normalMonthNet)], [months[1], 'Feriepenger', formatMoney(0), 'Feriepenger uten trekk'], [months[2], formatMoney(680000 / 12), formatMoney(t.normalMonthTax), formatMoney(t.normalMonthNet)], [months[3], formatMoney(680000 / 12), formatMoney(t.decemberTax), formatMoney(680000 / 12 - t.decemberTax)]];
+const faqs = [
+  { q: 'Hva betyr lønn etter skatt?', a: 'Lønn etter skatt, eller nettolønn, er det du får utbetalt når arbeidsgiveren har trukket forskuddsskatt etter skattekortet ditt. Andre trekk, som fagforeningskontingent eller egen pensjonssparing, kommer i tillegg. Den endelige skatten fastsettes i skatteoppgjøret året etter, og trekket gjennom året er bare et forskudd på den.' },
+  { q: 'Hvor mye får jeg utbetalt av 680 000 kr i året?', a: `${formatMoney(e.annual.net)} over året, ${formatMoney(e.annual.net / 12)} i snitt per måned. I en vanlig måned med tabelltrekk får du ${formatMoney(t.normalMonthNet)}. Skatten for 2026 er ${formatMoney(e.annual.totalTax)}, som er ${formatPercent(e.annual.effective)} av bruttolønnen. Beløpene gjelder uten andre fradrag.` },
+  { q: 'Hvorfor får jeg mer utbetalt i desember?', a: 'Fordi tabelltrekket gir halv skatt i desember, eller i november hos noen arbeidsgivere. Det er ikke en skattelette: skatten du slipper i desember, er allerede fordelt på de andre månedene gjennom tabellen. Bonus som utbetales med desemberlønnen, får derfor også lavere trekk, men ikke lavere endelig skatt.' },
+];
+---
+<ToolPage id="etterSkatt" title="Lønn etter skatt 2026: utbetalingen måned for måned" h1="Lønn etter skatt: hva du får utbetalt hver måned i 2026"
+  description="Se lønn etter skatt for 2026 slik den kommer på kontoen: vanlig måned med tabelltrekk, juni uten skattetrekk og desember med halv skatt. Satsene for 2026."
+  intro="Skatten for året trekkes ikke jevnt over tolv måneder. Kalkulatoren viser hva du faktisk får utbetalt i en vanlig måned, og hvordan juni og desember skiller seg ut."
+  mode="etterSkatt" initialGross={680000} faqs={faqs} related={['home', 'halvSkatt', 'skattekort', 'lonn', 'feriepenger', 'netto']}
+  sources={[SRC.feriepenger_trekk, SRC.skattekort, SRC.forskudd_2026]}>
+  <p>På {formatMoney(680000)} i årslønn er skatten for 2026 {formatMoney(e.annual.totalTax)}. Med tabellkort trekker arbeidsgiveren denne skatten over 10,5 måneder, ikke tolv. Fra januar til mai og fra juli til november trekkes omtrent {formatMoney(t.normalMonthTax)} hver måned, og du får {formatMoney(t.normalMonthNet)} utbetalt av en bruttolønn på {formatMoney(680000 / 12)}. I juni betales feriepengene, og det trekkes ingen skatt av dem. I desember trekkes halv skatt, rundt {formatMoney(t.decemberTax)}. Ordningen gjør at pengene kommer når mange har ekstra utgifter, til sommerferie og jul, men den gjør også en vanlig måned litt strammere enn gjennomsnittet. Regnet over hele året blir nettolønnen {formatMoney(e.annual.net)}. Har du prosentkort i stedet for tabellkort, trekkes samme prosent av alle utbetalinger, også i juni og desember, og månedene blir like.</p>
+  <h2>Året med tabellkort, {formatMoney(680000)} i lønn</h2>
+  <ContentTable headers={['Måned', 'Brutto', 'Skattetrekk', 'Utbetalt']} align={['l', 'r', 'r', 'r']} rows={rows} />
+  <p>Hvor mye som utbetales i juni, avhenger av feriepengene og av hvordan arbeidsgiveren trekker lønn for feriedagene. <a href={route('feriepenger', lang)}>Feriepengekalkulatoren</a> viser beløpet.</p>
+  <h2>Når trekket ikke stemmer</h2>
+  <p>Skattekortet bygger på Skatteetatens anslag, ofte fra fjorårets skatteoppgjør. Har du fått ny jobb, høyere lønn, nytt boliglån eller barn i barnehage, kan trekket bli for høyt eller for lavt. Du endrer det selv på Skatteetatens nettsider, og arbeidsgiveren får det nye skattekortet automatisk. Et riktig skattekort betyr at skatteoppgjøret blir nær null: ingen restskatt å betale og ingen stor tilbakebetaling som i realiteten er et rentefritt lån til staten. Guiden om <a href={route('halvSkatt', lang)}>skattefri juni og halv skatt i desember</a> forklarer tabellene i detalj.</p>
+</ToolPage>

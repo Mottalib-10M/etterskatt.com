@@ -1,0 +1,32 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { ex, P } from '../../lib/tables';
+import { compute } from '../../lib/engine/no';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const e = ex(620000).annual;
+const f = compute({ gross: 620000, interest: 50000, union: 6000 }).annual;
+const rows = [300000, 450000, 620000, 800000, 1100000].map((g) => { const a = ex(g).annual; return [formatMoney(g), formatMoney(a.skattAlminnelig), formatMoney(a.trygdeavgift), formatMoney(a.trinnskatt), formatMoney(a.totalTax), formatPercent(a.effective)]; });
+const faqs = [
+  { q: 'Hvordan beregnes skatten på lønn i 2026?', a: `Skatten består av tre deler. Skatt på alminnelig inntekt er 22 % av lønnen etter minstefradrag, andre fradrag og personfradraget på ${formatMoney(P.personfradrag)}. Trygdeavgiften er 7,6 % av bruttolønnen. Trinnskatten beregnes av bruttolønnen i fem trinn fra ${formatMoney(P.trinnskatt[0].from)}. Summen er skatten for året.` },
+  { q: 'Hvorfor er skatteoppgjøret annerledes enn kalkulatoren?', a: 'Kalkulatoren regner på lønn og de fradragene du legger inn. Skatteoppgjøret tar med alt: renteinntekter, utbytte, formue, gevinst ved salg, reisefradrag, foreldrefradrag og gaver. Har du hatt andre inntekter eller fradrag i løpet av året, vil oppgjøret avvike fra anslaget her.' },
+  { q: 'Hva er forskjellen på gjennomsnittsskatt og marginalskatt?', a: 'Gjennomsnittsskatten er samlet skatt delt på inntekten, og viser hvor stor del av lønnen som går til skatt. Marginalskatten er skatten på den neste kronen du tjener, og er alltid høyere for vanlige lønninger fordi trinnskatten og personfradraget gjør skatten progressiv. Marginalskatten er den som gjelder for en lønnsøkning.' },
+];
+---
+<ToolPage id="skatt" title="Skattekalkulator 2026: beregn skatt på lønn med fradrag" h1="Skattekalkulator 2026: hvor mye skatt betaler du?"
+  description="Beregn skatten din for 2026: skatt på alminnelig inntekt, trygdeavgift og trinnskatt, med rentefradrag, fagforening og BSU. Satsene er fra Skatteetaten."
+  intro="Legg inn bruttolønnen og eventuelle fradrag. Kalkulatoren viser hver skattepost, gjennomsnittsskatten og marginalskatten for inntektsåret 2026."
+  mode="skatt" initialGross={620000} initialPeriod="annual" faqs={faqs} related={['home', 'trinnskatt', 'fradrag', 'skattekort', 'satser', 'etterSkatt']}
+  sources={[SRC.forskudd_2026, SRC.trinnskatt, SRC.trygdeavgift]}>
+  <p>En lønnstaker med {formatMoney(620000)} i året betaler tre skatter. Den første er skatt på alminnelig inntekt: lønnen minus minstefradraget på {formatMoney(e.minstefradrag)} gir en alminnelig inntekt på {formatMoney(e.alminnelig)}, og 22 % av det som ligger over personfradraget på {formatMoney(P.personfradrag)} blir {formatMoney(e.skattAlminnelig)}. Den andre er trygdeavgiften, 7,6 % av bruttolønnen, {formatMoney(e.trygdeavgift)}, som finansierer folketrygden. Den tredje er trinnskatten, {formatMoney(e.trinnskatt)}, som bare rammer lønn over {formatMoney(P.trinnskatt[0].from)} og øker i fem trinn. Til sammen blir det {formatMoney(e.totalTax)} i skatt, en gjennomsnittsskatt på {formatPercent(e.effective)}. Med {formatMoney(50000)} i renter på boliglån og {formatMoney(6000)} i fagforeningskontingent faller skatten til {formatMoney(f.totalTax)}, fordi fradragene reduserer den alminnelige inntekten. Fradrag påvirker aldri trygdeavgiften eller trinnskatten, som beregnes av bruttolønnen.</p>
+  <h2>Skatt på ulike lønnsnivåer i 2026</h2>
+  <ContentTable headers={['Lønn', 'Alminnelig inntekt', 'Trygdeavgift', 'Trinnskatt', 'Samlet skatt', 'Snitt']} align={['r', 'r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Tallene gjelder skatteklasse 1 uten andre fradrag enn minstefradrag og personfradrag. Andelen som går til trinnskatt, øker raskt over {formatMoney(P.trinnskatt[2].from)}, der trinn 3 starter.</p>
+  <h2>Fradrag du kan legge inn</h2>
+  <p>Renteutgifter og fagforeningskontingent er de vanligste fradragene for lønnstakere, og begge kan legges inn i kalkulatoren. Fagforeningsfradraget er begrenset til {formatMoney(P.fagforening_max)} for 2026. BSU gir et fradrag direkte i skatten på 10 % av årets sparing, inntil {formatMoney(P.bsu.max_year * P.bsu.rate)}. Andre fradrag, som reisefradrag, foreldrefradrag og gaver til frivillige organisasjoner, er forklart i <a href={route('fradrag', lang)}>guiden om fradrag</a>. Bor du i Finnmark eller i en av kommunene i Nord-Troms som hører til tiltakssonen, er satsen på alminnelig inntekt 18,5 % i stedet for 22 %, og det kan du velge i kalkulatoren.</p>
+  <h2>Fra skattekalkulator til skattekort</h2>
+  <p>Skatten du ser her, er skatten for hele året. Arbeidsgiveren trekker den i forskudd hver måned etter skattekortet ditt. Stemmer anslaget ikke med skattekortet, kan du endre det hos Skatteetaten, og trekket justeres fra neste lønnsutbetaling. Slik unngår du restskatt eller et stort tilgodebeløp. <a href={route('skattekort', lang)}>Skattekort-kalkulatoren</a> viser prosentsatsen og det månedlige tabelltrekket.</p>
+</ToolPage>

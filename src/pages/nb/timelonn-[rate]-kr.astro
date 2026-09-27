@@ -1,0 +1,17 @@
+---
+import AmountPage from '../../components/AmountPage.astro';
+import { route, HOURLY } from '../../i18n/routes';
+import { hourlyLabel } from '../../i18n/nav';
+import { hourlyAngle } from '../../lib/amount-angles';
+import { compute, hourlyToAnnual } from '../../lib/engine/no';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatNumber } from '../../lib/format';
+export function getStaticPaths() { return HOURLY.map((a) => ({ params: { rate: String(a) } })); }
+const rate = Number(Astro.params.rate);
+const rows = [15, 20, 30, 37.5, 40].map((h) => { const g = rate * h * 52; const r = compute({ gross: g }); return [`${formatNumber(h, 1)} timer i uken`, formatMoney(g), formatMoney(g / 12), formatMoney(r.annual.totalTax), formatMoney(r.annual.net / 12)]; });
+const near = HOURLY.filter((h) => h !== rate);
+---
+<AmountPage id={`h-${rate}`} crumb={hourlyLabel(rate)} angle={hourlyAngle(rate)} gross={hourlyToAnnual(rate)} hourly={rate} mode="timelonn"
+  table={{ caption: `${formatMoney(rate)} i timen etter antall timer`, headers: ['Timer', 'Per år', 'Brutto per måned', 'Skatt per år', 'Netto snitt per måned'], rows }}
+  neighbours={[...near.map((n) => ({ href: route(`h-${n}`, 'nb'), name: hourlyLabel(n) })), { href: route('timelonn', 'nb'), name: 'Timelønnskalkulator' }, { href: route('minimumslonn', 'nb'), name: 'Minstelønn 2026' }]}
+  sources={[SRC.minstelonn, SRC.forskudd_2026, SRC.ferieloven]} />

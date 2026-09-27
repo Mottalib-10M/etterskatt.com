@@ -1,0 +1,29 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { overtime } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatNumber } from '../../lib/format';
+const lang = 'nb';
+const g = 580000; const o = overtime({ gross: g, hours: 20 });
+const rows = [400000, 580000, 750000, 1000000].flatMap((x) => [0.4, 1].map((s) => { const r = overtime({ gross: x, hours: 10, supplement: s }); return [formatMoney(x), `${s * 100} %`, formatMoney(r.overtimeRate, 2), formatMoney(r.pay), formatMoney(r.net)]; }));
+const faqs = [
+  { q: 'Hvor mye skal jeg ha i overtidstillegg?', a: `Minst 40 % av timelønnen etter arbeidsmiljøloven. Mange tariffavtaler gir mer, ofte 50 % på dagtid og 100 % på kveld, natt, helg og helligdager. Tillegget beregnes av den ordinære timelønnen, og ledere og særlig uavhengige stillinger kan være unntatt reglene om overtid.` },
+  { q: 'Hvor mye overtid er lov?', a: `Hovedregelen er inntil ${P.overtid.max_week} timer i uken, ${P.overtid.max_4_weeks} timer over fire sammenhengende uker og ${P.overtid.max_year} timer i løpet av 52 uker. Ved avtale med tillitsvalgte kan grensene utvides noe, og Arbeidstilsynet kan i særlige tilfeller gi tillatelse til mer. Overtid krever et særlig og tidsavgrenset behov.` },
+  { q: 'Hvorfor trekkes det så mye skatt av overtiden?', a: 'Fordi tabelltrekket regner månedens lønn som om den gjaldt hele året. En måned med mye overtid ser ut som en høy årslønn og får et høyt trekk. Den endelige skatten på overtiden er marginalskatten din, og skatteoppgjøret retter opp det som er trukket for mye.' },
+];
+---
+<ToolPage id="overtid" title="Overtid kalkulator 2026: overtidsbetaling etter skatt" h1="Overtidskalkulator: hva gir overtiden etter skatt?"
+  description="Beregn overtidsbetaling med 40 %, 50 % eller 100 % tillegg, og hva som blir igjen etter skatt med din marginalskatt i 2026. Grenser for overtid inkludert."
+  intro="Legg inn årslønnen, antall overtidstimer og tillegget. Kalkulatoren finner timelønnen, overtidssatsen og skatten på overtiden med din faktiske marginalskatt."
+  mode="overtid" initialGross={580000} faqs={faqs} related={['timelonn', 'trinnskatt', 'lonn', 'skattekort', 'etterSkatt', 'home']}
+  sources={[SRC.overtid, SRC.trinnskatt, SRC.forskudd_2026]}>
+  <p>For å finne overtidssatsen trengs timelønnen. Kalkulatoren deler årslønnen på {formatNumber(P.overtid.hours_year)} timer, som tilsvarer 37,5 timer i uken over 52 uker. Med {formatMoney(g)} i året blir timelønnen {formatMoney(o.hourly, 2)} og overtidssatsen med lovens minstetillegg på 40 % {formatMoney(o.overtimeRate, 2)}. Tjue overtidstimer gir {formatMoney(o.pay)} før skatt. Skatten på overtiden er ikke gjennomsnittsskatten din, men marginalskatten, fordi overtiden kommer på toppen av alt annet du tjener. Kalkulatoren beregner den ved å sammenligne skatten for året med og uten overtiden, og får {formatMoney(o.tax)}. Igjen etter skatt blir {formatMoney(o.net)}. Hvis overtiden gjør at årsinntekten passerer et innslagspunkt i trinnskatten, fanger beregningen opp at de siste timene beskattes hardere. Tabelltrekket i måneden med overtid kan likevel bli høyere enn dette, fordi tabellen antar at hele året ser ut som den måneden.</p>
+  <h2>Ti overtidstimer ved ulike lønninger</h2>
+  <ContentTable headers={['Årslønn', 'Tillegg', 'Sats per time', 'Brutto', 'Etter skatt']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Etter skatt gir en overtidstime med 100 % tillegg ved høy lønn ikke dobbelt så mye som ved lav lønn, fordi marginalskatten stiger fra rundt 34 % til over 46 %.</p>
+  <h2>Avspasering i stedet for penger</h2>
+  <p>Arbeidstaker og arbeidsgiver kan skriftlig avtale at overtidstimene tas ut som fritid i stedet for betaling. Overtidstillegget på minst 40 % skal likevel utbetales. Tillegget beskattes som vanlig lønn, mens timene du avspaserer, er ordinær lønn for fritiden. Overtid regnes med i feriepengegrunnlaget, så den gir også høyere <a href={route('feriepenger', lang)}>feriepenger</a> året etter.</p>
+</ToolPage>

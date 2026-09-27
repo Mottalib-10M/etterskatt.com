@@ -1,45 +1,34 @@
-/**
- * URL state management — encode/decode calculator parameters in the URL hash
+/** État du calculateur encodé dans l'URL (lien partageable). Aucune donnée n'est transmise à un serveur.
+ *
+ * RÈGLE D’HYDRATATION (RECETTE-SITE.md §17.4) — ne jamais lire l’URL ni la date du jour pendant le
+ * premier rendu d’un calculateur : le HTML servi a été calculé au build avec les valeurs par défaut, et
+ * React signale une erreur (#418) dès que le premier rendu du navigateur diffère. Le schéma :
+ *   const sp = new URLSearchParams();                       // premier rendu = valeurs par défaut
+ *   const [gross, setGross] = useState(num(sp, 'brut', 2500));
+ *   const [start, setStart] = useState(str(sp, 'd', __BUILD_DAY__));
+ *   useEffect(() => { const u = readParams(window.location.search);
+ *     setGross(num(u, 'brut', 2500)); setStart(str(u, 'd', new Date().toISOString().slice(0, 10))); }, []);
+ * `check-layout.mjs` le contrôle (horloge avancée de deux jours, lien partagé rechargé).
  */
-
-export interface UrlConfig {
-  [key: string]: 'number' | 'string';
+export function encodeState(params: Record<string, string | number | boolean | undefined>): string {
+  const sp = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== null && v !== '') sp.set(k, String(v));
+  return sp.toString();
 }
-
-let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-
-export function readUrlParams(config: UrlConfig): Record<string, any> {
-  if (typeof window === 'undefined') return {};
-
-  const hash = window.location.hash.slice(1);
-  const params = new URLSearchParams(hash);
-  const result: Record<string, any> = {};
-
-  for (const [key, type] of Object.entries(config)) {
-    const value = params.get(key);
-    if (value !== null) {
-      result[key] = type === 'number' ? parseFloat(value) : value;
-    }
-  }
-
-  return result;
+export function readParams(search: string): URLSearchParams { return new URLSearchParams(search); }
+export function num(sp: URLSearchParams, key: string, def: number): number {
+  const v = sp.get(key); if (v === null) return def; const n = parseFloat(v); return isNaN(n) ? def : n;
 }
+export function str(sp: URLSearchParams, key: string, def: string): string { return sp.get(key) ?? def; }
 
-export function writeUrlParams(values: Record<string, any>): void {
-  if (typeof window === 'undefined') return;
-
-  if (debounceTimer) clearTimeout(debounceTimer);
-
-  debounceTimer = setTimeout(() => {
-    const params = new URLSearchParams();
-    for (const [key, value] of Object.entries(values)) {
-      if (value !== undefined && value !== null && value !== '') {
-        params.set(key, String(value));
-      }
-    }
-    const hash = params.toString();
-    if (hash) {
-      window.history.replaceState(null, '', `#${hash}`);
-    }
-  }, 300);
+let interacted = false;
+if (typeof window !== 'undefined') {
+  const mark = () => { interacted = true; };
+  document.addEventListener('input', mark, { once: true });
+  document.addEventListener('change', mark, { once: true });
+}
+export function updateURL(params: Record<string, string | number | boolean | undefined>): void {
+  if (!interacted || typeof window === 'undefined') return;
+  const enc = encodeState(params);
+  window.history.replaceState(null, '', `${window.location.pathname}${enc ? '?' + enc : ''}`);
 }

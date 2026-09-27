@@ -1,0 +1,55 @@
+---
+import Guide from '../../components/Guide.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { selfEmployed, compute, employerCost } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const profit = 700000; const s = selfEmployed({ profit }); const w = compute({ gross: profit }).annual;
+const rows = [400000, 700000, 1000000].map((p) => { const a = selfEmployed({ profit: p }); const b = compute({ gross: p }).annual; return [formatMoney(p), formatMoney(a.total), formatMoney(a.net), formatMoney(b.totalTax), formatMoney(b.net)]; });
+const faqs = [
+  { q: 'Hvor mye skatt betaler en selvstendig næringsdrivende?', a: `Skatt på alminnelig inntekt med 22 %, trygdeavgift med ${formatPercent(P.trygdeavgift.business, 1)} og trinnskatt av hele overskuddet. Med ${formatMoney(profit)} i overskudd blir det omtrent ${formatMoney(s.total)} i 2026. Det gis ikke minstefradrag, men alle kostnader i virksomheten trekkes fra før overskuddet beregnes.` },
+  { q: 'Må jeg registrere meg for merverdiavgift?', a: `Ja, når omsetningen av avgiftspliktige varer og tjenester overstiger ${formatMoney(P.mva.threshold)} i løpet av en tolvmånedersperiode. Da må du registrere deg i Merverdiavgiftsregisteret, legge merverdiavgift på fakturaene og levere mva-melding. Noen tjenester, som helsetjenester og undervisning, er unntatt. Registreringen gjøres i Altinn.` },
+  { q: 'Har næringsdrivende rett til sykepenger?', a: 'Ja, men med dårligere dekning enn arbeidstakere. Selvstendig næringsdrivende får som hovedregel 80 % sykepenger fra den 17. dagen, beregnet av inntekten opp til 6 G. Du kan kjøpe tilleggsforsikring hos NAV for høyere dekning eller kortere ventetid. Premien er fradragsberettiget.' },
+  { q: 'Bør jeg ha enkeltpersonforetak eller aksjeselskap?', a: 'Enkeltpersonforetak er enklest å starte og drive, men du er personlig ansvarlig for gjelden, og hele overskuddet skattlegges som personinntekt hvert år. I et aksjeselskap betaler selskapet 22 % skatt, og du betaler skatt når du tar ut lønn eller utbytte. Valget avhenger av inntekt, risiko og hvor mye som skal bli igjen i selskapet.' },
+  { q: 'Hvor mye bør jeg sette av til skatt som næringsdrivende?', a: 'En tommelfingerregel er rundt en tredjedel av overskuddet, og mer ved høye overskudd der trinnskatten slår inn. Har du merverdiavgift, må den settes av i tillegg, siden den ikke er din inntekt. En egen skattekonto i banken gjør det lettere å ha pengene klare når terminene forfaller.' },
+];
+---
+<Guide id="selvstendig" title="Skatt for næringsdrivende 2026: enkeltpersonforetak" h1="Skatt for selvstendig næringsdrivende i 2026"
+  description="Slik beregnes skatt for enkeltpersonforetak i 2026: overskudd, trygdeavgift på 10,8 %, trinnskatt, forskuddsskatt i fire terminer, mva og forskjellen fra lønn."
+  intro="Som selvstendig næringsdrivende betaler du skatt av overskuddet, ikke av det du tar ut. Her er reglene for 2026 og en sammenligning med lønn."
+  resume={`En selvstendig næringsdrivende med enkeltpersonforetak skattlegges personlig for hele overskuddet i virksomheten, uansett hvor mye som tas ut. Overskuddet er inntekter minus kostnader, og for 2026 gir det tre skatter. Skatt på alminnelig inntekt er 22 % etter personfradraget på ${formatMoney(P.personfradrag)}. Trygdeavgiften er ${formatPercent(P.trygdeavgift.business, 1)}, høyere enn de ${formatPercent(P.trygdeavgift.wage, 1)} en lønnstaker betaler. Trinnskatten beregnes av hele overskuddet, som regnes som personinntekt. Det gis ikke minstefradrag. Med ${formatMoney(profit)} i overskudd blir skatten ${formatMoney(s.total)}, mot ${formatMoney(w.totalTax)} for en lønnstaker med samme lønn. Skatten betales som forskuddsskatt i fire terminer, 15. mars, 15. mai, 15. september og 15. november. I tillegg må næringsdrivende selv sørge for pensjon, feriepenger og forsikring, som en arbeidsgiver ellers dekker, og registrere seg for merverdiavgift når omsetningen passerer grensen.`}
+  faqs={faqs} related={['forskudd', 'trygdeavgift', 'trinnskatt', 'kostnad', 'aga', 'fradrag']} sources={[SRC.forskuddsskatt, SRC.trygdeavgift, SRC.forskudd_2026]}>
+  <h2>Næringsdrivende og lønnstaker med samme beløp</h2>
+  <ContentTable headers={['Beløp', 'Skatt, næringsdrivende', 'Etter skatt', 'Skatt, lønnstaker', 'Etter skatt']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Sammenligningen er ikke helt rettferdig. En lønnstaker med {formatMoney(profit)} i lønn koster arbeidsgiveren {formatMoney(employerCost({ gross: profit }).total)} med arbeidsgiveravgift og minimum pensjon, og har i tillegg feriepenger og full sykelønn. Som næringsdrivende må du tjene mer for å stå likt.</p>
+
+  <h2>Overskudd og kostnader</h2>
+  <p>Overskuddet beregnes i næringsoppgaven, som leveres sammen med skattemeldingen. Alle kostnader til å drive virksomheten kan trekkes fra: varekjøp, leie av lokaler, utstyr, reiser i virksomheten, forsikringer, regnskapsfører og en andel av bil og telefon som brukes i næringen. Utstyr som varer over flere år og koster minst {formatMoney(P.avskrivning_min)}, avskrives over tid. Hjemmekontor gir fradrag etter egne regler. Uttak til deg selv er ikke en kostnad; det er bruk av overskuddet.</p>
+
+  <h2>Forskuddsskatt</h2>
+  <p>Skatteetaten fastsetter forskuddsskatten ut fra anslaget ditt eller fjorårets resultat. Første året må du selv legge inn et anslag. Betaler du for lite, kan du betale et tilleggsforskudd innen 31. mai året etter for å slippe renter på restskatten. <a href={route('forskudd', lang)}>Kalkulatoren for forskuddsskatt</a> gir beløpet per termin.</p>
+
+  <h2>Pensjon og sykepenger</h2>
+  <p>Næringsdrivende tjener opp alderspensjon i folketrygden på samme måte som arbeidstakere, men har ingen obligatorisk tjenestepensjon. Du kan spare selv i egen pensjonsordning for selvstendig næringsdrivende, med fradrag innenfor grensene i loven, eller i individuell pensjonssparing. Sykepengene er lavere enn for arbeidstakere, og det kan lønne seg å kjøpe tilleggsforsikring hos NAV.</p>
+
+  <h2>Merverdiavgift</h2>
+  <p>Omsetter du for mer enn {formatMoney(P.mva.threshold)} i avgiftspliktige varer og tjenester i løpet av tolv måneder, må du registrere deg i Merverdiavgiftsregisteret. Da legger du {formatPercent(P.mva.rate, 0)} merverdiavgift på fakturaene, med lavere satser for noen varer og tjenester, og trekker fra merverdiavgiften på innkjøp. Merverdiavgift er ikke din inntekt, og kalkulatorene på dette nettstedet regner uten merverdiavgift.</p>
+
+  <h2>Enkeltpersonforetak eller aksjeselskap</h2>
+  <p>I et aksjeselskap betaler selskapet 22 % skatt av overskuddet, og du betaler skatt først når du tar ut lønn eller utbytte. Lønn gir arbeidsgiveravgift for selskapet og vanlig lønnsskatt for deg, mens utbytte beskattes med en oppjustert sats hos deg. For mange med moderat inntekt er enkeltpersonforetak enklest. Valget bør gjøres med en regnskapsfører, fordi det avhenger av inntekt, risiko og planer.</p>
+  <h2>Det første året</h2>
+  <p>Første året med enkeltpersonforetak er det vanskeligste for likviditeten. Skatteetaten kjenner ikke inntekten din, så forskuddsskatten bygger på anslaget du legger inn. Undervurderer du inntekten, kommer restskatten året etter, samtidig som forskuddsskatten for det nye året skal betales. Mange setter derfor av en fast andel av hver innbetaling på en egen skattekonto. Med {formatMoney(profit)} i overskudd går {formatPercent(s.total / profit)} til skatt, og en tredjedel av omsetningen etter kostnader er et forsiktig anslag for å dekke skatt og trygdeavgift.</p>
+
+  <h2>Regnskap og næringsoppgave</h2>
+  <p>Enkeltpersonforetak skal føre regnskap etter bokføringsloven og levere næringsspesifikasjon sammen med skattemeldingen. Små foretak kan føre enkelt regnskap selv med et regnskapsprogram, mens mange bruker regnskapsfører. Kostnaden til regnskapsfører er fradragsberettiget. Bilag skal oppbevares i fem år. Har du merverdiavgift, skal mva-meldingen normalt leveres annenhver måned.</p>
+
+  <h2>Kombinasjon av lønn og næring</h2>
+  <p>Mange starter enkeltpersonforetak ved siden av en fast jobb. Da beregnes trinnskatten av samlet personinntekt, lønn og overskudd, og trygdeavgiften med hver sin sats: 7,6 % på lønnen og 10,8 % på overskuddet. Forskuddstrekket fra arbeidsgiveren dekker bare skatten på lønnen, så skatten på overskuddet må betales som forskuddsskatt eller legges inn på skattekortet.</p>
+  <h2>Tilleggsforsikring for sykepenger</h2>
+  <p>Som selvstendig næringsdrivende får du ingen sykepenger de første 16 dagene, og deretter 80 % av inntekten opp til 6 G. NAV tilbyr frivillig forsikring som gir 100 % dekning, sykepenger fra første dag, eller begge deler. Premien beregnes som en prosent av inntekten og er fradragsberettiget. For dem som lever av virksomheten alene, er forsikringen ofte verdt å vurdere, fordi en lengre sykdomsperiode ellers gir et stort inntektstap. Mange kjøper også en privat uføreforsikring, siden næringsdrivende ikke har arbeidsgiverens gruppeforsikringer.</p>
+  <p>Tallene på denne siden gjelder et enkeltpersonforetak der overskuddet er eieren sin eneste inntekt, uten andre fradrag enn personfradraget.</p>
+  <p>Merverdiavgift er holdt utenfor alle beløp.</p>
+</Guide>

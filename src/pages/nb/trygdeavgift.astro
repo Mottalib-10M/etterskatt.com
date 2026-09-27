@@ -1,0 +1,56 @@
+---
+import Guide from '../../components/Guide.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { trygdeavgift } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const Tg = P.trygdeavgift;
+const rates = [['Lønn, 17 til 69 år', formatPercent(Tg.wage, 1)], ['Næringsinntekt', formatPercent(Tg.business, 1)], ['Pensjon', formatPercent(Tg.pension, 1)], ['Lønn under 17 og over 69 år', formatPercent(Tg.reduced_age, 1)], ['Nedre grense', formatMoney(Tg.lower_limit)], ['Opptrappingssats over nedre grense', formatPercent(Tg.phase_in, 0)]];
+const low = [90000, 100000, 110000, 120000, 125000, 150000, 400000].map((i) => [formatMoney(i), formatMoney(Math.min(i * Tg.wage, Math.max(0, i - Tg.lower_limit) * Tg.phase_in)), formatMoney(trygdeavgift(i)), formatPercent(trygdeavgift(i) / i)]);
+const cross = Math.round(Tg.lower_limit * Tg.phase_in / (Tg.phase_in - Tg.wage));
+const faqs = [
+  { q: 'Hva er trygdeavgift?', a: `Trygdeavgift er medlemsavgiften til folketrygden, som finansierer pensjon, sykepenger, dagpenger og helsetjenester. Den er ${formatPercent(Tg.wage, 1)} av bruttolønnen i 2026 for arbeidstakere mellom 17 og 69 år, og trekkes sammen med den øvrige skatten. Fradrag reduserer den ikke. Den gir ingen egen pensjonskonto.` },
+  { q: 'Hvorfor ble trygdeavgiften redusert i 2026?', a: 'Stortinget vedtok å redusere satsen på lønn fra 7,7 % til 7,6 % for 2026 som en del av skatteopplegget i statsbudsjettet. Reduksjonen gjelder også næringsinntekt. Satsen på pensjon er uendret på 5,1 %. Endringen gir en lønnstaker med 600 000 kr i lønn 600 kr lavere skatt.' },
+  { q: 'Betaler jeg trygdeavgift på lav inntekt?', a: `Ikke under ${formatMoney(Tg.lower_limit)} i året. Over grensen trappes avgiften gradvis opp: den kan aldri være mer enn 25 % av det som ligger over grensen. Full sats på ${formatPercent(Tg.wage, 1)} gjelder først når inntekten er rundt ${formatMoney(cross)}.` },
+  { q: 'Gir trygdeavgiften rett til pensjon?', a: 'Ikke direkte. Retten til alderspensjon fra folketrygden bygges opp av inntekten din, med 18,1 % av inntekten opp til 7,1 G hvert år, uavhengig av hvor mye trygdeavgift du har betalt. Trygdeavgiften er en skatt som finansierer ordningene, ikke et innskudd på en personlig konto.' },
+  { q: 'Står trygdeavgiften på lønnsslippen?', a: 'Vanligvis ikke som egen linje. Trygdeavgiften er med i forskuddstrekket sammen med trinnskatten og skatten på alminnelig inntekt, og lønnsslippen viser ett samlet skattetrekk. I skatteoppgjøret vises trygdeavgiften for seg, slik at du kan kontrollere at den er beregnet med riktig sats.' },
+];
+---
+<Guide id="trygdeavgift" title="Trygdeavgift 2026: 7,6 % på lønn, nedre grense og næring" h1="Trygdeavgift 2026: satser, nedre grense og opptrapping"
+  description="Trygdeavgift 2026: 7,6 % på lønn, 10,8 % på næring og 5,1 % på pensjon, nedre grense 99 650 kr og opptrapping med 25 %. Forklart med eksempler for lav inntekt."
+  intro="Trygdeavgiften er den delen av skatten som går til folketrygden. Den er enkel for de fleste, men har egne regler for lave inntekter, pensjon og næring."
+  resume={`Trygdeavgift er en avgift til folketrygden som alle med personinntekt i Norge betaler. For lønn til personer mellom 17 og 69 år er satsen ${formatPercent(Tg.wage, 1)} i 2026, redusert fra 7,7 % året før. Næringsinntekt har ${formatPercent(Tg.business, 1)}, og pensjon, samt lønn til personer under 17 og over 69 år, har ${formatPercent(Tg.pension, 1)}. Avgiften beregnes av bruttoinntekten, uten fradrag for renter eller minstefradrag. Inntekt under ${formatMoney(Tg.lower_limit)} gir ingen trygdeavgift, og over grensen kan avgiften aldri utgjøre mer enn ${formatPercent(Tg.phase_in, 0)} av det som ligger over grensen. Det gjør at personer med lav inntekt, som studenter med deltidsjobb, betaler lite. For en vanlig lønn på ${formatMoney(600000)} er trygdeavgiften ${formatMoney(trygdeavgift(600000))} i året. Trygdeavgiften trekkes sammen med den øvrige skatten etter skattekortet, og vises ikke som en egen linje på de fleste lønnsslipper.`}
+  faqs={faqs} related={['skatt', 'satser', 'frikort', 'trinnskatt', 'selvstendig', 'aga']} sources={[SRC.trygdeavgift, SRC.forskudd_2026, SRC.frikort]}>
+  <h2>Satser for 2026</h2>
+  <ContentTable headers={['Grunnlag', 'Sats eller beløp']} align={['l', 'r']} rows={rates} />
+
+  <h2>Opptrappingen for lave inntekter</h2>
+  <p>Reglene om nedre grense og opptrapping beskytter dem som tjener lite. Uten dem ville en student med {formatMoney(110000)} i lønn betale {formatMoney(110000 * Tg.wage)} i trygdeavgift. Med opptrappingen er avgiften begrenset til 25 % av det som ligger over {formatMoney(Tg.lower_limit)}, altså {formatMoney(trygdeavgift(110000))}. Grensen for når full sats gjelder, finner du ved å sette de to beregningene like: rundt {formatMoney(cross)}. Over det beløpet er trygdeavgiften {formatPercent(Tg.wage, 1)} av hele inntekten.</p>
+  <ContentTable headers={['Inntekt', 'Maks etter opptrapping eller full sats', 'Trygdeavgift', 'Andel']} align={['r', 'r', 'r', 'r']} rows={low} />
+
+  <h2>Trygdeavgift og frikort</h2>
+  <p>Frikortgrensen for 2026 er {formatMoney(P.frikort_limit)}. Tjener du under den, trekkes det ingen skatt, men trygdeavgiften kan likevel bli beregnet i skatteoppgjøret dersom inntekten er over {formatMoney(Tg.lower_limit)}. Med {formatMoney(P.frikort_limit)} i lønn er avgiften bare {formatMoney(trygdeavgift(P.frikort_limit))}, så i praksis betyr det lite. Frikortet er forklart i <a href={route('frikort', lang)}>guiden om frikort</a>.</p>
+
+  <h2>Næringsinntekt og pensjon</h2>
+  <p>Næringsdrivende betaler {formatPercent(Tg.business, 1)} av overskuddet, som er høyere enn satsen på lønn fordi det ikke betales arbeidsgiveravgift av næringsinntekt. For fiske, fangst og barnepass i egen bolig gjelder den lave satsen på {formatPercent(Tg.wage, 1)}. Pensjonister betaler {formatPercent(Tg.pension, 1)} av pensjonen, og arbeider du ved siden av pensjonen etter fylte 70 år, gjelder også den lave satsen på lønnen. For næringsdrivende beregnes trygdeavgiften sammen med <a href={route('forskudd', lang)}>forskuddsskatten</a>.</p>
+
+  <h2>Trygdeavgift og arbeidsgiveravgift</h2>
+  <p>Trygdeavgiften betales av deg som arbeidstaker, av din egen lønn. Arbeidsgiveravgiften betales av arbeidsgiveren, i tillegg til lønnen, og avhenger av hvor virksomheten ligger. Begge går til folketrygden. Samlet bidrag til folketrygden fra en lønn i sone 1 er derfor {formatPercent(Tg.wage, 1)} fra deg og {formatPercent(P.aga.zones['1'], 1)} fra arbeidsgiveren. <a href={route('aga', lang)}>Arbeidsgiveravgiften</a> er beskrevet sone for sone.</p>
+
+  <h2>Hva folketrygden dekker</h2>
+  <p>Folketrygden er grunnlaget for alderspensjon, uføretrygd, sykepenger, foreldrepenger, dagpenger ved arbeidsledighet, arbeidsavklaringspenger og en del av helsetjenestene. Trygdeavgiften dekker bare en del av utgiftene; resten finansieres av arbeidsgiveravgiften og av statens øvrige inntekter. Retten til ytelser avhenger av medlemskap og inntekt, ikke av hvor mye avgift du har betalt.</p>
+  <h2>Et eksempel med lønn og pensjon</h2>
+  <p>En pensjonist på 68 år har {formatMoney(250000)} i alderspensjon og jobber deltid for {formatMoney(200000)} i året. Pensjonen gir trygdeavgift på {formatPercent(Tg.pension, 1)}, {formatMoney(250000 * Tg.pension)}, og lønnen {formatPercent(Tg.wage, 1)}, {formatMoney(200000 * Tg.wage)}. Fra året hun fyller 70, faller satsen på lønnen også til {formatPercent(Tg.reduced_age, 1)}. Trygdeavgiften beregnes av hver inntektstype med sin sats, men den nedre grensen og opptrappingen gjelder samlet personinntekt.</p>
+
+  <h2>Unge arbeidstakere</h2>
+  <p>Ungdom som jobber og er under 17 år ved utgangen av året, betaler trygdeavgift med den lave satsen på {formatPercent(Tg.reduced_age, 1)}. De fleste i den alderen tjener under den nedre grensen på {formatMoney(Tg.lower_limit)} og betaler derfor ingenting. Det gir likevel opptjening av pensjonsrettigheter i folketrygden fra 13 år, basert på inntekten.</p>
+
+  <h2>Naturalytelser og andre inntekter</h2>
+  <p>Trygdeavgift beregnes av alt som regnes som personinntekt: lønn, bonus, feriepenger, sykepenger, foreldrepenger og skattepliktige naturalytelser som firmabil, fri telefon og rimelige lån fra arbeidsgiveren. Utbytte, renteinntekter og gevinster ved salg av aksjer eller fond gir ikke trygdeavgift. Det samme gjelder skattefrie utgiftsgodtgjørelser.</p>
+  <h2>Trygdeavgift og skattekortet</h2>
+  <p>Trygdeavgiften er med i trekket på skattekortet. Tabellene tar hensyn til både den nedre grensen og opptrappingen, slik at lave inntekter får lite eller ingen trekk. Har du prosentkort, er trygdeavgiften en del av prosentsatsen. Den står ikke som en egen linje på lønnsslippen, men vises i skatteoppgjøret sammen med trinnskatten og skatten på alminnelig inntekt. Er du i tvil om trekket er riktig, kan du sammenligne skatteoppgjøret for fjoråret med beregningen i <a href={route('skatt', lang)}>skattekalkulatoren</a>.</p>
+  <p>Satsene for 2026 er vedtatt av Stortinget i statsbudsjettet og publisert av Skatteetaten. De gjelder hele inntektsåret, fra 1. januar til 31. desember, og kalkulatorene bruker dem for alle beregninger av lønn, næring og pensjon.</p>
+</Guide>

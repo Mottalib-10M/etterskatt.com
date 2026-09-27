@@ -1,0 +1,112 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import NoCalculator from '../../components/calc/NoCalculator';
+import ContentTable from '../../components/ContentTable.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import Sources from '../../components/Sources.astro';
+import { YEAR, LAST_UPDATED, AUTHOR_NAME, LANG_TAGS } from '../../data/site-config';
+import { route, ANNUAL, HOURLY } from '../../i18n/routes';
+import { annualLabel, hourlyLabel, label } from '../../i18n/nav';
+import { webApplicationSchema, faqSchema, breadcrumbSchema, organizationSchema, personSchema, websiteSchema } from '../../lib/seo';
+import { ex, P } from '../../lib/tables';
+import { compute, trinnskatt, employerCost, feriepenger } from '../../lib/engine/no';
+import { formatMoney, formatPercent, displayDate } from '../../lib/format';
+import { SRC } from '../../lib/sources';
+const lang = 'nb';
+const T = P.trinnskatt;
+const title = `Lønnskalkulator 2026: lønn etter skatt og skatt i Norge`;
+const description = `Regn ut lønn etter skatt for 2026: trinnskatt, trygdeavgift på 7,6 %, skatt på alminnelig inntekt, tabelltrekk per måned og feriepenger. Skatteetatens satser.`;
+const g = 600000; const e = ex(g); const a = e.annual;
+const rows = [300000, 450000, 600000, 750000, 900000, 1200000, 1500000].map((x) => { const r = ex(x); return [formatMoney(x), formatMoney(r.annual.skattAlminnelig), formatMoney(r.annual.trygdeavgift), formatMoney(r.annual.trinnskatt), formatMoney(r.annual.net), formatMoney(r.tabell.normalMonthNet)]; });
+const faqs = [
+  { q: 'Hvordan regner jeg ut lønn etter skatt i 2026?', a: `Trekk fra tre skatter fra bruttolønnen. Skatt på alminnelig inntekt er 22 % av lønnen etter minstefradrag og personfradraget på ${formatMoney(P.personfradrag)}. Trygdeavgiften er 7,6 % av bruttolønnen. Trinnskatten beregnes av bruttolønnen i fem trinn fra ${formatMoney(T[0].from)}. Det som blir igjen, er lønnen etter skatt. Kalkulatoren gjør alle stegene for deg.` },
+  { q: 'Hvor mye skatt betaler jeg på 600 000 kr?', a: `${formatMoney(a.totalTax)} i 2026, som er ${formatPercent(a.effective)} av lønnen. Det fordeler seg på ${formatMoney(a.skattAlminnelig)} i skatt på alminnelig inntekt, ${formatMoney(a.trygdeavgift)} i trygdeavgift og ${formatMoney(a.trinnskatt)} i trinnskatt. Du får ${formatMoney(a.net)} utbetalt i løpet av året.` },
+  { q: 'Hva er trinnskatten for 2026?', a: `1,7 % fra ${formatMoney(T[0].from)}, 4,0 % fra ${formatMoney(T[1].from)}, 13,7 % fra ${formatMoney(T[2].from)}, 16,8 % fra ${formatMoney(T[3].from)} og 17,8 % fra ${formatMoney(T[4].from)}. Satsen gjelder bare den delen av lønnen som ligger i trinnet, og trinnskatten beregnes av bruttolønnen uten fradrag.` },
+  { q: 'Hvorfor er utbetalingen lavere enn årslønnen delt på tolv etter skatt?', a: 'Fordi tabelltrekket fordeler skatten over 10,5 måneder. Det trekkes ingen skatt i juni, når feriepengene utbetales, og bare halv skatt i desember. De andre månedene får derfor et trekk som er rundt 14 % høyere enn en tolvtedel av årsskatten. Over året blir det likt.' },
+  { q: 'Hva endret seg i skatten fra 2025 til 2026?', a: `Personfradraget økte til ${formatMoney(P.personfradrag)}, taket i minstefradraget til ${formatMoney(P.minstefradrag.max)}, trygdeavgiften på lønn ble redusert fra 7,7 til 7,6 %, og innslagspunktene i trinnskatten ble justert opp. Samlet gir det litt lavere skatt på samme lønn. Kalkulatorene bruker satsene for 2026.` },
+  { q: 'Gjelder kalkulatoren for Finnmark og Nord-Troms?', a: 'Ja. Velg Finnmark eller Nord-Troms i kalkulatoren, så brukes satsen på 18,5 % for alminnelig inntekt i stedet for 22 %. Trinnskatten og trygdeavgiften er de samme som i resten av landet. Arbeidsgiveravgiften er null i tiltakssonen, som vises i kalkulatoren for kostnad per ansatt.' },
+  { q: 'Lagrer kalkulatoren lønnen min?', a: 'Nei. Alt beregnes i nettleseren din med satsene for 2026 som ligger i siden. Ingenting du skriver, sendes til en server eller lagres etter at du lukker siden. Bruker du delingslenken, ligger tallene i selve adressen, og bare de du sender den til, kan se dem.' },
+];
+const related = ['skatt', 'lonn', 'etterSkatt', 'netto', 'skattekort', 'feriepenger', 'overtid', 'kostnad', 'forskudd'].map((id) => ({ href: route(id, lang), name: label(id), description: '' }));
+const sources = [SRC.forskudd_2026, SRC.trinnskatt, SRC.trygdeavgift, SRC.alminnelig, SRC.feriepenger_trekk, SRC.ssb_lonn];
+const jsonLd = [webApplicationSchema({ name: `Lønnskalkulator ${YEAR}`, description, path: route('home', lang), lang }), faqSchema(faqs, lang), breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }]), organizationSchema(lang), personSchema(lang), websiteSchema(lang)];
+---
+<PageLayout title={title} description={description} lang={lang} jsonLd={jsonLd} faqs={faqs} related={related} sources={sources}>
+  <header class="mb-6">
+    <h1 class="text-3xl font-bold text-navy-900 md:text-4xl">Lønnskalkulator {YEAR}: hva blir lønnen etter skatt?</h1>
+    <p class="mt-3 text-lg text-navy-600">Skriv inn bruttolønnen per år. Du får skatten fordelt på alminnelig inntekt, trygdeavgift og trinnskatt, lønnen etter skatt per måned, per uke eller per år, og skattetrekket i en vanlig måned med tabellkort. Satsene er Skatteetatens for inntektsåret {YEAR}.</p>
+    <p class="mt-3"><span class="inline-block rounded-full border border-navy-200 bg-white px-3 py-1 text-xs font-medium text-navy-600">Skatteetatens satser {YEAR} · kontrollert <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, LANG_TAGS[lang])}</time> av {AUTHOR_NAME}</span></p>
+  </header>
+  <NoCalculator client:load mode="lonn" methodHref={route('method', lang)} />
+  <AdSlot slot="home-1" />
+  <section class="prose prose-slate max-w-none">
+    <h2 id="kort-svar">Hva du får igjen av {formatMoney(g)} i året</h2>
+    <p>Med en årslønn på {formatMoney(g)} og ingen andre fradrag enn minstefradraget og personfradraget betaler du {formatMoney(a.totalTax)} i skatt for {YEAR}. Skatten består av tre deler. Skatt på alminnelig inntekt er {formatMoney(a.skattAlminnelig)}: lønnen minus minstefradraget på {formatMoney(a.minstefradrag)} gir en alminnelig inntekt på {formatMoney(a.alminnelig)}, og 22 % av det som overstiger personfradraget beskattes. Trygdeavgiften er {formatMoney(a.trygdeavgift)}, 7,6 % av bruttolønnen. Trinnskatten er {formatMoney(a.trinnskatt)}, fordi lønnen ligger i trinn 2. Du sitter igjen med {formatMoney(a.net)} i året, eller {formatMoney(a.net / 12)} i snitt per måned. Med tabellkort får du rundt {formatMoney(e.tabell.normalMonthNet)} utbetalt i en vanlig måned, mer i juni og desember. Gjennomsnittsskatten er {formatPercent(a.effective)}, mens marginalskatten, skatten på den neste kronen du tjener, er {formatPercent(a.marginal)}. Det er den som gjelder for en lønnsøkning, overtid eller bonus.</p>
+
+    <h2 id="slik">Slik beregnes skatten på lønn</h2>
+    <p>Skatteberegningen for en lønnstaker i Norge følger de samme stegene hvert år. Satsene endres i statsbudsjettet, men metoden er stabil.</p>
+    <ol>
+      <li><strong>Bruttolønn.</strong> Lønn, overtid, bonus, feriepenger og skattepliktige naturalytelser i løpet av året. Dette er personinntekten.</li>
+      <li><strong>Trygdeavgift.</strong> 7,6 % av personinntekten, men ingenting under {formatMoney(P.trygdeavgift.lower_limit)} og aldri mer enn 25 % av det som ligger over den grensen.</li>
+      <li><strong>Trinnskatt.</strong> Personinntekten deles opp i trinnene, og hver bit beskattes med trinnets sats, fra 1,7 til 17,8 %.</li>
+      <li><strong>Minstefradrag.</strong> 46 % av lønnen, inntil {formatMoney(P.minstefradrag.max)}, trekkes fra for å finne den alminnelige inntekten.</li>
+      <li><strong>Andre fradrag.</strong> Renter, fagforeningskontingent, reisefradrag og foreldrefradrag trekkes fra.</li>
+      <li><strong>Personfradrag.</strong> {formatMoney(P.personfradrag)} trekkes fra, og det som er igjen, beskattes med 22 %, eller 18,5 % i Finnmark og Nord-Troms.</li>
+    </ol>
+    <p>Summen av trygdeavgiften, trinnskatten og skatten på alminnelig inntekt er skatten for året. Skatteetaten beregner den i skatteoppgjøret våren etter, og forskuddstrekket gjennom året er et anslag på den.</p>
+
+    <h2 id="satser">Satser for {YEAR}</h2>
+    <ContentTable headers={['Sats eller beløp', 'Verdi']} align={['l', 'r']} rows={[
+      ['Skatt på alminnelig inntekt', '22 % (18,5 % i tiltakssonen)'],
+      ['Personfradrag', formatMoney(P.personfradrag)],
+      ['Minstefradrag lønn', `46 %, maks ${formatMoney(P.minstefradrag.max)}`],
+      ...T.map((t, i) => [`Trinnskatt trinn ${i + 1} fra ${formatMoney(t.from)}`, formatPercent(t.rate, 1)]),
+      ['Trygdeavgift lønn', formatPercent(P.trygdeavgift.wage, 1)],
+      ['Frikortgrense', formatMoney(P.frikort_limit)],
+      ['Grunnbeløpet (G) fra 1. mai 2026', formatMoney(P.grunnbelop.from_2026_05_01)],
+    ]} />
+    <p>Alle satsene er samlet med forklaring på siden om <a href={route('satser', lang)}>skattesatser {YEAR}</a>.</p>
+
+    <h2 id="eksempler">Lønn etter skatt for ulike lønninger</h2>
+    <ContentTable headers={['Lønn', 'Alminnelig inntekt', 'Trygdeavgift', 'Trinnskatt', 'Netto per år', 'Vanlig måned']} align={['r', 'r', 'r', 'r', 'r', 'r']} rows={rows} />
+    <p>Nettolønnen øker langsommere enn bruttolønnen fordi trinnskatten tar en stadig større del. Det største hoppet i marginalskatten skjer ved {formatMoney(T[2].from)}, der trinn 3 starter og marginalskatten går fra {formatPercent(compute({ gross: 700000 }).annual.marginal)} til {formatPercent(compute({ gross: 750000 }).annual.marginal)}. Trinnskatten på {formatMoney(1500000)} er {formatMoney(trinnskatt(1500000))}, mer enn trygdeavgiften.</p>
+
+    <h2 id="maned">Fra årslønn til utbetaling hver måned</h2>
+    <p>De fleste har tabellkort, og da trekker arbeidsgiveren skatt etter en tabell som fordeler årsskatten over 10,5 måneder. I juni trekkes det ingen skatt, fordi feriepengene utbetales da, og i desember trekkes halv skatt. For {formatMoney(g)} i lønn betyr det et trekk på rundt {formatMoney(e.tabell.normalMonthTax)} i en vanlig måned og {formatMoney(e.tabell.decemberTax)} i desember. Med prosentkort trekkes derimot samme prosent, omtrent {formatPercent(a.effective)}, av alt som utbetales. Kalkulatoren for <a href={route('etterSkatt', lang)}>lønn etter skatt</a> viser utbetalingene måned for måned, og guiden om <a href={route('halvSkatt', lang)}>skattefri juni og halv skatt</a> forklarer hvorfor.</p>
+
+    <h2 id="feriepenger">Feriepenger</h2>
+    <p>Feriepengene er lønnen for ferien og opptjenes året før. Etter ferieloven er satsen minst 10,2 %, og 12 % for dem som har fem ukers ferie gjennom avtale. Av {formatMoney(g)} blir feriepengene {formatMoney(feriepenger({ basis: g }).total)} med 10,2 %. For en fast ansatt trekkes lønnen for feriedagene samtidig, så feriepengene erstatter lønnen i ferien. For en timelønnet er feriepengene den eneste inntekten i ferien. <a href={route('feriepenger', lang)}>Feriepengekalkulatoren</a> regner ut beløpet, også tillegget for arbeidstakere over 60 år.</p>
+
+    <h2 id="arbeidsgiver">Hva lønnen koster arbeidsgiveren</h2>
+    <p>Bruttolønnen er ikke det hele. Arbeidsgiveren betaler arbeidsgiveravgift, 14,1 % i sone 1, og minst 2 % i obligatorisk tjenestepensjon. En ansatt med {formatMoney(g)} i lønn koster derfor {formatMoney(employerCost({ gross: g }).total)} i året i sone 1, og {formatMoney(employerCost({ gross: g, zone: '5' }).total)} i Finnmark og Nord-Troms, der arbeidsgiveravgiften er null. Av det arbeidsgiveren betaler, får du {formatPercent(a.net / employerCost({ gross: g }).total)} som nettolønn. <a href={route('kostnad', lang)}>Kalkulatoren for kostnad per ansatt</a> og siden om <a href={route('aga', lang)}>arbeidsgiveravgift</a> viser tallene for alle soner.</p>
+
+    <AdSlot slot="home-2" />
+
+    <h2 id="eksempler-lonn">Eksempler etter lønn</h2>
+    <p>Hver side nedenfor tar utgangspunkt i én lønn og forklarer det som betyr mest på det nivået: trinnene i trinnskatten, BSU, rentefradrag, feriepenger, overtid, gjennomsnittslønnen, taket på 6 G og 12 G.</p>
+    <ul class="columns-2 sm:columns-3" data-chrome>
+      {ANNUAL.map((x) => <li><a href={route(`y-${x}`, lang)}>{annualLabel(x)}</a></li>)}
+      {HOURLY.map((x) => <li><a href={route(`h-${x}`, lang)}>{hourlyLabel(x)}</a></li>)}
+    </ul>
+
+    <h2 id="tips">Seks måter å få riktig skatt på</h2>
+    <ol>
+      <li><strong>Sjekk skattekortet i januar.</strong> Skattekortet bygger ofte på fjoråret. Ny jobb, lønnsøkning eller nytt lån gir feil trekk hvis kortet ikke endres.</li>
+      <li><strong>Legg inn renteutgiftene.</strong> Hver krone i renter gir 22 øre lavere skatt. Med renter på skattekortet får du effekten hver måned.</li>
+      <li><strong>Spar i BSU hvis du er under 34.</strong> 10 % av inntil {formatMoney(P.bsu.max_year)} går rett til fratrekk i skatten, inntil {formatMoney(P.bsu.max_year * P.bsu.rate)} i året.</li>
+      <li><strong>Husk reisefradraget.</strong> Lang reisevei til jobben gir fradrag over {formatMoney(P.reisefradrag.threshold)}, men det er ikke forhåndsutfylt i skattemeldingen.</li>
+      <li><strong>Vær obs på frikortgrensen.</strong> Passerer du {formatMoney(P.frikort_limit)} med frikort, trekkes 50 % av resten til du har fått nytt skattekort.</li>
+      <li><strong>Kontroller skattemeldingen.</strong> Den er forhåndsutfylt, men fradrag som reisefradrag og gaver kan mangle. Fristen er normalt 30. april.</li>
+    </ol>
+
+    <h2 id="nar">Når kalkulatoren og skatteoppgjøret avviker</h2>
+    <p>Kalkulatoren regner på lønn og de fradragene du legger inn. Skatteoppgjøret tar med alt: renteinntekter og gevinster, utbytte, utleie, formue, gaver og reisefradrag. Har du hatt permisjon, byttet jobb eller fått sluttpakke, vil også trekket gjennom året ha vært annerledes. Er avviket stort, er det lurt å endre skattekortet for neste år, slik at du slipper restskatt. Kalkulatoren tar ikke med skattefradraget for pensjonister, reglene for pendlere og sjøfolk eller skatt for personer som bare har vært bosatt i Norge deler av året. <a href={route('method', lang)}>Metodesiden</a> beskriver alle regler og testene som kontrollerer dem.</p>
+
+    <h2 id="naering">Selvstendig næringsdrivende</h2>
+    <p>Har du enkeltpersonforetak, trekkes det ikke skatt av det du tar ut. Du betaler forskuddsskatt i fire terminer, og hele overskuddet regnes som personinntekt i trinnskatten, med trygdeavgift på {formatPercent(P.trygdeavgift.business, 1)} i stedet for 7,6 %. Det gis ikke minstefradrag, men alle kostnader i virksomheten trekkes fra. <a href={route('forskudd', lang)}>Kalkulatoren for forskuddsskatt</a> og guiden om <a href={route('selvstendig', lang)}>skatt for næringsdrivende</a> viser forskjellene fra lønn.</p>
+
+    <h2 id="formue">Formue</h2>
+    <p>Formuesskatten kommer i tillegg til skatten på inntekt, men bare for dem som har nettoformue over {formatMoney(P.formue.bunnfradrag)}, eller det dobbelte for ektefeller. Primærboligen verdsettes til 25 % av markedsverdien opp til 10 millioner, så mange boligeiere har lite eller ingen formuesskatt. <a href={route('formue', lang)}>Formuesskattkalkulatoren</a> regner ut beløpet.</p>
+    <Sources lang={lang} />
+  </section>
+</PageLayout>

@@ -1,83 +1,44 @@
 ---
-import CalculatorLayout from '../layouts/CalculatorLayout.astro';
-import LonnsKalkulator from '../components/calculators/LonnsKalkulator';
+// Racine : redirige vers la langue par défaut. Page noindex, mais elle doit rester
+// lisible et navigable sans JS — un visiteur d'une autre langue du site doit pouvoir
+// atteindre sa version depuis ici.
+import { DEFAULT_LOCALE, LOCALES, route } from '../i18n/routes';
+import { SITE_NAMES, SITE_URL } from '../data/site-config';
 
-const personSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Radif Partners",
-  "jobTitle": "Personal Finance Expert",
-  "url": "https://lonnetterskatt.no/om-oss/"
+const target = route('home', DEFAULT_LOCALE);
+const title = SITE_NAMES[DEFAULT_LOCALE];
+const languageName = (loc: string) => {
+  const name = new Intl.DisplayNames([loc], { type: 'language' }).of(loc) ?? loc;
+  return name.charAt(0).toUpperCase() + name.slice(1);
 };
-
-const faqs = [
-  {
-    question: 'Hvordan beregnes skatt på lønn i Norge i 2026?',
-    answer: 'Skatt på lønn i Norge består av tre hovedkomponenter: <strong>trinnskatt</strong> (progressiv skatt fra 1,7% til 17,6%), <strong>trygdeavgift</strong> (7,9% på personinntekt over 69 650 kr), og <strong>fellesskatt</strong> (22% på alminnelig inntekt etter fradrag). Du får minstefradrag (46% av inntekt, maks 114 950 kr) og personfradrag (70 000 kr) som reduserer grunnlaget for fellesskatt. Kilde: Skatteetaten.',
-  },
-  {
-    question: 'Hva er forskjellen mellom bruttolønn og nettolønn?',
-    answer: 'Bruttolønn er din lønn før skatt, det vil si det beløpet som står i arbeidskontrakten din. Nettolønn er det du faktisk får utbetalt etter at skatt er trukket. I Norge trekkes trinnskatt, trygdeavgift og fellesskatt fra bruttolønnen. For en typisk norsk lønn på 550 000 kr er nettolønnen omtrent 430 000–440 000 kr, avhengig av fradrag og kommune.',
-  },
-  {
-    question: 'Hva er trinnskatt og hvordan fungerer den?',
-    answer: 'Trinnskatt er en progressiv skatt som beregnes direkte på personinntekt (bruttolønn) uten fradrag. Den har fem trinn i 2026: Trinn 1 (1,7%) på 217 400–306 050 kr, Trinn 2 (4,0%) på 306 050–697 150 kr, Trinn 3 (13,6%) på 697 150–942 400 kr, Trinn 4 (16,6%) på 942 400–1 410 750 kr, og Trinn 5 (17,6%) over 1 410 750 kr. Du betaler kun den høyere satsen på inntekt over grensen for hvert trinn.',
-  },
-  {
-    question: 'Hva er trygdeavgift?',
-    answer: 'Trygdeavgift er en avgift alle yrkesaktive i Norge betaler til folketrygden (NAV). Satsen for lønnsmottakere er 7,9% i 2026, beregnet på brutto personinntekt. Inntekt under 69 650 kr er fritatt. Trygdeavgiften finansierer blant annet sykepenger, foreldrepenger, dagpenger, alderspensjon og uføretrygd.',
-  },
-  {
-    question: 'Hva er minstefradrag og personfradrag?',
-    answer: 'Minstefradrag er et standardfradrag alle lønnsmottakere får automatisk. I 2026 er det 46% av bruttoinntekt, minimum 4 000 kr og maksimum 114 950 kr. Personfradrag (tidligere kalt klassefradrag) er 70 000 kr for klasse 1 i 2026. Begge fradragene reduserer din alminnelige inntekt, som er grunnlaget for 22% fellesskatt.',
-  },
-  {
-    question: 'Hvor nøyaktig er denne lønnskalkulatoren?',
-    answer: 'Kalkulatoren bruker de offisielle skattesatsene fra Skatteetaten for 2026 og gir en god indikasjon på din skatt. Den dekker trinnskatt, trygdeavgift, fellesskatt, minstefradrag og personfradrag. Merk at individuelle forhold som fagforeningskontingent, BSU-fradrag, renteutgifter, eller spesielle skatteordninger kan påvirke din faktiske skatt. For en fullstendig beregning anbefaler vi Skatteetatens egne verktøy eller en skatterådgiver.',
-  },
-  {
-    question: 'Er feriepenger inkludert i beregningen?',
-    answer: 'Nei, denne kalkulatoren beregner skatt på ordinær årslønn. Feriepenger (12% av feriepengegrunnlaget, eller 14,3% for arbeidstakere over 60 år) beskattes på samme måte som vanlig lønn, men utbetales normalt i juni. Feriepengene kommer i tillegg til de 11 månedslønningene du mottar resten av året. Du kan legge til feriepengene i bruttolønnen for å se total skattebelastning.',
-  },
-];
+const links = LOCALES.map((loc) => ({
+  href: route('home', loc),
+  label: `${SITE_NAMES[loc] ?? title} (${languageName(loc)})`,
+}));
 ---
-
-<CalculatorLayout
-  slug="/"
-  title="Lønnskalkulator"
-  metaTitle="Lønnskalkulator 2026 | Beregn lønn etter skatt i Norge"
-  metaDescription="Gratis norsk lønnskalkulator for 2026. Beregn nettolønn, trinnskatt, trygdeavgift og skatt på lønnsinntekt. Basert på offisielle satser fra Skatteetaten."
-  h1="Lønnskalkulator 2026 | Beregn lønn etter skatt"
-  intro="Beregn din nettolønn etter skatt med vår gratis norske lønnskalkulator. Basert på Skatteetatens offisielle satser for 2026 inkludert trinnskatt, trygdeavgift og fellesskatt."
-  faqs={faqs}
->
-  <LonnsKalkulator client:idle />
-
-  <section class="mt-12 prose prose-gray dark:prose-invert max-w-none" slot="content">
-    <h2>Slik beregnes skatt på lønn i Norge 2026</h2>
-    <p>
-      Norsk inntektsskatt for lønnsmottakere består av flere komponenter som til sammen utgjør din totale skatt. Denne lønnskalkulatoren tar hensyn til alle de viktigste skatteelementene slik at du får et nøyaktig bilde av hva du sitter igjen med etter skatt. Nedenfor forklarer vi hver del av det norske skattesystemet for 2026.
-    </p>
-
-    <h3>Trinnskatt: Progressiv skatt på personinntekt</h3>
-    <p>
-      Trinnskatten er en progressiv skatt som beregnes direkte på personinntekt (brutto lønn) uten fradrag. Den ble innført i 2016 som erstatning for toppskatt og surtaks. I 2026 har trinnskatten fem trinn med satser fra 1,7% til 17,6%. Trinnskatten sikrer at de med høyere inntekt betaler en større andel av inntekten i skatt, noe som er et grunnleggende prinsipp i det norske skattesystemet. Du betaler kun den høyere satsen på den delen av inntekten som overstiger grensen for hvert trinn.
-    </p>
-
-    <h3>Trygdeavgift: Bidrag til folketrygden</h3>
-    <p>
-      Trygdeavgift er en obligatorisk avgift som finansierer folketrygden (NAV). For lønnsmottakere er satsen 7,9% i 2026, beregnet på brutto personinntekt over fribeløpet på 69 650 kr. Trygdeavgiften finansierer velferdsordninger som sykepenger, foreldrepenger, dagpenger ved arbeidsledighet, alderspensjon, uføretrygd og arbeidsavklaringspenger. I tillegg betaler arbeidsgiveren arbeidsgiveravgift som et separat bidrag til folketrygden.
-    </p>
-
-    <h3>Fellesskatt: Skatt på alminnelig inntekt</h3>
-    <p>
-      Fellesskatt (kommuneskatt + fylkesskatt + fellesskatt til staten) beregnes på din alminnelige inntekt med en flat sats på 22% i 2026. Alminnelig inntekt er bruttoinntekt minus fradrag, primært minstefradrag (46% av lønn, maks 114 950 kr) og personfradrag (70 000 kr i klasse 1). Andre fradrag som fagforeningskontingent, renteutgifter, BSU og reiseutgifter kan også redusere alminnelig inntekt. Satsen er lik for alle kommuner i 2026.
-    </p>
-
-    <h3>Hvem bør bruke denne kalkulatoren?</h3>
-    <p>
-      Denne kalkulatoren er nyttig for alle som ønsker å forstå sin skattebelastning i Norge. Enten du er nyansatt som vil vite hva du faktisk får utbetalt, student som jobber ved siden av studiene, eller arbeidstaker som vurderer lønnsforhandling, gir kalkulatoren deg et raskt og pålitelig estimat. Den er også nyttig for arbeidsgivere som vil beregne lønnskostnader, og for utenlandske arbeidstakere som vil forstå det norske skattesystemet.
-    </p>
-  </section>
-  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
-</CalculatorLayout>
+<!doctype html>
+<html lang={DEFAULT_LOCALE}>
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={`${SITE_URL}${target}`} />
+    <meta name="robots" content="noindex" />
+    <!-- La racine doit declarer sa favicon comme n'importe quelle page. Le robot
+         de Google qui collecte les favicons interroge d'abord la racine du
+         domaine et /favicon.ico ; une racine muette le laisse repartir les mains
+         vides, et Search Console affiche une icone generique pendant des
+         semaines. Constate le 2026-09-26 sur huit sites du portefeuille. -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script is:inline define:vars={{ locales: LOCALES, target }}>
+      const nav = (navigator.language || '').slice(0, 2).toLowerCase();
+      const m = locales.find((l) => l === nav);
+      location.replace(m ? `/${m}/` : target);
+    </script>
+  </head>
+  <body>
+    {links.map((l, i) => <>{i > 0 && ' · '}<a href={l.href}>{l.label}</a></>)}
+  </body>
+</html>

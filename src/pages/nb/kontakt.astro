@@ -1,0 +1,25 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LegalIdentity from '../../components/LegalIdentity.astro';
+import { route } from '../../i18n/routes';
+import { breadcrumbSchema, contactPageSchema } from '../../lib/seo';
+import { CONTACT_EMAIL } from '../../data/site-config';
+const lang = 'nb';
+const title = 'Kontakt Lønn etter skatt: meld feil eller still et spørsmål';
+const description = 'Skriv til utgiveren av Lønn etter skatt for å melde en feil i et skattebeløp, spørre om metoden eller få kalkulatoren gratis til ditt eget nettsted i dag.';
+const jsonLd = [contactPageSchema({ name: title, description, path: route('contact', lang), lang }), breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Kontakt', path: route('contact', lang) }])];
+---
+<PageLayout title={title} description={description} lang={lang} jsonLd={jsonLd} breadcrumbs={[{ label: 'Kontakt' }]}>
+  <header class="mb-6"><h1 class="text-3xl font-bold text-navy-900 md:text-4xl">Kontakt</h1></header>
+  <div class="prose prose-slate max-w-none">
+    <p>E-post er eneste kanal: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Vi leser alle henvendelser og svarer som regel innen noen arbeidsdager.</p>
+    <h2>Melde en feil</h2>
+    <p>Oppgi siden, lønnen og fradragene du la inn, tallet som ble vist og tallet du forventet, gjerne med kilden: en linje på lønnsslippen, skattekortet eller skatteoppgjøret. Ikke send fødselsnummer, kontonummer eller hele dokumenter; tallene er nok.</p>
+    <h2>Spørsmål om din egen situasjon</h2>
+    <p>Vi kan ikke gi personlig skatterådgivning. Skatteetaten svarer på spørsmål om skattekort og skatteoppgjør, NAV om ytelser og grunnbeløpet, og Arbeidstilsynet om ferie, overtid og minstelønn.</p>
+    <h2>Kalkulatoren på ditt nettsted</h2>
+    <p>Lønnskalkulatoren kan bygges inn gratis på andre nettsteder. Koden og vilkårene står på <a href={route('widget', lang)}>widget-siden</a>.</p>
+    <h2>Utgiver</h2>
+    <LegalIdentity lang="nb" />
+  </div>
+</PageLayout>

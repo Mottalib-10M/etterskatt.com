@@ -1,0 +1,14 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { route } from '../../i18n/routes';
+import { breadcrumbSchema } from '../../lib/seo';
+const lang = 'nb';
+---
+<PageLayout title="Informasjonskapsler på Lønn etter skatt: hva som lagres" description="Informasjonskapsler på Lønn etter skatt: ingen for kalkulatorene, samtykket ditt hvis statistikk tas i bruk, og hvordan du endrer eller trekker det tilbake." lang={lang} noindex={true} jsonLd={[breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Informasjonskapsler', path: route('cookies', lang) }])]} breadcrumbs={[{ label: 'Informasjonskapsler' }]}>
+  <header class="mb-6"><h1 class="text-3xl font-bold text-navy-900 md:text-4xl">Informasjonskapsler</h1></header>
+  <div class="prose prose-slate max-w-none">
+    <p>Kalkulatorene bruker ingen informasjonskapsler. Tallene du skriver inn, finnes bare i siden, og i adressefeltet når du bruker delingslenken.</p>
+    <p>Ingen informasjonskapsler for statistikk eller annonser settes i dag. Tas besøksstatistikk i bruk, blir du spurt før noe lastes, valget ditt lagres i nettleserens lokale lagring under nøkkelen <code>consent-choice</code>, og en lenke nederst på hver side lar deg endre det. Reglene i ekomloven krever samtykke før slike data lagres.</p>
+    <p>Spørsmål: se <a href={route('privacy', lang)}>personvernerklæringen</a>.</p>
+  </div>
+</PageLayout>

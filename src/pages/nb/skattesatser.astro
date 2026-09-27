@@ -1,0 +1,78 @@
+---
+import Guide from '../../components/Guide.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { compute } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const T = P.trinnskatt; const Tg = P.trygdeavgift; const G = P.grunnbelop.from_2026_05_01;
+const person = [
+  ['Skatt på alminnelig inntekt', formatPercent(P.alminnelig.rate, 1)],
+  ['Skatt på alminnelig inntekt i Finnmark og Nord-Troms', formatPercent(P.alminnelig.rate_tiltakssone, 1)],
+  ['Personfradrag', formatMoney(P.personfradrag)],
+  ['Minstefradrag lønn', `${formatPercent(P.minstefradrag.rate, 0)}, maks ${formatMoney(P.minstefradrag.max)}`],
+  ['Minstefradrag pensjon', `${formatPercent(P.minstefradrag.pension_rate, 0)}, maks ${formatMoney(P.minstefradrag.pension_max)}`],
+  ...T.map((t, i) => [`Trinnskatt trinn ${i + 1}, fra ${formatMoney(t.from)}`, formatPercent(t.rate, 1)]),
+  ['Trygdeavgift lønn', formatPercent(Tg.wage, 1)], ['Trygdeavgift næring', formatPercent(Tg.business, 1)], ['Trygdeavgift pensjon', formatPercent(Tg.pension, 1)],
+  ['Nedre grense trygdeavgift', formatMoney(Tg.lower_limit)], ['Frikortgrense', formatMoney(P.frikort_limit)],
+];
+const ded = [
+  ['Fagforeningskontingent', `maks ${formatMoney(P.fagforening_max)}`], ['BSU', `${formatPercent(P.bsu.rate, 0)} av maks ${formatMoney(P.bsu.max_year)}, samlet ${formatMoney(P.bsu.max_total)}`],
+  ['Reisefradrag', `${formatMoney(P.reisefradrag.rate_per_km, 2)} per km, bunnbeløp ${formatMoney(P.reisefradrag.threshold)}`], ['Foreldrefradrag', `${formatMoney(P.foreldrefradrag.first)} + ${formatMoney(P.foreldrefradrag.each_additional)} per ekstra barn`],
+];
+const other = [
+  ['Formuesskatt, bunnfradrag', formatMoney(P.formue.bunnfradrag)], ['Formuesskatt, sats', `${formatPercent(P.formue.rate, 1)}, ${formatPercent(P.formue.high_rate, 1)} over ${formatMoney(P.formue.high_from)}`],
+  ['Arbeidsgiveravgift sone 1', formatPercent(P.aga.zones['1'], 1)], ['Arbeidsgiveravgift sone 5', formatPercent(P.aga.zones['5'], 1)],
+  ['Grunnbeløpet (G) fra 1. mai 2026', formatMoney(G)], ['Feriepenger', `${formatPercent(P.feriepenger.rate, 1)}, ${formatPercent(P.feriepenger.rate_5_weeks, 0)} ved fem uker`],
+  ['Obligatorisk tjenestepensjon', `minst ${formatPercent(P.otp_min.rate, 0)} opp til 12 G`],
+];
+const marg = [250000, 400000, 750000, 1000000, 1600000].map((g) => [formatMoney(g), formatPercent(compute({ gross: g }).annual.marginal), formatPercent(compute({ gross: g }).annual.effective)]);
+const faqs = [
+  { q: 'Hva er skattesatsene for 2026?', a: `22 % på alminnelig inntekt, trygdeavgift på 7,6 % for lønn og trinnskatt i fem trinn fra 1,7 % til 17,8 %. Personfradraget er ${formatMoney(P.personfradrag)} og minstefradraget 46 % av lønnen, maks ${formatMoney(P.minstefradrag.max)}. Satsene er vedtatt av Stortinget i statsbudsjettet for 2026.` },
+  { q: 'Hva endret seg fra 2025 til 2026?', a: `Personfradraget økte fra ${formatMoney(P.personfradrag_2025)} til ${formatMoney(P.personfradrag)}, minstefradraget fikk høyere tak, trygdeavgiften på lønn gikk ned fra 7,7 til 7,6 %, og innslagspunktene i trinnskatten ble justert opp. For de fleste lønnstakere gir endringene litt lavere skatt enn i 2025 for samme lønn.` },
+  { q: 'Hva er den høyeste skattesatsen i Norge?', a: `Den høyeste marginalskatten på lønn er ${formatPercent(compute({ gross: 1600000 }).annual.marginal)}: 22 % på alminnelig inntekt, 7,6 % trygdeavgift og 17,8 % i trinn 5 av trinnskatten, som gjelder inntekt over ${formatMoney(T[4].from)}. Gjennomsnittsskatten er alltid lavere, fordi de lavere trinnene og fradragene gjelder for resten av inntekten.` },
+  { q: 'Hvor finner jeg de offisielle satsene?', a: 'Skatteetaten publiserer alle satser og beløpsgrenser for inntektsåret, og regjeringen publiserer skatteopplegget i statsbudsjettet. Satsene på dette nettstedet er hentet fra Skatteetatens forskuddsutskriving for 2026 og de enkelte satssidene, med dato for når de ble kontrollert. Lenkene står i kildelisten på hver side.' },
+  { q: 'Er satsene de samme for alle kommuner?', a: 'Ja, med ett unntak. Skatten på alminnelig inntekt fordeles mellom stat, fylke og kommune, men satsen er den samme i hele landet, 22 %, bortsett fra Finnmark og Nord-Troms med 18,5 %. Trinnskatten og trygdeavgiften er like overalt. Arbeidsgiveravgiften varierer derimot med sonen virksomheten ligger i.' },
+];
+---
+<Guide id="satser" title="Skattesatser 2026: alle satser for lønn, fradrag og formue" h1="Skattesatser 2026: den komplette oversikten"
+  description="Alle skattesatser for 2026 på ett sted: alminnelig inntekt, trinnskatt, trygdeavgift, personfradrag, minstefradrag, fradrag, formuesskatt og arbeidsgiveravgift."
+  intro="Her er alle satsene og beløpsgrensene som brukes i kalkulatorene, samlet for inntektsåret 2026."
+  resume={`For inntektsåret 2026 betaler lønnstakere i Norge skatt etter tre hovedsatser. Alminnelig inntekt, altså inntekt etter fradrag, beskattes med ${formatPercent(P.alminnelig.rate, 0)}, eller ${formatPercent(P.alminnelig.rate_tiltakssone, 1)} i Finnmark og Nord-Troms. Trygdeavgiften er ${formatPercent(Tg.wage, 1)} av bruttolønnen. Trinnskatten har fem trinn med satser fra 1,7 % over ${formatMoney(T[0].from)} til 17,8 % over ${formatMoney(T[4].from)}. De viktigste fradragene er personfradraget på ${formatMoney(P.personfradrag)} og minstefradraget på 46 % av lønnen, inntil ${formatMoney(P.minstefradrag.max)}. Frikortgrensen er ${formatMoney(P.frikort_limit)}. Formuesskatten er ${formatPercent(P.formue.rate, 1)} av nettoformue over ${formatMoney(P.formue.bunnfradrag)}. Arbeidsgiveravgiften er fra 0 til 14,1 % etter sone. Sammenlignet med 2025 er personfradraget økt, trygdeavgiften senket og innslagspunktene i trinnskatten hevet, slik at samme lønn gir litt lavere skatt. Alle tallene er hentet fra Skatteetaten og kontrollert på datoen som står øverst.`}
+  faqs={faqs} related={['skatt', 'trinnskatt', 'trygdeavgift', 'fradrag', 'formue', 'aga']} sources={[SRC.forskudd_2026, SRC.trinnskatt, SRC.trygdeavgift, SRC.formue, SRC.aga]}>
+  <h2>Skatt på personinntekt og alminnelig inntekt</h2>
+  <ContentTable headers={['Sats eller beløp', '2026']} align={['l', 'r']} rows={person} />
+  <p>Trinnskatten beregnes av personinntekten, det vil si bruttolønn, pensjon eller næringsinntekt. Skatten på alminnelig inntekt beregnes etter fradrag. Trygdeavgiften beregnes av personinntekten, med opptrapping over nedre grense.</p>
+
+  <h2>Fradrag</h2>
+  <ContentTable headers={['Fradrag', '2026']} align={['l', 'l']} rows={ded} />
+  <p>Fradragene er beskrevet nærmere i <a href={route('fradrag', lang)}>guiden om fradrag</a>. Renter på gjeld kommer i tillegg og trekkes fra fullt ut.</p>
+
+  <h2>Formue, arbeidsgiver og folketrygd</h2>
+  <ContentTable headers={['Sats eller beløp', '2026']} align={['l', 'r']} rows={other} />
+
+  <h2>Marginalskatt og gjennomsnittsskatt</h2>
+  <ContentTable headers={['Lønn', 'Marginalskatt', 'Gjennomsnittsskatt']} align={['r', 'r', 'r']} rows={marg} />
+  <p>Marginalskatten er skatten på neste krone, og den stiger ved hvert innslagspunkt i trinnskatten. Gjennomsnittsskatten er samlet skatt delt på lønnen, og stiger jevnt.</p>
+
+  <h2>Slik henger satsene sammen</h2>
+  <p>Skatten på en lønn beregnes i tre deler som legges sammen. Trygdeavgiften og trinnskatten beregnes av bruttolønnen, uten fradrag. Skatten på alminnelig inntekt beregnes etter at minstefradrag, andre fradrag og personfradrag er trukket fra. Det gjør at fradrag bare påvirker én av de tre delene, og at de alltid er verdt 22 % av beløpet. <a href={route('skatt', lang)}>Skattekalkulatoren</a> viser alle tre delene for din lønn.</p>
+
+  <h2>Satser som ikke gjelder lønn</h2>
+  <p>Aksjeutbytte og gevinster beskattes med 22 % etter at beløpet er oppjustert med en faktor, slik at den effektive satsen er høyere. Selskaper betaler 22 % av overskuddet. Merverdiavgiften er {formatPercent(P.mva.rate, 0)} som hovedregel. Disse satsene er ikke med i kalkulatorene, som gjelder lønn, næringsinntekt og formue.</p>
+
+  <h2>Når satsene endres</h2>
+  <p>Regjeringen legger fram forslag til skattesatser for neste år i statsbudsjettet i oktober, og Stortinget vedtar dem i desember. Skatteetaten publiserer deretter satsene og lager skattekort. Grunnbeløpet i folketrygden justeres fra 1. mai hvert år. Nettstedet oppdateres når nye satser er vedtatt.</p>
+  <h2>Satser i Finnmark og Nord-Troms</h2>
+  <p>I tiltakssonen, som omfatter Finnmark og sju kommuner i Nord-Troms, er satsen på alminnelig inntekt {formatPercent(P.alminnelig.rate_tiltakssone, 1)} i stedet for 22 %, og arbeidsgiveravgiften er null. Trinnskatten og trygdeavgiften er de samme som i resten av landet. For en lønn på {formatMoney(600000)} gir den lavere satsen {formatMoney(compute({ gross: 600000 }).annual.skattAlminnelig - compute({ gross: 600000, tiltakssone: true }).annual.skattAlminnelig)} lavere skatt i året. I tillegg har tiltakssonen andre ordninger, som nedskriving av studielån og fritak for elavgift, som ikke er skatt på inntekt.</p>
+
+  <h2>Satser for unge og eldre</h2>
+  <p>Lønn til personer under 17 år og over 69 år har trygdeavgift på {formatPercent(Tg.reduced_age, 1)} i stedet for {formatPercent(Tg.wage, 1)}. Pensjon har samme lave sats. Pensjonister har i tillegg et lavere minstefradrag, {formatPercent(P.minstefradrag.pension_rate, 0)} med tak på {formatMoney(P.minstefradrag.pension_max)}, og et eget skattefradrag for pensjonsinntekt. Unge under 34 år kan få BSU-fradrag. Utenom dette er satsene de samme uansett alder.</p>
+
+  <h2>Satser for næringsdrivende</h2>
+  <p>Selvstendig næringsdrivende betaler de samme satsene for alminnelig inntekt og trinnskatt, men trygdeavgift på {formatPercent(Tg.business, 1)} og ingen minstefradrag. Skatten betales som forskuddsskatt i fire terminer. <a href={route('forskudd', lang)}>Kalkulatoren for forskuddsskatt</a> bruker disse satsene.</p>
+  <h2>Satser brukt i kalkulatorene</h2>
+  <p>Alle kalkulatorene på nettstedet henter satsene fra den samme parameterfilen. Når satsene endres, oppdateres alle sider samtidig, og datoen for siste kontroll står øverst og nederst på hver side. Se <a href={route('method', lang)}>metodesiden</a> for testene og begrensningene.</p>
+</Guide>

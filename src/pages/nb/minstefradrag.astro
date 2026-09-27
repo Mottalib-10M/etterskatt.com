@@ -1,0 +1,56 @@
+---
+import Guide from '../../components/Guide.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { minstefradrag } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney } from '../../lib/format';
+const lang = 'nb';
+const M = P.minstefradrag;
+const cap = Math.round(M.max / M.rate);
+const rows = [50000, 100000, 150000, cap, 300000, 600000].map((g) => [formatMoney(g), formatMoney(minstefradrag(g)), formatMoney(minstefradrag(g) * P.alminnelig.rate)]);
+const faqs = [
+  { q: 'Hva er minstefradraget i 2026?', a: `46 % av lønnsinntekten, men ikke mer enn ${formatMoney(M.max)}. Taket nås ved en lønn på rundt ${formatMoney(cap)}, så de fleste i fulltidsjobb får maksimalt fradrag. For pensjon er satsen 40 % med et tak på ${formatMoney(M.pension_max)}. Fradraget gis automatisk og trenger ikke dokumentasjon.` },
+  { q: 'Kan jeg velge faktiske kostnader i stedet for minstefradrag?', a: 'Ja, hvis de faktiske kostnadene til inntektens ervervelse er høyere enn minstefradraget. Det er sjelden for lønnstakere, fordi de fleste kostnader dekkes av arbeidsgiveren eller ikke er fradragsberettiget. Reisefradrag, fagforeningskontingent og foreldrefradrag gis i tillegg til minstefradraget og påvirker ikke valget.' },
+  { q: 'Får jeg minstefradrag både for lønn og pensjon?', a: `Har du både lønn og pensjon, beregnes minstefradraget for hver inntekt, men samlet fradrag kan ikke overstige taket for lønn, ${formatMoney(M.max)}. Pensjonister som jobber ved siden av pensjonen, får derfor ikke dobbelt fradrag. Fradraget beregnes automatisk i skatteoppgjøret.` },
+  { q: 'Påvirker minstefradraget trinnskatten?', a: 'Nei. Minstefradraget reduserer den alminnelige inntekten og dermed skatten på 22 %, men trinnskatt og trygdeavgift beregnes av bruttolønnen. For en lønn over taket er minstefradraget verdt det samme i kroner for alle, uansett hvor høy lønnen er. Det samme gjelder personfradraget.' },
+  { q: 'Får jeg minstefradrag hvis jeg bare jobber noen måneder?', a: 'Ja, fullt ut, så lenge du er bosatt i Norge hele året. Minstefradraget beregnes av samlet lønn for året, 46 % opp til taket, uansett hvor mange måneder du har jobbet. For personer som flytter til eller fra Norge i løpet av året, reduseres taket forholdsmessig.' },
+];
+---
+<Guide id="minstefradrag" title="Minstefradrag 2026: 46 % og maks 95 700 kr for lønn" h1="Minstefradrag 2026: standardfradraget alle lønnstakere får"
+  description="Minstefradraget er 46 % av lønnen i 2026, maks 95 700 kr, og 40 % av pensjon, maks 75 400 kr. Se hva det er verdt, når taket nås, og når det lønner seg."
+  intro="Minstefradraget erstatter fradrag for kostnader til jobben. Det gis automatisk og er, sammen med personfradraget, det viktigste fradraget for de fleste."
+  resume={`Minstefradraget er et standardfradrag som alle med lønn eller pensjon får automatisk, i stedet for å dokumentere faktiske kostnader ved arbeidet. For 2026 er det 46 % av lønnsinntekten, med et tak på ${formatMoney(M.max)}, opp fra ${formatMoney(M.max_2025)} i 2025. Taket nås ved en lønn på rundt ${formatMoney(cap)}, så de fleste i full stilling får maksimalt fradrag. Fradraget trekkes fra i alminnelig inntekt og er verdt 22 % i lavere skatt, altså inntil ${formatMoney(M.max * P.alminnelig.rate)} i 2026. For pensjon er satsen 40 % med et tak på ${formatMoney(M.pension_max)}. Minstefradraget påvirker ikke trygdeavgiften eller trinnskatten, som beregnes av bruttolønnen. Har du både lønn og pensjon, kan det samlede fradraget ikke overstige taket for lønn. Er de faktiske kostnadene dine høyere, kan du kreve dem i stedet, men det er sjelden lønnsomt for lønnstakere.`}
+  faqs={faqs} related={['personfradrag', 'fradrag', 'skatt', 'frikort', 'satser', 'home']} sources={[SRC.forskudd_2026, SRC.alminnelig, SRC.skattekort]}>
+  <h2>Minstefradrag etter lønn</h2>
+  <ContentTable headers={['Lønn', 'Minstefradrag', 'Verdi i skatt (22 %)']} align={['r', 'r', 'r']} rows={rows} />
+  <p>Under taket øker fradraget med 46 øre for hver krone i lønn. Over taket er fradraget fast, og hver ny krone i lønn øker den alminnelige inntekten fullt ut.</p>
+
+  <h2>Hvorfor minstefradraget påvirker marginalskatten</h2>
+  <p>For lave lønninger gjør minstefradraget at marginalskatten på alminnelig inntekt er lavere enn 22 %. Når lønnen øker med 1 000 kr under taket, øker den alminnelige inntekten med bare 540 kr, og skatten med 22 % av det, 119 kr. Over taket øker skatten med 220 kr. Derfor stiger marginalskatten merkbart rundt {formatMoney(cap)}, i tillegg til at trinnskatten allerede har startet. For en student med deltidsjobb er denne effekten en av grunnene til at de første inntektene er nesten skattefrie.</p>
+
+  <h2>Minstefradrag og faktiske kostnader</h2>
+  <p>Loven lar deg velge det høyeste av minstefradraget og de faktiske kostnadene til inntektens ervervelse. For de aller fleste er minstefradraget høyest. Faktiske kostnader kan være aktuelt for noen yrker med store egne utgifter, for eksempel enkelte selgere på provisjon eller musikere som holder eget utstyr. Da må kostnadene dokumenteres, og minstefradraget faller bort for den inntekten. Reisefradrag, foreldrefradrag, fagforeningskontingent og renter påvirkes ikke av valget; de gis i tillegg.</p>
+
+  <h2>Deltid og flere jobber</h2>
+  <p>Minstefradraget beregnes av samlet lønnsinntekt i året, ikke per arbeidsgiver. Har du to deltidsjobber som til sammen gir {formatMoney(300000)}, får du maksimalt fradrag én gang. Det er en grunn til at to jobber med prosenttrekk kan gi restskatt: hver arbeidsgiver trekker som om den andre ikke fantes. <a href={route('skattekort', lang)}>Skattekort-kalkulatoren</a> viser riktig prosentsats for samlet inntekt.</p>
+
+  <h2>Minstefradrag for pensjon</h2>
+  <p>Pensjonsinntekt får et minstefradrag på 40 %, med et tak på {formatMoney(M.pension_max)} i 2026. Uføretrygd regnes som lønn i denne sammenhengen. Pensjonister har i tillegg et eget skattefradrag for pensjonsinntekt. Kalkulatorene på dette nettstedet gjelder lønnsinntekt og bruker lønnssatsen.</p>
+
+  <h2>Minstefradraget i skattemeldingen</h2>
+  <p>Du trenger ikke gjøre noe for å få minstefradraget. Skatteetaten beregner det automatisk ut fra inntektene som arbeidsgiveren og NAV har rapportert. Det står ikke som en egen post du fyller ut, men vises i beregningen av alminnelig inntekt. Sammen med <a href={route('personfradrag', lang)}>personfradraget</a> utgjør det grunnlaget for at lave inntekter beskattes lite.</p>
+  <h2>Et eksempel med lav inntekt</h2>
+  <p>En student med {formatMoney(120000)} i lønn får et minstefradrag på {formatMoney(minstefradrag(120000))}. Den alminnelige inntekten blir {formatMoney(120000 - minstefradrag(120000))}, som er under personfradraget på {formatMoney(P.personfradrag)}. Det blir derfor ingen skatt på alminnelig inntekt, bare trygdeavgift. Uten minstefradraget ville studenten hatt {formatMoney(120000 - P.personfradrag)} over personfradraget og betalt 22 % skatt av det. Det er minstefradraget og personfradraget sammen som gjør de første rundt {formatMoney(Math.round(P.personfradrag / (1 - M.rate)))} av en lønn fri for skatt på alminnelig inntekt.</p>
+
+  <h2>Taket over tid</h2>
+  <p>Taket i minstefradraget justeres i statsbudsjettet. For 2026 økte det fra {formatMoney(M.max_2025)} til {formatMoney(M.max)}. Økningen gir alle med lønn over taket {formatMoney((M.max - M.max_2025) * P.alminnelig.rate)} lavere skatt enn med fjorårets tak. Satsen på 46 % har ligget fast i flere år, mens taket følger omtrent lønnsveksten.</p>
+
+  <h2>Minstefradraget på skattekortet</h2>
+  <p>Skattekortet tar hensyn til minstefradraget automatisk. Trekktabellene er laget ut fra at du har lønn hele året og får fullt minstefradrag. Har du lav inntekt eller jobber bare deler av året, kan tabelltrekket bli for høyt, fordi tabellene antar at minstefradraget fordeles over tolv måneder. Da får du penger tilbake i skatteoppgjøret, eller du kan be om et prosentkort som passer bedre.</p>
+  <h2>Minstefradrag for utenlandske arbeidstakere</h2>
+  <p>Utenlandske arbeidstakere som bor i Norge, får samme minstefradrag som andre lønnstakere. De som er her på korttidsopphold og betaler kildeskatt etter ordningen for utenlandske arbeidstakere, betaler en fast prosentsats uten fradrag, og minstefradraget er da innbakt i satsen. Velger de ordinær skatteberegning i stedet, får de minstefradraget beregnet på vanlig måte, men redusert forholdsmessig hvis de bare har jobbet i Norge deler av året. Reglene for kildeskatt er ikke med i kalkulatorene på dette nettstedet.</p>
+  <p>Minstefradraget gjelder både for fast lønn, timelønn, sykepenger og foreldrepenger fra NAV, som alle regnes som lønn i denne sammenhengen.</p>
+  <p>Kalkulatorene beregner minstefradraget automatisk ut fra lønnen du legger inn.</p>
+</Guide>

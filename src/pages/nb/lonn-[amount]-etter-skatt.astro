@@ -1,0 +1,19 @@
+---
+import AmountPage from '../../components/AmountPage.astro';
+import { route, ANNUAL } from '../../i18n/routes';
+import { annualLabel } from '../../i18n/nav';
+import { annualAngle } from '../../lib/amount-angles';
+import { compute } from '../../lib/engine/no';
+import { SRC } from '../../lib/sources';
+import { formatMoney } from '../../lib/format';
+export function getStaticPaths() { return ANNUAL.map((a) => ({ params: { amount: String(a) } })); }
+const amount = Number(Astro.params.amount);
+const cases = [['Uten andre fradrag', {}], ['Renter 40 000 kr', { interest: 40000 }], ['Fagforening 8 700 kr', { union: 8700 }], ['Finnmark eller Nord-Troms', { tiltakssone: true }]] as const;
+const rows = cases.map(([l, o]) => { const r = compute({ gross: amount, ...o }); return [l, formatMoney(r.annual.totalTax), formatMoney(r.annual.net), formatMoney(r.annual.net / 12), formatMoney(r.tabell.normalMonthNet)]; });
+const i = ANNUAL.indexOf(amount as (typeof ANNUAL)[number]);
+const near = [ANNUAL[i - 1], ANNUAL[i + 1]].filter(Boolean) as number[];
+---
+<AmountPage id={`y-${amount}`} crumb={annualLabel(amount)} angle={annualAngle(amount)} gross={amount} mode="lonn"
+  table={{ caption: `${formatMoney(amount)} i året med og uten fradrag`, headers: ['Situasjon', 'Skatt per år', 'Netto per år', 'Netto snitt per måned', 'Vanlig måned (tabelltrekk)'], rows }}
+  neighbours={[...near.map((n) => ({ href: route(`y-${n}`, 'nb'), name: annualLabel(n) })), { href: route('etterSkatt', 'nb'), name: 'Lønn etter skatt' }, { href: route('trinnskatt', 'nb'), name: 'Trinnskatt 2026' }]}
+  sources={[SRC.forskudd_2026, SRC.trinnskatt, SRC.trygdeavgift]} />

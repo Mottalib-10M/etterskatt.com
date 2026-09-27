@@ -1,0 +1,32 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { formuesskatt, primaryHomeValue } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const F = P.formue;
+const rows = [2500000, 5000000, 10000000, 25000000].map((w) => [formatMoney(w), formatMoney(formuesskatt({ netWealth: w }).tax), formatMoney(formuesskatt({ netWealth: w, married: true }).tax)]);
+const homes = [4000000, 8000000, 12000000].map((m) => [formatMoney(m), formatMoney(primaryHomeValue(m))]);
+const faqs = [
+  { q: 'Når må jeg betale formuesskatt i 2026?', a: `Når nettoformuen, altså skattemessig verdi av eiendeler minus gjeld, overstiger ${formatMoney(F.bunnfradrag)}. For ektefeller som skattlegges samlet, er grensen ${formatMoney(F.bunnfradrag * 2)}. Satsen er ${formatPercent(F.rate, 1)} over grensen og ${formatPercent(F.high_rate, 1)} på formue over ${formatMoney(F.high_from)}.` },
+  { q: 'Hvordan verdsettes boligen i formuesskatten?', a: `Primærboligen verdsettes til ${formatPercent(F.primary_home_rate, 0)} av beregnet markedsverdi opp til ${formatMoney(F.primary_home_limit)}, og ${formatPercent(F.primary_home_rate_above, 0)} av verdien over. En bolig verdt ${formatMoney(8000000)} får derfor en formuesverdi på ${formatMoney(primaryHomeValue(8000000))}. Gjelden trekkes fra fullt ut.` },
+  { q: 'Hvem får formuesskatten?', a: `Den deles mellom kommunen og staten. Kommunen får ${formatPercent(F.kommune_rate, 2)} og staten resten av satsen. Formuesskatten fastsettes i skatteoppgjøret ut fra formuen per 31. desember i inntektsåret, og betales sammen med eventuell restskatt eller som en del av forskuddstrekket. Satsen er den samme i alle kommuner.` },
+];
+---
+<ToolPage id="formue" title="Formuesskatt 2026: kalkulator med bunnfradrag og satser" h1="Formuesskatt 2026: hvor mye skal du betale?"
+  description="Beregn formuesskatt for 2026: 1,0 % over bunnfradraget på 1,9 millioner, 1,1 % over 21,5 millioner, dobbel grense for ektefeller. Med verdsetting av bolig."
+  intro="Skriv inn nettoformuen etter skattemessige verdier og velg om dere er gift. Kalkulatoren viser formuesskatten for 2026."
+  mode="formue" initialGross={4000000} faqs={faqs} related={['satser', 'fradrag', 'skatt', 'selvstendig', 'home', 'trinnskatt']}
+  sources={[SRC.formue, SRC.forskudd_2026, SRC.alminnelig]}>
+  <p>Formuesskatten beregnes av nettoformuen per 31. desember, etter skattemessige verdier og etter fradrag for gjeld. For 2026 er bunnfradraget {formatMoney(F.bunnfradrag)} for en enslig. Formue over grensen beskattes med {formatPercent(F.rate, 1)}, og den delen som overstiger {formatMoney(F.high_from)}, med {formatPercent(F.high_rate, 1)}. En nettoformue på {formatMoney(4000000)} gir dermed {formatMoney(formuesskatt({ netWealth: 4000000 }).tax)} i formuesskatt. For ektefeller dobles grensene, og samme formue gir ingen skatt. Mange som tror de har stor formue, betaler lite, fordi primærboligen verdsettes lavt: {formatPercent(F.primary_home_rate, 0)} av markedsverdien opp til {formatMoney(F.primary_home_limit)}. En bolig til {formatMoney(8000000)} teller bare {formatMoney(primaryHomeValue(8000000))}, mens boliglånet trekkes fra med hele beløpet. Aksjer, fond og næringseiendom har egne verdsettingsregler som Skatteetaten beskriver. Kalkulatoren tar derfor utgangspunkt i nettoformuen etter at verdsettingen er gjort, slik den står i skattemeldingen.</p>
+  <h2>Formuesskatt for enslige og ektefeller</h2>
+  <ContentTable headers={['Nettoformue', 'Enslig', 'Ektefeller samlet']} align={['r', 'r', 'r']} rows={rows} />
+  <h2>Formuesverdi av primærbolig</h2>
+  <ContentTable headers={['Markedsverdi', 'Formuesverdi']} align={['r', 'r']} rows={homes} />
+  <p>Over {formatMoney(F.primary_home_limit)} øker formuesverdien med {formatPercent(F.primary_home_rate_above, 0)} av hver krone, så dyre boliger gir betydelig høyere formuesverdi.</p>
+  <h2>Formue og inntekt</h2>
+  <p>Formuesskatten er uavhengig av inntekten, men betales vanligvis av den. Den kommer med skatteoppgjøret og legges ofte inn i skattekortet, slik at den trekkes gradvis. Renteutgifter på gjeld gir fradrag i inntektsskatten, se <a href={route('fradrag', lang)}>guiden om fradrag</a>, og samtidig lavere formue. <a href={route('satser', lang)}>Skattesatsene for 2026</a> samler alle satsene på én side.</p>
+</ToolPage>

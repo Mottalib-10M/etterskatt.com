@@ -1,0 +1,30 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { employerCost } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const G = P.grunnbelop.from_2026_05_01;
+const e = employerCost({ gross: 620000 }); const e5 = employerCost({ gross: 620000, otpRate: 0.05 });
+const rows = [400000, 620000, 850000, 1200000].map((g) => { const a = employerCost({ gross: g }); const b = employerCost({ gross: g, feriepengerOnTop: true }); return [formatMoney(g), formatMoney(a.otp), formatMoney(a.aga), formatMoney(a.total), formatMoney(b.total)]; });
+const faqs = [
+  { q: 'Hva koster en ansatt utover lønnen?', a: `Minst arbeidsgiveravgift, 14,1 % i sone 1, og obligatorisk tjenestepensjon, minst 2 % av lønnen opp til 12 G. For en lønn på ${formatMoney(620000)} blir det ${formatMoney(e.total - 620000)} i året. I tillegg kommer yrkesskadeforsikring, som er lovpålagt, og ofte forsikringer, utstyr, kontorplass og opplæring.` },
+  { q: 'Er feriepengene en ekstra kostnad?', a: 'For en fast ansatt med månedslønn er feriepengene i hovedsak finansiert av at lønnen for feriedagene trekkes, så merkostnaden er liten. For en timelønnet kommer feriepengene på 10,2 % i tillegg til timene som betales, og arbeidsgiveravgift beregnes også av dem. Kalkulatoren lar deg velge.' },
+  { q: 'Betaler arbeidsgiveren avgift av pensjonsinnskudd?', a: 'Ja. Arbeidsgiverens innskudd til tjenestepensjon er avgiftspliktig, og arbeidsgiveravgiften beregnes av lønn, feriepenger, pensjonsinnskudd og skattepliktige naturalytelser. Innskuddet er ikke skattepliktig for den ansatte når det betales inn, men pensjonen beskattes når den utbetales. Satsen følger sonen der virksomheten er registrert.' },
+];
+---
+<ToolPage id="kostnad" title="Kostnad ansatt 2026: lønn, arbeidsgiveravgift og OTP" h1="Kostnad for en ansatt: hva lønnen koster arbeidsgiveren"
+  description="Beregn hva en ansatt koster i 2026: bruttolønn, arbeidsgiveravgift etter sone, obligatorisk tjenestepensjon og feriepenger for timelønnede. Satser for 2026."
+  intro="En ansatt koster mer enn lønnen. Velg sone og pensjonssats, og se samlet kostnad per år og per måned for 2026."
+  mode="kostnad" initialGross={620000} faqs={faqs} related={['aga', 'netto', 'lonn', 'feriepenger', 'selvstendig', 'home']}
+  sources={[SRC.aga, SRC.otp, SRC.grunnbelop]}>
+  <p>En arbeidsgiver i sone 1 som betaler {formatMoney(620000)} i lønn, har i 2026 en samlet kostnad på minst {formatMoney(e.total)}. To poster kommer i tillegg til lønnen. Den første er obligatorisk tjenestepensjon: loven krever at arbeidsgiveren sparer minst 2 % av lønnen fra første krone og opp til 12 G, som er {formatMoney(12 * G)} med grunnbeløpet fra 1. mai 2026. Her blir det {formatMoney(e.otp)}. Mange bedrifter sparer mer, og med 5 % blir innskuddet {formatMoney(e5.otp)}. Den andre er arbeidsgiveravgiften, {formatPercent(e.agaRate, 1)} i sone 1, som beregnes av både lønn og pensjonsinnskudd: {formatMoney(e.aga)}. Samlet er kostnaden {formatPercent(e.total / 620000 - 1, 1)} høyere enn lønnen. Er arbeidstakeren timelønnet, kommer feriepengene på 10,2 % på toppen, og arbeidsgiveravgiften beregnes også av dem. I sone 5, Finnmark og Nord-Troms, er arbeidsgiveravgiften null, og samme ansatt koster {formatMoney(employerCost({ gross: 620000, zone: '5' }).total)}.</p>
+  <h2>Kostnad per ansatt i sone 1</h2>
+  <ContentTable headers={['Lønn', 'OTP 2 %', 'Arbeidsgiveravgift', 'Kostnad, månedslønnet', 'Kostnad, timelønnet']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Pensjonsinnskuddet slutter å øke ved {formatMoney(12 * G)} fordi minimumskravet stopper ved 12 G.</p>
+  <h2>Andre kostnader</h2>
+  <p>Kalkulatoren tar med de lovpålagte kostnadene som følger lønnen direkte. En arbeidsgiver må også ha yrkesskadeforsikring, betale sykepenger de første 16 dagene av et sykefravær og dekke eventuelle tillegg i tariffavtalen. Utstyr, lokaler, opplæring og administrasjon kommer i tillegg. Vurderer du å ansette eller å ta oppdrag som selvstendig, viser <a href={route('selvstendig', lang)}>guiden om skatt for næringsdrivende</a> hva du selv må dekke. <a href={route('aga', lang)}>Arbeidsgiveravgiften</a> er forklart sone for sone på en egen side.</p>
+</ToolPage>

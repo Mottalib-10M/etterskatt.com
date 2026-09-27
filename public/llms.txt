@@ -1,0 +1,16 @@
+# Lønn etter skatt
+
+> Gratis lønns- og skattekalkulatorer for Norge for inntektsåret 2026, utgitt av Radif Partners. Alle satser er hentet fra Skatteetaten, NAV, SSB og Arbeidstilsynet, med kilde og dato på hver side. Beregningene skjer i nettleseren.
+
+## Kalkulatorer
+- [Lønnskalkulator 2026](https://lonnetterskatt.no/nb/): lønn etter skatt, trinnskatt, trygdeavgift, tabelltrekk per måned.
+- [Skattekalkulator](https://lonnetterskatt.no/nb/skattekalkulator/), [skattekort](https://lonnetterskatt.no/nb/skattekort/), [netto til brutto](https://lonnetterskatt.no/nb/netto-lonn/).
+- [Feriepenger](https://lonnetterskatt.no/nb/feriepenger-kalkulator/), [overtid](https://lonnetterskatt.no/nb/overtid-kalkulator/), [timelønn](https://lonnetterskatt.no/nb/timelonn-kalkulator/).
+- [Kostnad per ansatt](https://lonnetterskatt.no/nb/kostnad-ansatt/), [arbeidsgiveravgift](https://lonnetterskatt.no/nb/arbeidsgiveravgift/), [forskuddsskatt](https://lonnetterskatt.no/nb/forskuddsskatt/), [formuesskatt](https://lonnetterskatt.no/nb/formuesskatt/).
+
+## Data
+- Alle skattesatser for 2026: https://lonnetterskatt.no/nb/skattesatser/
+- Trinnskatt 2026: https://lonnetterskatt.no/nb/trinnskatt/
+
+## Metode
+- https://lonnetterskatt.no/nb/metode/

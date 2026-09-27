@@ -1,10 +1,68 @@
-export const SITE_NAME = 'Lønn Etter Skatt';
-export const SITE_URL = 'https://lonnetterskatt.no';
-export const SITE_LOCALE = 'nb-NO';
-export const SITE_LANGUAGE = 'nb';
-export const TAX_YEAR = 2026;
-export const LAST_UPDATED = '2026-07-01';
+/** Configuration centrale du site (générée par new-site.py). */
+export const SITE_URL = "https://lonnetterskatt.no";
+export const SITE_NAMES: Record<string, string> = {"nb": "Lønn etter skatt"};
+export const LANG_TAGS: Record<string, string> = {"nb": "nb-NO"};
+export const OG_LOCALES: Record<string, string> = {"nb": "nb_NO"};
+export const LOCALE_TAG = 'nb-NO';
 export const CURRENCY = 'NOK';
-export const CURRENCY_SYMBOL = 'kr';
+export const YEAR = 2026;
+/** Année de création du site — signal d'ancienneté (RECETTE §8.0). */
+export const SITE_FOUNDED = '2026';
+export const LAST_UPDATED = '2026-09-27';
+export const AUTHOR_NAME = 'Radif Partners';
+export const AUTHOR_ROLE: Record<string, string> = {"nb": "Utgiver av lønnskalkulatorer og praktiske veiledninger · norsk skatt, trygdeavgift og feriepenger"};
+export const AUTHOR_DESC: Record<string, string> = {"nb": "Radif Partners utgir gratis lønnskalkulatorer og praktiske veiledninger. Alle satser på dette nettstedet er hentet fra Skatteetaten, NAV, SSB og Arbeidstilsynet, med kilde og kontrolldato vist på siden."};
+/** Sujets sur lesquels l'editeur est competent (schema.org knowsAbout). Ce sont les
+ *  themes reellement traites par le site, pas une liste de mots-cles : un sujet
+ *  declare ici sans page qui le couvre est une declaration fausse. */
+export const KNOWS_ABOUT: Record<string, string[]> = {"nb": ["Norsk inntektsskatt", "Trinnskatt", "Trygdeavgift", "Skattekort og forskuddstrekk", "Feriepenger", "Arbeidsgiveravgift"]};
+export const CONTACT_EMAIL = "kontakt@lonnetterskatt.no";
+export const THEME_COLOR = '#BA0C2F';
+export const LOGO_SYMBOL = 'kr';
 export const BING_VERIFY_CODE = '';
-export const CLARITY_PROJECT_ID = '';
+export const GOOGLE_VERIFY_CODE = '';
+/** Régime de consentement : 'opt-in' = rien avant l'accord (UE, Suisse) ;
+ *  'notice' = mesure d'audience active avec information préalable et retrait (CA, AU). */
+export const CONSENT_MODE: 'opt-in' | 'notice' = 'opt-in';
+export const GA4_ID = '';
+export const INDEXNOW_KEY = '9c4e2a7f1b6d43e8a5f0c3b7d2e19a64';
+
+/* ------------------------------------------------------------------------- *
+ * IDENTITÉ LÉGALE — À COMPLÉTER AVANT LA MISE EN LIGNE
+ * Ces champs alimentent la mention légale du pays, la politique de confidentialité,
+ * la page contact et le schema Organization. Un champ vide s'affiche en jaune
+ * sur le site. Contrôle : `npm run check:legal`.
+ * ------------------------------------------------------------------------- */
+export interface LegalHosting { name: string; address: string; phone: string; url: string }
+export interface LegalIdentity {
+  entityName: string; legalForm: string; street: string; postalCode: string; city: string;
+  country: string; phone: string; registerLabel: string; registerNumber: string;
+  vatLabel: string; vatNumber: string; jurisdiction: string;
+  supervisoryAuthority: string; supervisoryAuthorityUrl: string; hosting: LegalHosting;
+}
+export const LEGAL: LegalIdentity = {
+  entityName: 'Radif Partners',  // éditeur de tous les sites du portefeuille (RECETTE §8)
+  legalForm: '',  // vide : publication à titre personnel, pas de société
+  street: '49 rue du Ressort',
+  postalCode: '63000',
+  city: 'Clermont-Ferrand',
+  country: "France",
+  phone: '',                 // ligne de contact publiée
+  registerLabel: "SIREN",
+  registerNumber: '',
+  vatLabel: "VAT",
+  vatNumber: '',             // laisser vide si non assujetti
+  jurisdiction: "France",
+  supervisoryAuthority: "Commission nationale de l'informatique et des libertés (CNIL)",
+  supervisoryAuthorityUrl: "https://www.cnil.fr",
+  hosting: { name: 'GitHub, Inc. (GitHub Pages)', address: '88 Colin P Kelly Jr Street, San Francisco, CA 94107, United States', phone: '', url: 'https://pages.github.com' },
+};
+
+/** Champs sans lesquels le site ne doit pas être mis en ligne. */
+export const LEGAL_REQUIRED: Array<keyof LegalIdentity> = ['entityName', 'street', 'postalCode', 'city'];
+
+/** Profils publics de l'auteur (schema.org sameAs). Laisser vide si aucun. */
+export const AUTHOR_SAME_AS: string[] = [];
+
+/** Rythme de revue éditoriale annoncé sur le site, en mois. */
+export const REVIEW_CYCLE_MONTHS = 12;

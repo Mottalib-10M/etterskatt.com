@@ -1,0 +1,51 @@
+---
+import Guide from '../../components/Guide.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { trinnskatt, compute } from '../../lib/engine/no';
+import { P } from '../../lib/tables';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const T = P.trinnskatt;
+const steps = T.map((t, i) => [`Trinn ${i + 1}`, i + 1 < T.length ? `${formatMoney(t.from + 1)} – ${formatMoney(T[i + 1].from)}` : `over ${formatMoney(t.from)}`, formatPercent(t.rate, 1), i + 1 < T.length ? formatMoney(trinnskatt(T[i + 1].from)) : '–']);
+const ex = [250000, 400000, 600000, 800000, 1000000, 1500000, 2000000].map((g) => [formatMoney(g), formatMoney(trinnskatt(g)), formatPercent(trinnskatt(g) / g), formatPercent(compute({ gross: g }).annual.marginal)]);
+const faqs = [
+  { q: 'Hva er trinnskatt?', a: `Trinnskatt er en progressiv skatt på personinntekt, som for lønnstakere er bruttolønnen før fradrag. Den har fem trinn i 2026, fra 1,7 % over ${formatMoney(T[0].from)} til 17,8 % over ${formatMoney(T[4].from)}. Bare den delen av inntekten som ligger innenfor hvert trinn, beskattes med trinnets sats.` },
+  { q: 'Beregnes trinnskatt av inntekt før eller etter fradrag?', a: 'Før fradrag. Trinnskatten beregnes av personinntekten, som er lønn, pensjon og næringsinntekt uten fradrag for renter, minstefradrag eller andre kostnader. Fradrag reduserer bare skatten på alminnelig inntekt. To personer med samme lønn betaler derfor samme trinnskatt, uansett hvor mye gjeld de har.' },
+  { q: 'Er trinnskatten lik i hele landet?', a: 'Ja, fra 2024 er satsene like over hele landet. Tidligere hadde Finnmark og Nord-Troms en lavere sats i trinn 3. Det som fortsatt er annerledes i tiltakssonen, er satsen på alminnelig inntekt, 18,5 % i stedet for 22 %. Arbeidsgiveravgiften er også lavere der.' },
+  { q: 'Hvor mye trinnskatt betaler jeg på 600 000 kr?', a: `${formatMoney(trinnskatt(600000))} i 2026: 1,7 % av de ${formatMoney(T[1].from - T[0].from)} i trinn 1 og 4,0 % av de ${formatMoney(600000 - T[1].from)} som ligger i trinn 2. Det er ${formatPercent(trinnskatt(600000) / 600000)} av lønnen, mens skatten på neste krone i trinnskatt er 4,0 %.` },
+  { q: 'Når justeres innslagspunktene i trinnskatten?', a: 'Hvert år i statsbudsjettet, som legges fram i oktober og vedtas i desember. Innslagspunktene justeres vanligvis med forventet lønnsvekst, slik at en vanlig lønnsøkning ikke skyver deg inn i et høyere trinn. Endringer i satsene er politiske valg og varierer mer fra år til år.' },
+];
+---
+<Guide id="trinnskatt" title="Trinnskatt 2026: satser, innslagspunkter og eksempler" h1="Trinnskatt 2026: fem trinn og hva de betyr for lønnen din"
+  description="Trinnskatt 2026 med alle fem trinn fra 226 100 kr, satser fra 1,7 til 17,8 %, eksempler på lønn og hvordan trinnene påvirker marginalskatten din i år."
+  intro="Trinnskatten er den delen av skatten som gjør at høyere lønn beskattes hardere. Her er satsene for 2026, forklart med tall."
+  resume={`Trinnskatt er en skatt på personinntekt, som for lønnstakere er bruttolønnen før fradrag. I 2026 har den fem trinn. Inntekt opp til ${formatMoney(T[0].from)} er fri for trinnskatt. Mellom ${formatMoney(T[0].from)} og ${formatMoney(T[1].from)} er satsen 1,7 %, opp til ${formatMoney(T[2].from)} 4,0 %, opp til ${formatMoney(T[3].from)} 13,7 %, opp til ${formatMoney(T[4].from)} 16,8 %, og over det 17,8 %. Hver sats gjelder bare den delen av inntekten som ligger i trinnet, så en lønnsøkning som krysser et innslagspunkt, gir aldri lavere nettolønn. En lønn på ${formatMoney(600000)} gir ${formatMoney(trinnskatt(600000))} i trinnskatt, og en lønn på ${formatMoney(1000000)} gir ${formatMoney(trinnskatt(1000000))}. Trinnskatten kommer i tillegg til 22 % skatt på alminnelig inntekt og 7,6 % trygdeavgift, og det er den som gjør at marginalskatten stiger fra ${formatPercent(compute({ gross: 300000 }).annual.marginal)} ved lave lønninger til ${formatPercent(compute({ gross: 1600000 }).annual.marginal)} ved de høyeste.`}
+  faqs={faqs} related={['skatt', 'satser', 'trygdeavgift', 'overtid', 'home', 'personfradrag']} sources={[SRC.trinnskatt, SRC.forskudd_2026, SRC.alminnelig]}>
+  <h2>Trinnene for 2026</h2>
+  <ContentTable headers={['Trinn', 'Personinntekt', 'Sats', 'Trinnskatt ved øvre grense']} align={['l', 'l', 'r', 'r']} rows={steps} />
+  <p>Kolonnen til høyre viser samlet trinnskatt når inntekten er nøyaktig på den øvre grensen for trinnet. For en inntekt midt i et trinn legger du til trinnets sats ganget med det som ligger over forrige grense.</p>
+
+  <h2>Slik regner du ut trinnskatten</h2>
+  <p>Ta en lønn på {formatMoney(800000)}. De første {formatMoney(T[0].from)} gir ingen trinnskatt. Neste bit, opp til {formatMoney(T[1].from)}, er {formatMoney(T[1].from - T[0].from)} og gir 1,7 %, altså {formatMoney((T[1].from - T[0].from) * T[0].rate)}. Fra {formatMoney(T[1].from)} til {formatMoney(T[2].from)} er det {formatMoney(T[2].from - T[1].from)} med 4,0 %, som blir {formatMoney((T[2].from - T[1].from) * T[1].rate)}. Resten, {formatMoney(800000 - T[2].from)}, ligger i trinn 3 og gir 13,7 %, {formatMoney((800000 - T[2].from) * T[2].rate)}. Summen er {formatMoney(trinnskatt(800000))}. Metoden er den samme for alle inntekter: del inntekten opp i trinnene, gang hver bit med sin sats og legg sammen.</p>
+
+  <h2>Trinnskatt og marginalskatt</h2>
+  <ContentTable headers={['Lønn', 'Trinnskatt', 'Andel av lønnen', 'Marginalskatt i alt']} align={['r', 'r', 'r', 'r']} rows={ex} />
+  <p>Andelen av lønnen som går til trinnskatt, øker jevnt, men marginalskatten gjør hopp ved hvert innslagspunkt. Det største hoppet kommer ved {formatMoney(T[2].from)}, der satsen går fra 4,0 til 13,7 %, og marginalskatten fra {formatPercent(compute({ gross: 700000 }).annual.marginal)} til {formatPercent(compute({ gross: 750000 }).annual.marginal)}. Det er her mange merker at en lønnsøkning gir mindre enn ventet.</p>
+
+  <h2>Personinntekt: hva regnes med</h2>
+  <p>Grunnlaget for trinnskatt er personinntekten. For en lønnstaker er det lønn, overtid, bonus, feriepenger og skattepliktige naturalytelser som firmabil og fri telefon. Pensjon er også personinntekt, og for næringsdrivende er overskuddet i enkeltpersonforetaket det. Kapitalinntekter som renter, utbytte og gevinst ved salg av aksjer er ikke personinntekt og gir ingen trinnskatt. Fradrag i alminnelig inntekt, som renter på boliglån, minstefradrag og fagforeningskontingent, påvirker ikke trinnskatten. Det er grunnen til at to personer med samme lønn, men ulik gjeld, betaler like mye trinnskatt og ulik skatt på alminnelig inntekt.</p>
+
+  <h2>Hvorfor Norge har trinnskatt</h2>
+  <p>Trinnskatten erstattet toppskatten i 2016 og gjør skattesystemet progressivt. Skatten på alminnelig inntekt har en flat sats, 22 %, og trygdeavgiften er også flat. Uten trinnskatten ville alle med lønn over personfradraget betale omtrent samme andel på den neste kronen. Innslagspunktene justeres hvert år i statsbudsjettet, vanligvis med forventet lønnsvekst, slik at en vanlig lønnsøkning ikke automatisk skyver folk opp i et høyere trinn. I 2026 ble innslagspunktet for trinn 1 økt til {formatMoney(T[0].from)}.</p>
+
+  <h2>Trinnskatt for pensjonister og næringsdrivende</h2>
+  <p>Pensjonister betaler trinnskatt etter de samme trinnene som lønnstakere, men lavere trygdeavgift. Næringsdrivende betaler trinnskatt av hele overskuddet, som gjør at en god inntekt i enkeltpersonforetak raskt havner i trinn 3. Har du både lønn og næringsinntekt, legges de sammen før trinnskatten beregnes. <a href={route('forskudd', lang)}>Kalkulatoren for forskuddsskatt</a> viser skatten for et enkeltpersonforetak, og <a href={route('skatt', lang)}>skattekalkulatoren</a> gjør det samme for lønn.</p>
+
+  <h2>Hva trinnskatten betyr for overtid og bonus</h2>
+  <p>Fordi trinnskatten er progressiv, er det marginalskatten som avgjør hvor mye du får igjen av overtid, bonus og tillegg. En lønnstaker med {formatMoney(700000)} som tar {formatMoney(40000)} i overtid, passerer {formatMoney(T[2].from)}, og en del av overtiden beskattes med 13,7 % i trinnskatt. <a href={route('overtid', lang)}>Overtidskalkulatoren</a> tar hensyn til dette ved å regne skatten med og uten overtiden.</p>
+  <h2>Trinnskatt i skattekortet</h2>
+  <p>Trekktabellene tar hensyn til trinnskatten, og tabellnummeret på skattekortet velges ut fra samlet forventet inntekt. Får du en stor lønnsøkning eller bonus som løfter inntekten inn i et nytt trinn, bør du endre skattekortet, ellers kan trekket bli for lavt.</p>
+  <p>Innslagspunktene gjelder personinntekt for hele året. Tjener du det meste i noen få måneder, kan trekket i de månedene bli høyt, men den endelige trinnskatten avhenger bare av årsinntekten.</p>
+</Guide>

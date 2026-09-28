@@ -1,5 +1,5 @@
 /** Configuration centrale du site (générée par new-site.py). */
-export const SITE_URL = "https://lonnetterskatt.no";
+export const SITE_URL = "https://etterskatt.com";
 export const SITE_NAMES: Record<string, string> = {"nb": "Lønn etter skatt"};
 export const LANG_TAGS: Record<string, string> = {"nb": "nb-NO"};
 export const OG_LOCALES: Record<string, string> = {"nb": "nb_NO"};
@@ -16,7 +16,7 @@ export const AUTHOR_DESC: Record<string, string> = {"nb": "Radif Partners utgir 
  *  themes reellement traites par le site, pas une liste de mots-cles : un sujet
  *  declare ici sans page qui le couvre est une declaration fausse. */
 export const KNOWS_ABOUT: Record<string, string[]> = {"nb": ["Norsk inntektsskatt", "Trinnskatt", "Trygdeavgift", "Skattekort og forskuddstrekk", "Feriepenger", "Arbeidsgiveravgift"]};
-export const CONTACT_EMAIL = "kontakt@lonnetterskatt.no";
+export const CONTACT_EMAIL = "kontakt@etterskatt.com";
 export const THEME_COLOR = '#BA0C2F';
 export const LOGO_SYMBOL = 'kr';
 export const BING_VERIFY_CODE = '';

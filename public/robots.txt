@@ -3,4 +3,4 @@ Allow: /
 
 Disallow: /*?*
 
-Sitemap: https://lonnetterskatt.no/sitemap-index.xml
+Sitemap: https://etterskatt.com/sitemap-index.xml

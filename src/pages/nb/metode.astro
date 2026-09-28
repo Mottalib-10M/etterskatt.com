@@ -9,7 +9,7 @@ import { SRC } from '../../lib/sources';
 import { formatMoney, formatPercent } from '../../lib/format';
 const lang = 'nb';
 const title = 'Skatteberegningen: metode, kilder, tester og begrensninger';
-const description = 'Slik beregner lonnetterskatt.no skatt, trygdeavgift, trinnskatt, tabelltrekk, feriepenger og arbeidsgiverkostnad for 2026: kilder, tester og begrensninger.';
+const description = 'Slik beregner etterskatt.com skatt, trygdeavgift, trinnskatt, tabelltrekk, feriepenger og arbeidsgiverkostnad for 2026: kilder, tester og begrensninger.';
 const checks = [
   ['Minstefradrag, 600 000 kr', formatMoney(minstefradrag(600000)), 'Taket 95 700 kr'],
   ['Skatt alminnelig inntekt, 600 000 kr', formatMoney(ex(600000).annual.skattAlminnelig), '(504 300 − 114 540) × 22 %'],

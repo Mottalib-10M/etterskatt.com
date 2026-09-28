@@ -1,4 +1,5 @@
 ---
+import MiniSim from '../../components/calc/MiniSim';
 import Guide from '../../components/Guide.astro';
 import ContentTable from '../../components/ContentTable.astro';
 import { route } from '../../i18n/routes';
@@ -23,6 +24,7 @@ const faqs = [
   intro="Personfradraget er grunnen til at de første kronene du tjener, ikke gir skatt på alminnelig inntekt. For 2026 er det økt betydelig."
   resume={`Personfradraget er et bunnfradrag i alminnelig inntekt som alle skattytere får automatisk. For 2026 er det ${formatMoney(PF)}, en økning fra ${formatMoney(P.personfradrag_2025)} i 2025. Det trekkes fra etter minstefradraget og andre fradrag, og bare det som ligger over personfradraget, beskattes med 22 %. For alle som har alminnelig inntekt over fradraget, er det verdt ${formatMoney(PF * 0.22)} i lavere skatt, uansett inntekt. Sammen med minstefradraget på 46 % gjør personfradraget at en lønn på opptil rundt ${formatMoney(zero)} ikke gir skatt på alminnelig inntekt i det hele tatt. Personfradraget påvirker ikke trygdeavgiften eller trinnskatten. Den gamle skatteklasse 2, som ga dobbelt fradrag til enkelte, er avviklet, så alle har i dag samme personfradrag. Personer som bare har vært bosatt i Norge deler av året, får fradraget redusert forholdsmessig.`}
   faqs={faqs} related={['minstefradrag', 'fradrag', 'frikort', 'skatt', 'satser', 'home']} sources={[SRC.forskudd_2026, SRC.alminnelig, SRC.frikort]}>
+  <MiniSim client:visible kind="personfradrag" lang={lang} href={route('skatt', lang)} />
   <h2>Slik virker personfradraget</h2>
   <p>Beregningen av skatt på alminnelig inntekt går i tre steg. Først trekkes minstefradraget fra lønnen. Deretter trekkes andre fradrag fra, som renter og fagforeningskontingent. Til slutt trekkes personfradraget fra, og det som er igjen, beskattes med 22 %. Tabellen viser stegene for ulike lønninger uten andre fradrag.</p>
   <ContentTable headers={['Lønn', 'Minstefradrag', 'Alminnelig inntekt', 'Over personfradraget', 'Skatt 22 %']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />

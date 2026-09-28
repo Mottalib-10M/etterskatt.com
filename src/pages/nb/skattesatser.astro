@@ -1,4 +1,5 @@
 ---
+import MiniSim from '../../components/calc/MiniSim';
 import Guide from '../../components/Guide.astro';
 import ContentTable from '../../components/ContentTable.astro';
 import { route } from '../../i18n/routes';
@@ -42,6 +43,7 @@ const faqs = [
   intro="Her er alle satsene og beløpsgrensene som brukes i kalkulatorene, samlet for inntektsåret 2026."
   resume={`For inntektsåret 2026 betaler lønnstakere i Norge skatt etter tre hovedsatser. Alminnelig inntekt, altså inntekt etter fradrag, beskattes med ${formatPercent(P.alminnelig.rate, 0)}, eller ${formatPercent(P.alminnelig.rate_tiltakssone, 1)} i Finnmark og Nord-Troms. Trygdeavgiften er ${formatPercent(Tg.wage, 1)} av bruttolønnen. Trinnskatten har fem trinn med satser fra 1,7 % over ${formatMoney(T[0].from)} til 17,8 % over ${formatMoney(T[4].from)}. De viktigste fradragene er personfradraget på ${formatMoney(P.personfradrag)} og minstefradraget på 46 % av lønnen, inntil ${formatMoney(P.minstefradrag.max)}. Frikortgrensen er ${formatMoney(P.frikort_limit)}. Formuesskatten er ${formatPercent(P.formue.rate, 1)} av nettoformue over ${formatMoney(P.formue.bunnfradrag)}. Arbeidsgiveravgiften er fra 0 til 14,1 % etter sone. Sammenlignet med 2025 er personfradraget økt, trygdeavgiften senket og innslagspunktene i trinnskatten hevet, slik at samme lønn gir litt lavere skatt. Alle tallene er hentet fra Skatteetaten og kontrollert på datoen som står øverst.`}
   faqs={faqs} related={['skatt', 'trinnskatt', 'trygdeavgift', 'fradrag', 'formue', 'aga']} sources={[SRC.forskudd_2026, SRC.trinnskatt, SRC.trygdeavgift, SRC.formue, SRC.aga]}>
+  <MiniSim client:visible kind="skattesatser" lang={lang} href={route('skatt', lang)} />
   <h2>Skatt på personinntekt og alminnelig inntekt</h2>
   <ContentTable headers={['Sats eller beløp', '2026']} align={['l', 'r']} rows={person} />
   <p>Trinnskatten beregnes av personinntekten, det vil si bruttolønn, pensjon eller næringsinntekt. Skatten på alminnelig inntekt beregnes etter fradrag. Trygdeavgiften beregnes av personinntekten, med opptrapping over nedre grense.</p>

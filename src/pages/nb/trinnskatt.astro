@@ -1,4 +1,5 @@
 ---
+import MiniSim from '../../components/calc/MiniSim';
 import Guide from '../../components/Guide.astro';
 import ContentTable from '../../components/ContentTable.astro';
 import { route } from '../../i18n/routes';
@@ -23,6 +24,7 @@ const faqs = [
   intro="Trinnskatten er den delen av skatten som gjør at høyere lønn beskattes hardere. Her er satsene for 2026, forklart med tall."
   resume={`Trinnskatt er en skatt på personinntekt, som for lønnstakere er bruttolønnen før fradrag. I 2026 har den fem trinn. Inntekt opp til ${formatMoney(T[0].from)} er fri for trinnskatt. Mellom ${formatMoney(T[0].from)} og ${formatMoney(T[1].from)} er satsen 1,7 %, opp til ${formatMoney(T[2].from)} 4,0 %, opp til ${formatMoney(T[3].from)} 13,7 %, opp til ${formatMoney(T[4].from)} 16,8 %, og over det 17,8 %. Hver sats gjelder bare den delen av inntekten som ligger i trinnet, så en lønnsøkning som krysser et innslagspunkt, gir aldri lavere nettolønn. En lønn på ${formatMoney(600000)} gir ${formatMoney(trinnskatt(600000))} i trinnskatt, og en lønn på ${formatMoney(1000000)} gir ${formatMoney(trinnskatt(1000000))}. Trinnskatten kommer i tillegg til 22 % skatt på alminnelig inntekt og 7,6 % trygdeavgift, og det er den som gjør at marginalskatten stiger fra ${formatPercent(compute({ gross: 300000 }).annual.marginal)} ved lave lønninger til ${formatPercent(compute({ gross: 1600000 }).annual.marginal)} ved de høyeste.`}
   faqs={faqs} related={['skatt', 'satser', 'trygdeavgift', 'overtid', 'home', 'personfradrag']} sources={[SRC.trinnskatt, SRC.forskudd_2026, SRC.alminnelig]}>
+  <MiniSim client:visible kind="trinnskatt" lang={lang} href={route('skatt', lang)} />
   <h2>Trinnene for 2026</h2>
   <ContentTable headers={['Trinn', 'Personinntekt', 'Sats', 'Trinnskatt ved øvre grense']} align={['l', 'l', 'r', 'r']} rows={steps} />
   <p>Kolonnen til høyre viser samlet trinnskatt når inntekten er nøyaktig på den øvre grensen for trinnet. For en inntekt midt i et trinn legger du til trinnets sats ganget med det som ligger over forrige grense.</p>

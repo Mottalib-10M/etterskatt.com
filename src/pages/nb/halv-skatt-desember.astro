@@ -1,4 +1,5 @@
 ---
+import MiniSim from '../../components/calc/MiniSim';
 import Guide from '../../components/Guide.astro';
 import ContentTable from '../../components/ContentTable.astro';
 import { route } from '../../i18n/routes';
@@ -22,6 +23,7 @@ const faqs = [
   intro="To måneder i året gir mer på konto enn de andre. Det er ikke en skattelette, men en måte å fordele skatten på."
   resume={`Med tabellkort trekkes skatten for året over 10,5 måneder. I juni trekkes det ingen skatt, fordi feriepengene utbetales da, og i desember trekkes bare halv skatt, eller i november hos enkelte arbeidsgivere. De andre ti månedene trekkes det fullt. Skatten som ikke trekkes i juni og desember, er bygget inn i trekktabellene og fordelt på resten av året. For en lønn på ${formatMoney(g)} er skatten for 2026 ${formatMoney(r.annual.totalTax)}. Delt jevnt på tolv måneder ville det vært ${formatMoney(r.annual.totalTax / 12)} i måneden, men med tabelltrekk trekkes rundt ${formatMoney(T.normalMonthTax)} i en vanlig måned og ${formatMoney(T.decemberTax)} i desember. Samlet over året blir trekket det samme. Ordningen gjelder bare tabellkort. Med prosentkort trekkes samme prosentsats av alle utbetalinger, også feriepenger. Skatteoppgjøret våren etter viser om trekket har vært riktig, uansett hvilken ordning du har.`}
   faqs={faqs} related={['etterSkatt', 'feriepenger', 'skattekort', 'lonn', 'skatt', 'home']} sources={[SRC.feriepenger_trekk, SRC.skattekort, SRC.ferieloven]}>
+  <MiniSim client:visible kind="desember" lang={lang} href={route('etterSkatt', lang)} />
   <h2>Månedlig trekk sammenlignet med jevn fordeling</h2>
   <ContentTable headers={['Lønn', 'Jevnt over 12 måneder', 'Vanlig måned', 'Desember', 'Ekstra i vanlig måned']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
   <p>Den siste kolonnen viser hvor mye mer som trekkes i en vanlig måned for å finansiere skattefri juni og halv skatt i desember.</p>

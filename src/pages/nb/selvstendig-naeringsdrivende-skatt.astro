@@ -1,4 +1,5 @@
 ---
+import MiniSim from '../../components/calc/MiniSim';
 import Guide from '../../components/Guide.astro';
 import ContentTable from '../../components/ContentTable.astro';
 import { route } from '../../i18n/routes';
@@ -22,6 +23,7 @@ const faqs = [
   intro="Som selvstendig næringsdrivende betaler du skatt av overskuddet, ikke av det du tar ut. Her er reglene for 2026 og en sammenligning med lønn."
   resume={`En selvstendig næringsdrivende med enkeltpersonforetak skattlegges personlig for hele overskuddet i virksomheten, uansett hvor mye som tas ut. Overskuddet er inntekter minus kostnader, og for 2026 gir det tre skatter. Skatt på alminnelig inntekt er 22 % etter personfradraget på ${formatMoney(P.personfradrag)}. Trygdeavgiften er ${formatPercent(P.trygdeavgift.business, 1)}, høyere enn de ${formatPercent(P.trygdeavgift.wage, 1)} en lønnstaker betaler. Trinnskatten beregnes av hele overskuddet, som regnes som personinntekt. Det gis ikke minstefradrag. Med ${formatMoney(profit)} i overskudd blir skatten ${formatMoney(s.total)}, mot ${formatMoney(w.totalTax)} for en lønnstaker med samme lønn. Skatten betales som forskuddsskatt i fire terminer, 15. mars, 15. mai, 15. september og 15. november. I tillegg må næringsdrivende selv sørge for pensjon, feriepenger og forsikring, som en arbeidsgiver ellers dekker, og registrere seg for merverdiavgift når omsetningen passerer grensen.`}
   faqs={faqs} related={['forskudd', 'trygdeavgift', 'trinnskatt', 'kostnad', 'aga', 'fradrag']} sources={[SRC.forskuddsskatt, SRC.trygdeavgift, SRC.forskudd_2026]}>
+  <MiniSim client:visible kind="naering" lang={lang} href={route('forskudd', lang)} />
   <h2>Næringsdrivende og lønnstaker med samme beløp</h2>
   <ContentTable headers={['Beløp', 'Skatt, næringsdrivende', 'Etter skatt', 'Skatt, lønnstaker', 'Etter skatt']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
   <p>Sammenligningen er ikke helt rettferdig. En lønnstaker med {formatMoney(profit)} i lønn koster arbeidsgiveren {formatMoney(employerCost({ gross: profit }).total)} med arbeidsgiveravgift og minimum pensjon, og har i tillegg feriepenger og full sykelønn. Som næringsdrivende må du tjene mer for å stå likt.</p>

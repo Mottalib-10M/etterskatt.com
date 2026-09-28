@@ -1,4 +1,5 @@
 ---
+import MiniSim from '../../components/calc/MiniSim';
 import Guide from '../../components/Guide.astro';
 import ContentTable from '../../components/ContentTable.astro';
 import { route } from '../../i18n/routes';
@@ -25,6 +26,7 @@ const faqs = [
   intro="Gjennomsnittslønnen er et utgangspunkt for lønnsforhandlinger og budsjetter. Her er de siste tallene fra SSB, regnet om til lønn etter skatt for 2026."
   resume={`Ifølge SSB var gjennomsnittlig månedslønn for heltidsekvivalenter ${formatMoney(S.avg_month_nov2025)} i november 2025, en økning på ${formatPercent(S.growth)} fra året før. Omregnet til år tilsvarer det ${formatMoney(g)}. Menn hadde i snitt ${formatMoney(S.avg_month_men)} og kvinner ${formatMoney(S.avg_month_women)}. Med skattereglene for 2026 gir gjennomsnittslønnen ${formatMoney(r.totalTax)} i skatt og ${formatMoney(r.net)} etter skatt i året, eller ${formatMoney(r.net / 12)} i snitt per måned. Gjennomsnittslønnen ligger så vidt over innslagspunktet for trinn 3 i trinnskatten, så marginalskatten er ${formatPercent(r.marginal)}. Tallet omfatter avtalt lønn, uregelmessige tillegg og bonus for alle sektorer, men ikke overtid. Fordi gjennomsnittet trekkes opp av høye lønninger, tjener flertallet mindre enn snittet. For å sammenligne din egen lønn er medianen og statistikken for ditt yrke mer treffende.`}
   faqs={faqs} related={['lonn', 'netto', 'minimumslonn', 'skatt', 'kostnad', 'home']} sources={[SRC.ssb_lonn, SRC.forskudd_2026, SRC.trinnskatt]}>
+  <MiniSim client:visible kind="snitt" lang={lang} href={route('etterSkatt', lang)} />
   <h2>Gjennomsnittslønn og lønn etter skatt</h2>
   <ContentTable headers={['Gruppe', 'Per måned', 'Per år', 'Skatt 2026', 'Netto snitt', 'Vanlig måned']} align={['l', 'r', 'r', 'r', 'r', 'r']} rows={rows} />
   <p>Skatten er beregnet for 2026 med skatteklasse 1 uten andre fradrag. Lønnstallene er fra november 2025, så lønnen i 2026 vil for de fleste være høyere etter årets lønnsoppgjør.</p>

@@ -1,4 +1,5 @@
 ---
+import MiniSim from '../../components/calc/MiniSim';
 import Guide from '../../components/Guide.astro';
 import ContentTable from '../../components/ContentTable.astro';
 import { route } from '../../i18n/routes';
@@ -22,6 +23,7 @@ const faqs = [
   intro="Frikort er skattekortet for dem som tjener lite. Det gjør at det ikke trekkes skatt før grensen er nådd, men det har noen feller."
   resume={`Frikort er et skattekort uten skattetrekk, for personer som ventes å tjene lite i løpet av året. Grensen for 2026 er ${formatMoney(L)}. Så lenge samlet lønn og feriepenger fra alle arbeidsgivere holder seg under grensen, trekkes det ingen skatt. Grensen er satt slik at inntekten under den gir liten eller ingen skatt: minstefradraget og personfradraget gjør at ${formatMoney(L)} i lønn ikke gir skatt på alminnelig inntekt, og trygdeavgiften blir bare ${formatMoney(compute({ gross: L }).annual.trygdeavgift)} på grunn av opptrappingsregelen. Overstiger du grensen, skal arbeidsgiveren trekke 50 % av det som ligger over, til du har fått nytt skattekort. Frikort passer for elever, studenter med deltidsjobb og andre med lav inntekt. Tjener du mer enn grensen, gir et vanlig skattekort med tabelltrekk et mer treffsikkert trekk.`}
   faqs={faqs} related={['skattekort', 'personfradrag', 'minstefradrag', 'trygdeavgift', 'timelonn', 'skatt']} sources={[SRC.frikort, SRC.forskudd_2026, SRC.trygdeavgift]}>
+  <MiniSim client:visible kind="frikort" lang={lang} href={route('skatt', lang)} />
   <h2>Skatt på lave inntekter i 2026</h2>
   <ContentTable headers={['Lønn', 'Skatt alminnelig inntekt', 'Trygdeavgift', 'Samlet skatt']} align={['r', 'r', 'r', 'r']} rows={rows} />
   <p>Tabellen viser skatten som blir fastsatt i skatteoppgjøret. Med frikort trekkes ingenting gjennom året, og det lille som skal betales ved inntekt like over {formatMoney(P.trygdeavgift.lower_limit)}, kommer som restskatt. Beløpet er så lite at det sjelden merkes.</p>

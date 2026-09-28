@@ -1,4 +1,5 @@
 ---
+import MiniSim from '../../components/calc/MiniSim';
 import Guide from '../../components/Guide.astro';
 import ContentTable from '../../components/ContentTable.astro';
 import { route } from '../../i18n/routes';
@@ -30,6 +31,7 @@ const faqs = [
   intro="Fradrag senker skatten, men mindre enn mange tror. Her er fradragene som betyr noe for lønnstakere i 2026, og hva de faktisk er verdt."
   resume={`Et fradrag reduserer den alminnelige inntekten, som beskattes med 22 %, eller 18,5 % i Finnmark og Nord-Troms. Hver krone i fradrag gir derfor 22 øre lavere skatt, ikke en krone. To fradrag får alle lønnstakere automatisk: minstefradraget på 46 % av lønnen, inntil ${formatMoney(P.minstefradrag.max)}, og personfradraget på ${formatMoney(P.personfradrag)}. De viktigste andre fradragene er renter på lån, som trekkes fra fullt ut, fagforeningskontingent inntil ${formatMoney(P.fagforening_max)}, reisefradrag for lang reisevei til jobben, og foreldrefradrag for barnehage og SFO. BSU gir et fradrag direkte i skatten på 10 % av sparingen. For en lønnstaker med ${formatMoney(g)} i lønn, ${formatMoney(45000)} i renter, full fagforeningskontingent og ett barn i barnehage blir skatten ${formatMoney(withAll.totalTax)} i stedet for ${formatMoney(base.totalTax)}, altså ${formatMoney(base.totalTax - withAll.totalTax)} lavere. Fradragene påvirker ikke trinnskatten eller trygdeavgiften.`}
   faqs={faqs} related={['skatt', 'minstefradrag', 'personfradrag', 'skattekort', 'satser', 'formue']} sources={[SRC.forskudd_2026, SRC.fagforening, SRC.bsu]}>
+  <MiniSim client:visible kind="fradrag" lang={lang} href={route('skatt', lang)} />
   <h2>Fradragene i 2026</h2>
   <ContentTable headers={['Fradrag', 'Beløp', 'I skattemeldingen']} align={['l', 'l', 'l']} rows={list} />
 

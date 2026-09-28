@@ -1,4 +1,5 @@
 ---
+import MiniSim from '../../components/calc/MiniSim';
 import Guide from '../../components/Guide.astro';
 import ContentTable from '../../components/ContentTable.astro';
 import { route } from '../../i18n/routes';
@@ -23,6 +24,7 @@ const faqs = [
   intro="Minstefradraget erstatter fradrag for kostnader til jobben. Det gis automatisk og er, sammen med personfradraget, det viktigste fradraget for de fleste."
   resume={`Minstefradraget er et standardfradrag som alle med lønn eller pensjon får automatisk, i stedet for å dokumentere faktiske kostnader ved arbeidet. For 2026 er det 46 % av lønnsinntekten, med et tak på ${formatMoney(M.max)}, opp fra ${formatMoney(M.max_2025)} i 2025. Taket nås ved en lønn på rundt ${formatMoney(cap)}, så de fleste i full stilling får maksimalt fradrag. Fradraget trekkes fra i alminnelig inntekt og er verdt 22 % i lavere skatt, altså inntil ${formatMoney(M.max * P.alminnelig.rate)} i 2026. For pensjon er satsen 40 % med et tak på ${formatMoney(M.pension_max)}. Minstefradraget påvirker ikke trygdeavgiften eller trinnskatten, som beregnes av bruttolønnen. Har du både lønn og pensjon, kan det samlede fradraget ikke overstige taket for lønn. Er de faktiske kostnadene dine høyere, kan du kreve dem i stedet, men det er sjelden lønnsomt for lønnstakere.`}
   faqs={faqs} related={['personfradrag', 'fradrag', 'skatt', 'frikort', 'satser', 'home']} sources={[SRC.forskudd_2026, SRC.alminnelig, SRC.skattekort]}>
+  <MiniSim client:visible kind="minstefradrag" lang={lang} href={route('skatt', lang)} />
   <h2>Minstefradrag etter lønn</h2>
   <ContentTable headers={['Lønn', 'Minstefradrag', 'Verdi i skatt (22 %)']} align={['r', 'r', 'r']} rows={rows} />
   <p>Under taket øker fradraget med 46 øre for hver krone i lønn. Over taket er fradraget fast, og hver ny krone i lønn øker den alminnelige inntekten fullt ut.</p>

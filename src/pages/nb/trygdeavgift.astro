@@ -1,4 +1,5 @@
 ---
+import MiniSim from '../../components/calc/MiniSim';
 import Guide from '../../components/Guide.astro';
 import ContentTable from '../../components/ContentTable.astro';
 import { route } from '../../i18n/routes';
@@ -24,6 +25,7 @@ const faqs = [
   intro="Trygdeavgiften er den delen av skatten som går til folketrygden. Den er enkel for de fleste, men har egne regler for lave inntekter, pensjon og næring."
   resume={`Trygdeavgift er en avgift til folketrygden som alle med personinntekt i Norge betaler. For lønn til personer mellom 17 og 69 år er satsen ${formatPercent(Tg.wage, 1)} i 2026, redusert fra 7,7 % året før. Næringsinntekt har ${formatPercent(Tg.business, 1)}, og pensjon, samt lønn til personer under 17 og over 69 år, har ${formatPercent(Tg.pension, 1)}. Avgiften beregnes av bruttoinntekten, uten fradrag for renter eller minstefradrag. Inntekt under ${formatMoney(Tg.lower_limit)} gir ingen trygdeavgift, og over grensen kan avgiften aldri utgjøre mer enn ${formatPercent(Tg.phase_in, 0)} av det som ligger over grensen. Det gjør at personer med lav inntekt, som studenter med deltidsjobb, betaler lite. For en vanlig lønn på ${formatMoney(600000)} er trygdeavgiften ${formatMoney(trygdeavgift(600000))} i året. Trygdeavgiften trekkes sammen med den øvrige skatten etter skattekortet, og vises ikke som en egen linje på de fleste lønnsslipper.`}
   faqs={faqs} related={['skatt', 'satser', 'frikort', 'trinnskatt', 'selvstendig', 'aga']} sources={[SRC.trygdeavgift, SRC.forskudd_2026, SRC.frikort]}>
+  <MiniSim client:visible kind="trygdeavgift" lang={lang} href={route('skatt', lang)} />
   <h2>Satser for 2026</h2>
   <ContentTable headers={['Grunnlag', 'Sats eller beløp']} align={['l', 'r']} rows={rates} />
 

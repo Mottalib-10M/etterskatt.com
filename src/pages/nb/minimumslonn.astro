@@ -1,4 +1,5 @@
 ---
+import MiniSim from '../../components/calc/MiniSim';
 import Guide from '../../components/Guide.astro';
 import ContentTable from '../../components/ContentTable.astro';
 import { route } from '../../i18n/routes';
@@ -24,6 +25,7 @@ const faqs = [
   intro="Mange spør etter minstelønnen i Norge. Svaret er at den bare finnes i noen bransjer, gjennom allmenngjorte tariffavtaler."
   resume={`Norge har ingen generell minstelønn fastsatt ved lov. Lønn avtales mellom arbeidsgiver og arbeidstaker eller gjennom tariffavtaler. I noen bransjer der det har vært problemer med lav lønn, særlig for utenlandske arbeidstakere, har Tariffnemnda gjort tariffavtalen allmenngjort. Da gjelder minstelønnen i avtalen for alle som utfører arbeid i bransjen i Norge. Ifølge Arbeidstilsynet er satsene fra ${from} blant annet ${formatMoney(M.bygg_fagarbeider, 2)} i timen for fagarbeidere i bygg, ${formatMoney(M.renhold, 2)} i renhold for voksne og ${formatMoney(M.jordbruk, 2)} for fast ansatte ufaglærte i jordbruk og gartneri. En renholder på minstelønn i full stilling tjener ${formatMoney(hourlyToAnnual(M.renhold))} i året og får ${formatMoney(compute({ gross: hourlyToAnnual(M.renhold) }).annual.net / 12)} i snitt per måned etter skatt. Satsene justeres når tariffavtalene fornyes, og Arbeidstilsynets oversikt er den som gjelder.`}
   faqs={faqs} related={['timelonn', 'snittlonn', 'overtid', 'feriepenger', 'lonn', 'home']} sources={[SRC.minstelonn, SRC.overtid, SRC.ferieloven]}>
+  <MiniSim client:visible kind="timelonn" lang={lang} href={route('timelonn', lang)} />
   <h2>Allmenngjorte minstelønnssatser</h2>
   <ContentTable headers={['Bransje', 'Per time', 'Årslønn, 37,5 t/uke', 'Netto per måned']} align={['l', 'r', 'r', 'r']} rows={rows} />
   <p>Satsene er hentet fra Arbeidstilsynets oversikt og gjelder fra {from}. Årslønnen forutsetter 37,5 timer i uken hele året. Nettolønnen er et snitt over tolv måneder med skatt for 2026, uten feriepenger.</p>

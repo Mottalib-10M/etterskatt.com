@@ -17,6 +17,7 @@ const { id, crumb, angle: A, gross, hourly, mode = 'lonn', table, neighbours, so
 const lang: Locale = 'nb'; const ui = t(lang); const path = route(id, lang);
 const title = fitTitle(A.title); const description = fitDescription(A.description);
 const jsonLd = [webApplicationSchema({ name: A.h1, description, path, lang }), webPageSchema({ name: A.h1, description, path, lang }), faqSchema(A.faqs, lang), breadcrumbSchema([{ name: ui.breadcrumbHome, path: route('home', lang) }, { name: crumb, path }])];
+import { position } from '../lib/position';
 ---
 <PageLayout title={title} description={description} lang={lang} jsonLd={jsonLd} faqs={A.faqs} breadcrumbs={[{ label: crumb }]} related={neighbours.map((n) => ({ ...n, description: '' }))} sources={sources}>
   <header class="mb-6">
@@ -35,6 +36,7 @@ const jsonLd = [webApplicationSchema({ name: A.h1, description, path, lang }), w
     <h2>{table.caption}</h2>
     <ContentTable headers={table.headers} align={table.headers.map((_, i) => (i === 0 ? 'l' : 'r'))} rows={table.rows} />
     <p data-chrome>Tallene er beregnet med Skatteetatens satser for 2026, skatteklasse 1, lønn som eneste inntekt og bare minstefradrag og personfradrag. Kun anslag: skattekortet og skatteoppgjøret gjelder.</p>
+    <p data-chrome>{position(gross)} <a href={route('snittlonn', 'nb')}>Gjennomsnittslønn i Norge</a>.</p>
     <nav data-chrome aria-label="Lønn i nærheten"><p class="text-sm">I nærheten: {neighbours.slice(0, 4).map((n, i) => <>{i > 0 && ' · '}<a href={n.href}>{n.name}</a></>)}</p></nav>
   </section>
 </PageLayout>

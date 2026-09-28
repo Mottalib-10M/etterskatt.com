@@ -8,7 +8,7 @@ export const CURRENCY = 'NOK';
 export const YEAR = 2026;
 /** Année de création du site — signal d'ancienneté (RECETTE §8.0). */
 export const SITE_FOUNDED = '2026';
-export const LAST_UPDATED = '2026-09-27';
+export const LAST_UPDATED = '2026-09-28';
 export const AUTHOR_NAME = 'Radif Partners';
 export const AUTHOR_ROLE: Record<string, string> = {"nb": "Utgiver av lønnskalkulatorer og praktiske veiledninger · norsk skatt, trygdeavgift og feriepenger"};
 export const AUTHOR_DESC: Record<string, string> = {"nb": "Radif Partners utgir gratis lønnskalkulatorer og praktiske veiledninger. Alle satser på dette nettstedet er hentet fra Skatteetaten, NAV, SSB og Arbeidstilsynet, med kilde og kontrolldato vist på siden."};

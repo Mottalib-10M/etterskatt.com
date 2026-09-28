@@ -8,6 +8,7 @@ export const HOURLY = [200, 250, 300, 350, 400, 500] as const;
 export const ROUTES: RouteDef<Locale>[] = [
   { id: 'home', paths: { nb: '/nb/' } },
   { id: 'skatt', paths: { nb: '/nb/skattekalkulator/' } },
+  { id: 'pensjonist', paths: { nb: '/nb/skattekalkulator-pensjonist/' } },
   { id: 'lonn', paths: { nb: '/nb/lonnskalkulator/' } },
   { id: 'etterSkatt', paths: { nb: '/nb/lonn-etter-skatt/' } },
   { id: 'netto', paths: { nb: '/nb/netto-lonn/' } },

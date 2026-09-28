@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { compute, trinnskatt, trygdeavgift, minstefradrag, feriepenger, employerCost, formuesskatt, selfEmployed, grossForNet, overtime, primaryHomeValue } from './no';
+import { compute, trinnskatt, trygdeavgift, minstefradrag, feriepenger, employerCost, formuesskatt, selfEmployed, grossForNet, overtime, primaryHomeValue, pensionTax } from './no';
 
 describe('lønnstaker 2026, skatteklasse 1', () => {
   it('600 000 kr : calcul manuel avec les satser de Forskuddsutskrivingen 2026', () => {
@@ -43,3 +43,28 @@ describe('autres calculs', () => {
   it('næringsdrivende 600 000', () => { const s = selfEmployed({ profit: 600000 }); expect(s.trygdeavgift).toBe(64800); expect(s.total).toBe(184436); });
   it('overtid 40 %', () => { const o = overtime({ gross: 585000, hours: 10 }); expect(o.hourly).toBe(300); expect(o.pay).toBe(4200); });
 });
+
+describe('alderspensjonist 2026', () => {
+  it('ingen skatt på en lav alderspensjon : skattefradraget dekker alt', () => {
+    const r = pensionTax({ pension: 240000 });
+    expect(r.minstefradrag).toBe(75400);
+    expect(r.skattefradrag).toBe(r.skattAlminnelig + r.trinnskatt + r.trygdeavgift);
+    expect(r.totalTax).toBe(0);
+  });
+  it('400 000 kr : fradrag 37 100 − 16,7 % × (400 000 − 284 950)', () => {
+    const r = pensionTax({ pension: 400000 });
+    expect(r.skattefradrag).toBe(17887);
+    expect(r.trygdeavgift).toBe(20400);
+    expect(r.totalTax).toBeCloseTo(46213 + r.trinnskatt + 20400 - 17887, 0);
+  });
+  it('fradraget faller bort over omtrent 620 000 kr', () => {
+    expect(pensionTax({ pension: 650000 }).skattefradrag).toBe(0);
+    expect(pensionTax({ pension: 600000 }).skattefradrag).toBeGreaterThan(0);
+  });
+  it('avkortes forholdsmessig etter uttaksgrad og måneder', () => {
+    const r = pensionTax({ pension: 80000, grad: 0.5, months: 6 });
+    // maks 37 100 × 0,25 = 9 275 ; innslagspunkt 284 950 × 0,25 = 71 237,5
+    expect(r.skattefradrag).toBeLessThanOrEqual(Math.round(9275 - 0.167 * (80000 - 71237.5)));
+  });
+});
+

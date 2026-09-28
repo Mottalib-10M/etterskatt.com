@@ -5,53 +5,270 @@
   "valid_from": "2026-01-01",
   "valid_to": "2026-12-31",
   "sources": {
-    "forskudd_2026": { "url": "https://www.skatteetaten.no/en/rettskilder/type/uttalelser/uttalelser/forskuddsutskrivingen-2026/", "label": { "nb": "Skatteetaten: Forskuddsutskrivingen 2026 (satser og beløpsgrenser)" } },
-    "trinnskatt": { "url": "https://www.skatteetaten.no/en/rates/bracket-tax/", "label": { "nb": "Skatteetaten: Trinnskatt, satser og innslagspunkter" } },
-    "trygdeavgift": { "url": "https://www.skatteetaten.no/en/rates/national-insurance-contributions/", "label": { "nb": "Skatteetaten: Trygdeavgift, satser og nedre grense" } },
-    "alminnelig": { "url": "https://www.skatteetaten.no/en/rates/general-income/", "label": { "nb": "Skatteetaten: Skatt på alminnelig inntekt" } },
-    "aga": { "url": "https://www.skatteetaten.no/satser/arbeidsgiveravgift/", "label": { "nb": "Skatteetaten: Arbeidsgiveravgift, satser per sone" } },
-    "formue": { "url": "https://www.skatteetaten.no/en/rates/wealth-tax/", "label": { "nb": "Skatteetaten: Formuesskatt, satser og bunnfradrag" } },
-    "bsu": { "url": "https://www.skatteetaten.no/en/rates/deduction-for-young-peoples-housing-savings-bsu/", "label": { "nb": "Skatteetaten: Boligsparing for ungdom (BSU)" } },
-    "fagforening": { "url": "https://www.skatteetaten.no/en/person/taxes/get-the-taxes-right/employment-benefits-and-pensions/deduction-for-trade-union-fees/", "label": { "nb": "Skatteetaten: Fradrag for fagforeningskontingent" } },
-    "skattekort": { "url": "https://www.skatteetaten.no/person/skatt/skattekort/", "label": { "nb": "Skatteetaten: Skattekort" } },
-    "feriepenger_trekk": { "url": "https://www.skatteetaten.no/en/press/nyhetsrommet/derfor-trekkes-det-ikke-skatt-av-feriepengene/", "label": { "nb": "Skatteetaten: Derfor trekkes det ikke skatt av feriepengene" } },
-    "frikort": { "url": "https://www.skatteetaten.no/person/skatt/skattekort/frikort/", "label": { "nb": "Skatteetaten: Frikort" } },
-    "forskuddsskatt": { "url": "https://www.skatteetaten.no/person/skatt/skattekort/forskuddsskatt/", "label": { "nb": "Skatteetaten: Forskuddsskatt for personer" } },
-    "ferieloven": { "url": "https://lovdata.no/dokument/NL/lov/1988-04-29-21", "label": { "nb": "Lovdata: Ferieloven" } },
-    "overtid": { "url": "https://www.arbeidstilsynet.no/arbeidstid-og-organisering/arbeidstid/overtid/", "label": { "nb": "Arbeidstilsynet: Overtid" } },
-    "minstelonn": { "url": "https://www.arbeidstilsynet.no/arbeidsforhold/lonn/minstelonn/", "label": { "nb": "Arbeidstilsynet: Minstelønn i allmenngjorte tariffavtaler" } },
-    "otp": { "url": "https://lovdata.no/dokument/NL/lov/2005-12-21-124", "label": { "nb": "Lovdata: Lov om obligatorisk tjenestepensjon" } },
-    "grunnbelop": { "url": "https://www.nav.no/grunnbelopet", "label": { "nb": "NAV: Grunnbeløpet i folketrygden (G)" } },
-    "ssb_lonn": { "url": "https://www.ssb.no/arbeid-og-lonn/lonn-og-arbeidskraftkostnader/statistikk/lonn", "label": { "nb": "SSB: Lønn, november 2025" } }
+    "forskudd_2026": {
+      "url": "https://www.skatteetaten.no/en/rettskilder/type/uttalelser/uttalelser/forskuddsutskrivingen-2026/",
+      "label": {
+        "nb": "Skatteetaten: Forskuddsutskrivingen 2026 (satser og beløpsgrenser)"
+      }
+    },
+    "trinnskatt": {
+      "url": "https://www.skatteetaten.no/en/rates/bracket-tax/",
+      "label": {
+        "nb": "Skatteetaten: Trinnskatt, satser og innslagspunkter"
+      }
+    },
+    "trygdeavgift": {
+      "url": "https://www.skatteetaten.no/en/rates/national-insurance-contributions/",
+      "label": {
+        "nb": "Skatteetaten: Trygdeavgift, satser og nedre grense"
+      }
+    },
+    "alminnelig": {
+      "url": "https://www.skatteetaten.no/en/rates/general-income/",
+      "label": {
+        "nb": "Skatteetaten: Skatt på alminnelig inntekt"
+      }
+    },
+    "aga": {
+      "url": "https://www.skatteetaten.no/satser/arbeidsgiveravgift/",
+      "label": {
+        "nb": "Skatteetaten: Arbeidsgiveravgift, satser per sone"
+      }
+    },
+    "formue": {
+      "url": "https://www.skatteetaten.no/en/rates/wealth-tax/",
+      "label": {
+        "nb": "Skatteetaten: Formuesskatt, satser og bunnfradrag"
+      }
+    },
+    "bsu": {
+      "url": "https://www.skatteetaten.no/en/rates/deduction-for-young-peoples-housing-savings-bsu/",
+      "label": {
+        "nb": "Skatteetaten: Boligsparing for ungdom (BSU)"
+      }
+    },
+    "fagforening": {
+      "url": "https://www.skatteetaten.no/en/person/taxes/get-the-taxes-right/employment-benefits-and-pensions/deduction-for-trade-union-fees/",
+      "label": {
+        "nb": "Skatteetaten: Fradrag for fagforeningskontingent"
+      }
+    },
+    "skattekort": {
+      "url": "https://www.skatteetaten.no/person/skatt/skattekort/",
+      "label": {
+        "nb": "Skatteetaten: Skattekort"
+      }
+    },
+    "feriepenger_trekk": {
+      "url": "https://www.skatteetaten.no/en/press/nyhetsrommet/derfor-trekkes-det-ikke-skatt-av-feriepengene/",
+      "label": {
+        "nb": "Skatteetaten: Derfor trekkes det ikke skatt av feriepengene"
+      }
+    },
+    "frikort": {
+      "url": "https://www.skatteetaten.no/person/skatt/skattekort/frikort/",
+      "label": {
+        "nb": "Skatteetaten: Frikort"
+      }
+    },
+    "forskuddsskatt": {
+      "url": "https://www.skatteetaten.no/person/skatt/skattekort/forskuddsskatt/",
+      "label": {
+        "nb": "Skatteetaten: Forskuddsskatt for personer"
+      }
+    },
+    "ferieloven": {
+      "url": "https://lovdata.no/dokument/NL/lov/1988-04-29-21",
+      "label": {
+        "nb": "Lovdata: Ferieloven"
+      }
+    },
+    "overtid": {
+      "url": "https://www.arbeidstilsynet.no/arbeidstid-og-organisering/arbeidstid/overtid/",
+      "label": {
+        "nb": "Arbeidstilsynet: Overtid"
+      }
+    },
+    "minstelonn": {
+      "url": "https://www.arbeidstilsynet.no/arbeidsforhold/lonn/minstelonn/",
+      "label": {
+        "nb": "Arbeidstilsynet: Minstelønn i allmenngjorte tariffavtaler"
+      }
+    },
+    "otp": {
+      "url": "https://lovdata.no/dokument/NL/lov/2005-12-21-124",
+      "label": {
+        "nb": "Lovdata: Lov om obligatorisk tjenestepensjon"
+      }
+    },
+    "grunnbelop": {
+      "url": "https://www.nav.no/grunnbelopet",
+      "label": {
+        "nb": "NAV: Grunnbeløpet i folketrygden (G)"
+      }
+    },
+    "ssb_lonn": {
+      "url": "https://www.ssb.no/arbeid-og-lonn/lonn-og-arbeidskraftkostnader/statistikk/lonn",
+      "label": {
+        "nb": "SSB: Lønn, november 2025"
+      }
+    },
+    "pensjonist": {
+      "url": "https://www.skatteetaten.no/en/person/taxes/get-the-taxes-right/employment-benefits-and-pensions/pension-and-disability-benefit/tax-rules-for-pensioners/tax-deductions-for-recipients-of-old-age-pensions-from-the-national-insurance-scheme-or-early-retirement-pension-afp/",
+      "label": {
+        "nb": "Skatteetaten: skattefradrag for mottakere av alderspensjon og AFP"
+      }
+    }
   },
-  "alminnelig": { "rate": 0.22, "rate_tiltakssone": 0.185 },
+  "alminnelig": {
+    "rate": 0.22,
+    "rate_tiltakssone": 0.185
+  },
   "personfradrag": 114540,
   "personfradrag_2025": 108550,
-  "minstefradrag": { "rate": 0.46, "max": 95700, "max_2025": 92000, "pension_rate": 0.40, "pension_max": 75400 },
+  "minstefradrag": {
+    "rate": 0.46,
+    "max": 95700,
+    "max_2025": 92000,
+    "pension_rate": 0.4,
+    "pension_max": 75400
+  },
   "trinnskatt": [
-    { "from": 226100, "rate": 0.017 },
-    { "from": 318300, "rate": 0.040 },
-    { "from": 725050, "rate": 0.137 },
-    { "from": 980100, "rate": 0.168 },
-    { "from": 1467200, "rate": 0.178 }
+    {
+      "from": 226100,
+      "rate": 0.017
+    },
+    {
+      "from": 318300,
+      "rate": 0.04
+    },
+    {
+      "from": 725050,
+      "rate": 0.137
+    },
+    {
+      "from": 980100,
+      "rate": 0.168
+    },
+    {
+      "from": 1467200,
+      "rate": 0.178
+    }
   ],
-  "trygdeavgift": { "wage": 0.076, "business": 0.108, "pension": 0.051, "reduced_age": 0.051, "lower_limit": 99650, "phase_in": 0.25 },
+  "trygdeavgift": {
+    "wage": 0.076,
+    "business": 0.108,
+    "pension": 0.051,
+    "reduced_age": 0.051,
+    "lower_limit": 99650,
+    "phase_in": 0.25
+  },
   "frikort_limit": 100000,
-  "mva": { "threshold": 50000, "rate": 0.25 },
+  "mva": {
+    "threshold": 50000,
+    "rate": 0.25
+  },
   "avskrivning_min": 30000,
   "fagforening_max": 8700,
-  "bsu": { "rate": 0.10, "max_year": 27500, "max_total": 300000, "age_limit": 33 },
-  "reisefradrag": { "rate_per_km": 1.90, "threshold": 12000, "max": 120000 },
-  "foreldrefradrag": { "first": 15000, "each_additional": 10000 },
+  "bsu": {
+    "rate": 0.1,
+    "max_year": 27500,
+    "max_total": 300000,
+    "age_limit": 33
+  },
+  "reisefradrag": {
+    "rate_per_km": 1.9,
+    "threshold": 12000,
+    "max": 120000
+  },
+  "foreldrefradrag": {
+    "first": 15000,
+    "each_additional": 10000
+  },
   "tabelltrekk_months": 10.5,
-  "aga": { "zones": { "1": 0.141, "1a": 0.106, "2": 0.106, "3": 0.064, "4": 0.051, "4a": 0.079, "5": 0 }, "fribelop_1a": 850000 },
-  "otp_min": { "rate": 0.02, "cap_g": 12 },
-  "grunnbelop": { "from_2026_05_01": 136549, "from_2025_05_01": 130160, "average_2025": 128116 },
-  "feriepenger": { "rate": 0.102, "rate_5_weeks": 0.12, "extra_60": 0.023, "extra_60_cap_g": 6, "weeks_law": 4, "extra_days": 1 },
-  "overtid": { "min_supplement": 0.40, "max_week": 10, "max_4_weeks": 25, "max_year": 200, "hours_year": 1950 },
-  "formue": { "bunnfradrag": 1900000, "rate": 0.010, "high_from": 21500000, "high_rate": 0.011, "kommune_rate": 0.0035, "primary_home_rate": 0.25, "primary_home_limit": 10000000, "primary_home_rate_above": 0.70 },
-  "forskuddsskatt_terms": ["15. mars", "15. mai", "15. september", "15. november"],
-  "ssb": { "avg_month_nov2025": 62070, "avg_month_men": 65610, "avg_month_women": 57690, "growth": 0.045 },
-  "minstelonn": { "from": "2025-06-15", "bygg_fagarbeider": 264.32, "bygg_ufaglaert": 239.61, "bygg_ufaglaert_1yr": 249.00, "renhold": 236.54, "jordbruk": 182.80, "servering": 204.79, "godstransport": 229.00, "turbil": 218.62, "elektro": 270.45, "verft": 216.79 },
-  "periods": { "monthly": 12, "biweekly": 26, "weekly": 52, "annual": 1 }
+  "aga": {
+    "zones": {
+      "1": 0.141,
+      "1a": 0.106,
+      "2": 0.106,
+      "3": 0.064,
+      "4": 0.051,
+      "4a": 0.079,
+      "5": 0
+    },
+    "fribelop_1a": 850000
+  },
+  "otp_min": {
+    "rate": 0.02,
+    "cap_g": 12
+  },
+  "grunnbelop": {
+    "from_2026_05_01": 136549,
+    "from_2025_05_01": 130160,
+    "average_2025": 128116
+  },
+  "feriepenger": {
+    "rate": 0.102,
+    "rate_5_weeks": 0.12,
+    "extra_60": 0.023,
+    "extra_60_cap_g": 6,
+    "weeks_law": 4,
+    "extra_days": 1
+  },
+  "overtid": {
+    "min_supplement": 0.4,
+    "max_week": 10,
+    "max_4_weeks": 25,
+    "max_year": 200,
+    "hours_year": 1950
+  },
+  "formue": {
+    "bunnfradrag": 1900000,
+    "rate": 0.01,
+    "high_from": 21500000,
+    "high_rate": 0.011,
+    "kommune_rate": 0.0035,
+    "primary_home_rate": 0.25,
+    "primary_home_limit": 10000000,
+    "primary_home_rate_above": 0.7
+  },
+  "forskuddsskatt_terms": [
+    "15. mars",
+    "15. mai",
+    "15. september",
+    "15. november"
+  ],
+  "ssb": {
+    "avg_month_nov2025": 62070,
+    "avg_month_men": 65610,
+    "avg_month_women": 57690,
+    "growth": 0.045
+  },
+  "minstelonn": {
+    "from": "2025-06-15",
+    "bygg_fagarbeider": 264.32,
+    "bygg_ufaglaert": 239.61,
+    "bygg_ufaglaert_1yr": 249.0,
+    "renhold": 236.54,
+    "jordbruk": 182.8,
+    "servering": 204.79,
+    "godstransport": 229.0,
+    "turbil": 218.62,
+    "elektro": 270.45,
+    "verft": 216.79
+  },
+  "periods": {
+    "monthly": 12,
+    "biweekly": 26,
+    "weekly": 52,
+    "annual": 1
+  },
+  "pensjon": {
+    "_kilde": "Forskuddsutskrivingen 2026 (skattefradrag for pensjonsinntekt) og Skatteetaten, reglene for alderspensjonister: fradraget avkortes forholdsmessig etter uttaksgrad og antall måneder, og kan ikke overstige skatt på alminnelig inntekt, trinnskatt og trygdeavgift.",
+    "skattefradrag_max": 37100,
+    "trinn1": 284950,
+    "sats1": 0.167,
+    "trinn2": 436050,
+    "sats2": 0.06
+  }
 }

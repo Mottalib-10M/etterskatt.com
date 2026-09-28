@@ -1,0 +1,42 @@
+---
+import ToolPage from '../../components/ToolPage.astro';
+import ContentTable from '../../components/ContentTable.astro';
+import { route } from '../../i18n/routes';
+import { P } from '../../lib/tables';
+import { compute, pensionTax } from '../../lib/engine/no';
+import { SRC } from '../../lib/sources';
+import { formatMoney, formatPercent } from '../../lib/format';
+const lang = 'nb';
+const Q = P.pensjon;
+const p4 = pensionTax({ pension: 400000 });
+const l4 = compute({ gross: 400000 }).annual;
+const bortfall = Math.round((Q.skattefradrag_max - Q.sats1 * (Q.trinn2 - Q.trinn1)) / Q.sats2 + Q.trinn2);
+const rows = [200000, 285000, 350000, 400000, 500000, 600000, 750000].map((x) => { const r = pensionTax({ pension: x }); return [formatMoney(x), formatMoney(r.skattefradrag), formatMoney(r.totalTax), formatPercent(r.effective), formatMoney(r.monthlyNet)]; });
+const halv = pensionTax({ pension: 150000, grad: 0.5, months: 12 });
+const faqs = [
+  { q: 'Hvor mye skatt betaler en pensjonist i 2026?', a: `Det avhenger av pensjonen. En alderspensjon på ${formatMoney(400000)} gir ${formatMoney(p4.totalTax)} i skatt, eller ${formatPercent(p4.effective)}, etter et skattefradrag for pensjonsinntekt på ${formatMoney(p4.skattefradrag)}. Lave pensjoner blir helt skattefrie, fordi fradraget kan dekke hele skatten. Over omtrent ${formatMoney(bortfall)} er fradraget borte.` },
+  { q: 'Hvorfor betaler pensjonister mindre skatt enn lønnstakere?', a: `Tre regler gir lavere skatt: trygdeavgiften er ${formatPercent(P.trygdeavgift.pension, 1)} i stedet for ${formatPercent(P.trygdeavgift.wage, 1)}, alderspensjonister får et skattefradrag for pensjonsinntekt på inntil ${formatMoney(Q.skattefradrag_max)}, og minstefradraget er 40 % av pensjonen. Til gjengjeld er maksimalt minstefradrag lavere enn for lønn, ${formatMoney(P.minstefradrag.pension_max)}.` },
+  { q: 'Hvem får skattefradraget for pensjonsinntekt?', a: 'Mottakere av alderspensjon fra folketrygden, avtalefestet pensjon (AFP) i offentlig sektor for de som er født i 1962 eller tidligere, og tilsvarende pensjon fra et annet EØS-land. Ny offentlig AFP og privat AFP gir bare fradraget sammen med alderspensjon fra folketrygden. Uføretrygd har egne regler og gir ikke dette fradraget.' },
+  { q: 'Hva skjer med skatten hvis jeg tar ut halv pensjon?', a: `Fradraget og innslagspunktene reduseres i samme forhold som uttaksgraden og antall måneder med pensjon. Med 50 % uttak hele året er maksimalt fradrag ${formatMoney(Q.skattefradrag_max / 2)}. En pensjon på ${formatMoney(150000)} med 50 % uttak gir ${formatMoney(halv.totalTax)} i skatt. Jobber du ved siden av, skattlegges lønnen etter vanlige regler.` },
+];
+---
+<ToolPage id="pensjonist" title="Skattekalkulator pensjonist 2026: skatt på alderspensjon" h1="Skattekalkulator for pensjonister: skatt på alderspensjon i 2026"
+  description="Beregn skatt på alderspensjon i 2026: minstefradrag 40 %, trygdeavgift 5,1 %, trinnskatt og skattefradrag for pensjonsinntekt på inntil 37 100 kr."
+  intro="Legg inn pensjonen før skatt for 2026, hvor mange måneder du har hatt pensjon og uttaksgraden. Kalkulatoren bruker satsene fra Forskuddsutskrivingen 2026."
+  mode="pensjon" initialGross={400000} faqs={faqs} related={['skatt', 'minstefradrag', 'trygdeavgift', 'trinnskatt', 'personfradrag', 'skattekort']}
+  sources={[SRC.forskudd_2026, SRC.pensjonist, SRC.trinnskatt, SRC.trygdeavgift]}>
+  <p>Alderspensjon skattlegges i Norge etter egne regler som gir lavere skatt enn lønn. I 2026 er minstefradraget 40 % av pensjonen, med et tak på {formatMoney(P.minstefradrag.pension_max)}, trygdeavgiften er {formatPercent(P.trygdeavgift.pension, 1)} i stedet for {formatPercent(P.trygdeavgift.wage, 1)}, og mottakere av alderspensjon fra folketrygden får et skattefradrag for pensjonsinntekt på inntil {formatMoney(Q.skattefradrag_max)}. Fradraget trekkes direkte fra skatten, men reduseres med {formatPercent(Q.sats1, 1)} av pensjonen mellom {formatMoney(Q.trinn1)} og {formatMoney(Q.trinn2)} og med {formatPercent(Q.sats2, 0)} av pensjonen over det. Trinnskatten og skatten på alminnelig inntekt, 22 %, er de samme som for lønn. En alderspensjon på {formatMoney(400000)} gir dermed {formatMoney(p4.totalTax)} i skatt i 2026 og {formatMoney(p4.monthlyNet)} utbetalt i måneden, mens den samme summen som lønn ville gitt {formatMoney(l4.totalTax)} i skatt.</p>
+
+  <h2>Skatt på alderspensjon i 2026</h2>
+  <ContentTable headers={['Pensjon per år', 'Skattefradrag', 'Skatt i alt', 'Gjennomsnittsskatt', 'Netto per måned']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Tabellen gjelder full alderspensjon hele året, uten andre inntekter eller fradrag. Under omtrent {formatMoney(Q.trinn1)} får du fullt fradrag på {formatMoney(Q.skattefradrag_max)}, og en lav pensjon blir helt skattefri fordi fradraget aldri kan bli større enn skatten. Over {formatMoney(bortfall)} er fradraget borte, og pensjonen skattlegges som annen personinntekt, bare med lavere trygdeavgift.</p>
+
+  <h2>Slik regnes skattefradraget</h2>
+  <p>Fradraget er {formatMoney(Q.skattefradrag_max)} når pensjonen er {formatMoney(Q.trinn1)} eller lavere. Deretter trekkes {formatPercent(Q.sats1, 1)} av pensjonen mellom {formatMoney(Q.trinn1)} og {formatMoney(Q.trinn2)} fra, og {formatPercent(Q.sats2, 0)} av pensjonen over {formatMoney(Q.trinn2)}. For en pensjon på {formatMoney(400000)} blir fradraget {formatMoney(Q.skattefradrag_max)} minus {formatPercent(Q.sats1, 1)} av {formatMoney(400000 - Q.trinn1)}, altså {formatMoney(p4.skattefradrag)}. Tar du ut gradert pensjon, eller har du pensjon bare en del av året, reduseres både det maksimale fradraget og innslagspunktene i samme forhold. Fradraget kan ikke overstige summen av skatt på alminnelig inntekt, trinnskatt og trygdeavgift.</p>
+
+  <h2>Tjenestepensjon, AFP og jobb ved siden av</h2>
+  <p>Tjenestepensjon fra en arbeidsgiver og privat pensjonssparing skattlegges som pensjon, med samme minstefradrag og trygdeavgift, og teller med når fradraget skal reduseres. Legg derfor inn all pensjon i kalkulatoren. Privat AFP alene gir ikke skattefradraget, men gjør det sammen med alderspensjon fra folketrygden. Har du lønn i tillegg, betaler du vanlig minstefradrag og 7,6 % trygdeavgift på lønnen, eller 5,1 % hvis du er over 69 år; <a href={route('skatt', lang)}>skattekalkulatoren for lønn</a> viser skatten på den delen.</p>
+
+  <h2>Skattekort og skattetrekk for pensjonister</h2>
+  <p>NAV og pensjonsleverandørene trekker skatt etter skattekortet ditt, som Skatteetaten lager ut fra forventet pensjon for året. Endrer pensjonen seg, for eksempel når du går fra gradert til full pensjon, bør du endre skattekortet for å unngå restskatt. Les mer om <a href={route('skattekort', lang)}>skattekort og tabelltrekk</a> og om <a href={route('minstefradrag', lang)}>minstefradraget</a>.</p>
+</ToolPage>

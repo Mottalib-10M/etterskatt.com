@@ -145,3 +145,20 @@ export function primaryHomeValue(market: number): number {
 }
 
 export const hourlyToAnnual = (h: number, hoursPerYear = P.overtid.hours_year) => h * hoursPerYear;
+
+/** Alderspensjonist (folketrygd, offentlig AFP) : minstefradrag 40 %, trygdeavgift 5,1 %, skattefradrag for pensjonsinntekt. */
+export function pensionTax(o: { pension: number; months?: number; grad?: number; interest?: number }) {
+  const pension = Math.max(0, o.pension);
+  const f = Math.min(1, Math.max(0, o.grad ?? 1)) * Math.min(12, Math.max(1, o.months ?? 12)) / 12;
+  const mf = r0(Math.min(pension * P.minstefradrag.pension_rate, P.minstefradrag.pension_max));
+  const alminnelig = Math.max(0, pension - mf - Math.max(0, o.interest ?? 0));
+  const skattAlminnelig = r0(Math.max(0, alminnelig - P.personfradrag) * P.alminnelig.rate);
+  const tr = trinnskatt(pension);
+  const tg = trygdeavgift(pension, P.trygdeavgift.pension);
+  const Q = P.pensjon;
+  const reduction = Q.sats1 * Math.max(0, Math.min(pension, Q.trinn2 * f) - Q.trinn1 * f) + Q.sats2 * Math.max(0, pension - Q.trinn2 * f);
+  const beforeCap = r0(Math.max(0, Q.skattefradrag_max * f - reduction));
+  const skattefradrag = Math.min(beforeCap, skattAlminnelig + tr + tg);
+  const totalTax = skattAlminnelig + tr + tg - skattefradrag;
+  return { pension, minstefradrag: mf, alminnelig, skattAlminnelig, trinnskatt: tr, trygdeavgift: tg, skattefradrag, totalTax, net: pension - totalTax, monthlyNet: (pension - totalTax) / 12, effective: pension > 0 ? totalTax / pension : 0 };
+}

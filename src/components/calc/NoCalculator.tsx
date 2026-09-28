@@ -3,18 +3,19 @@ import NumberField from '../ui/NumberField';
 import SelectField from '../ui/SelectField';
 import Toggle from '../ui/Toggle';
 import StackedBar from '../ui/StackedBar';
-import { compute, grossForNet, feriepenger, overtime, employerCost, selfEmployed, formuesskatt, type Period, type Zone } from '../../lib/engine/no';
+import { compute, grossForNet, feriepenger, overtime, employerCost, selfEmployed, formuesskatt, pensionTax, type Period, type Zone } from '../../lib/engine/no';
 import P from '../../data/params-2026.json';
 import { formatMoney, formatPercent, formatNumber } from '../../lib/format';
 import { readParams, num, str, updateURL } from '../../lib/url-state';
 
-export type Mode = 'lonn' | 'skatt' | 'etterSkatt' | 'netto' | 'timelonn' | 'skattekort' | 'feriepenger' | 'overtid' | 'kostnad' | 'aga' | 'forskudd' | 'formue';
+export type Mode = 'lonn' | 'skatt' | 'etterSkatt' | 'netto' | 'timelonn' | 'skattekort' | 'feriepenger' | 'overtid' | 'kostnad' | 'aga' | 'forskudd' | 'formue' | 'pensjon';
 interface Props { mode?: Mode; initialGross?: number; initialHourly?: number; initialPeriod?: Period; methodHref?: string }
 const PERIOD_OPTS = [{ value: 'monthly', label: 'Per måned' }, { value: 'biweekly', label: 'Hver 14. dag' }, { value: 'weekly', label: 'Per uke' }, { value: 'annual', label: 'Per år' }];
 const PER: Record<Period, string> = { monthly: 'per måned', biweekly: 'hver 14. dag', weekly: 'per uke', annual: 'per år' };
 const ZONE_OPTS = (Object.keys(P.aga.zones) as Zone[]).map((z) => ({ value: z, label: `Sone ${z.toUpperCase()} (${formatPercent(P.aga.zones[z], 1)})` }));
 const OTP_OPTS = [0.02, 0.03, 0.04, 0.05, 0.07].map((r) => ({ value: String(r), label: `${formatPercent(r, 0)}${r === 0.02 ? ' (lovens minimum)' : ''}` }));
 const SUP_OPTS = [0.4, 0.5, 1].map((r) => ({ value: String(r), label: `${formatPercent(r, 0)} tillegg${r === 0.4 ? ' (minimum)' : ''}` }));
+const GRAD_OPTS = [100, 80, 60, 50, 40, 20].map((g) => ({ value: String(g), label: `${g} %` }));
 const YN = [{ value: '0', label: 'Nei' }, { value: '1', label: 'Ja' }];
 
 export default function NoCalculator({ mode = 'lonn', initialGross = 600000, initialHourly = 300, initialPeriod = 'monthly', methodHref }: Props) {
@@ -37,13 +38,15 @@ export default function NoCalculator({ mode = 'lonn', initialGross = 600000, ini
   const [fpTop, setFpTop] = useState(str(sp, 'fp', '0'));
   const [ded, setDed] = useState(num(sp, 'fr', 0));
   const [married, setMarried] = useState(str(sp, 'gift', '0'));
+  const [months, setMonths] = useState(num(sp, 'mnd', 12));
+  const [grad, setGrad] = useState(str(sp, 'ug', '100'));
   const [copied, setCopied] = useState(false);
   useEffect(() => {
     const u = readParams(window.location.search);
     setGross(num(u, 'l', initialGross)); setNet(num(u, 'n', 450000)); setHourly(num(u, 't', initialHourly)); setHours(num(u, 'tu', 37.5));
     setPeriod(str(u, 'p', initialPeriod) as Period); setTz(str(u, 'tz', '0')); setUnion(num(u, 'fk', 0)); setInterest(num(u, 'r', 0)); setBsu(num(u, 'bsu', 0));
     setFive(str(u, 'f5', '0')); setO60(str(u, 'o60', '0')); setOtH(num(u, 'ot', 10)); setSup(str(u, 'ts', '0.4'));
-    setZone(str(u, 'z', '1') as Zone); setOtp(str(u, 'otp', '0.02')); setFpTop(str(u, 'fp', '0')); setDed(num(u, 'fr', 0)); setMarried(str(u, 'gift', '0'));
+    setZone(str(u, 'z', '1') as Zone); setOtp(str(u, 'otp', '0.02')); setFpTop(str(u, 'fp', '0')); setDed(num(u, 'fr', 0)); setMarried(str(u, 'gift', '0')); setMonths(num(u, 'mnd', 12)); setGrad(str(u, 'ug', '100'));
   }, []);
   const tiltak = tz === '1';
   const effGross = mode === 'netto' ? grossForNet(net, { tiltakssone: tiltak }) : mode === 'timelonn' ? Math.round(hourly * hours * 52) : gross;
@@ -52,8 +55,9 @@ export default function NoCalculator({ mode = 'lonn', initialGross = 600000, ini
   const ot = useMemo(() => overtime({ gross, hours: otH, supplement: Number(sup) }), [gross, otH, sup]);
   const ec = useMemo(() => employerCost({ gross, zone, otpRate: Number(otp), feriepengerOnTop: fpTop === '1' }), [gross, zone, otp, fpTop]);
   const se = useMemo(() => selfEmployed({ profit: gross, deductions: ded, tiltakssone: tiltak }), [gross, ded, tiltak]);
+  const pt = useMemo(() => pensionTax({ pension: gross, months, grad: Number(grad) / 100, interest }), [gross, months, grad, interest]);
   const fs = useMemo(() => formuesskatt({ netWealth: gross, married: married === '1' }), [gross, married]);
-  useEffect(() => { updateURL({ l: ['netto', 'timelonn'].includes(mode) ? undefined : gross, n: mode === 'netto' ? net : undefined, t: mode === 'timelonn' ? hourly : undefined, tu: mode === 'timelonn' && hours !== 37.5 ? hours : undefined, p: period === initialPeriod ? undefined : period, tz: tz === '1' ? 1 : undefined, fk: union || undefined, r: interest || undefined, bsu: bsu || undefined, f5: five === '1' ? 1 : undefined, o60: o60 === '1' ? 1 : undefined, ot: mode === 'overtid' ? otH : undefined, ts: mode === 'overtid' && sup !== '0.4' ? sup : undefined, z: zone === '1' ? undefined : zone, otp: otp === '0.02' ? undefined : otp, fp: fpTop === '1' ? 1 : undefined, fr: ded || undefined, gift: married === '1' ? 1 : undefined }); }, [gross, net, hourly, hours, period, tz, union, interest, bsu, five, o60, otH, sup, zone, otp, fpTop, ded, married, mode]);
+  useEffect(() => { updateURL({ l: ['netto', 'timelonn'].includes(mode) ? undefined : gross, n: mode === 'netto' ? net : undefined, t: mode === 'timelonn' ? hourly : undefined, tu: mode === 'timelonn' && hours !== 37.5 ? hours : undefined, p: period === initialPeriod ? undefined : period, tz: tz === '1' ? 1 : undefined, fk: union || undefined, r: interest || undefined, bsu: bsu || undefined, f5: five === '1' ? 1 : undefined, o60: o60 === '1' ? 1 : undefined, ot: mode === 'overtid' ? otH : undefined, ts: mode === 'overtid' && sup !== '0.4' ? sup : undefined, z: zone === '1' ? undefined : zone, otp: otp === '0.02' ? undefined : otp, fp: fpTop === '1' ? 1 : undefined, fr: ded || undefined, gift: married === '1' ? 1 : undefined, mnd: mode === 'pensjon' && months !== 12 ? months : undefined, ug: mode === 'pensjon' && grad !== '100' ? grad : undefined }); }, [gross, net, hourly, hours, period, tz, union, interest, bsu, five, o60, otH, sup, zone, otp, fpTop, ded, married, months, grad, mode]);
 
   const A = r.annual; const pp = r.perPeriod; const per = PER[period]; const T = r.tabell;
   const head = (() => {
@@ -68,12 +72,13 @@ export default function NoCalculator({ mode = 'lonn', initialGross = 600000, ini
       case 'kostnad': return { l: 'Kostnad for arbeidsgiver per år', v: formatMoney(ec.total), s: `${formatMoney(ec.total / 12)} per måned · ${formatPercent(ec.total / Math.max(1, ec.gross) - 1, 1)} over lønnen` };
       case 'aga': return { l: `Arbeidsgiveravgift i sone ${zone.toUpperCase()}`, v: formatMoney(ec.aga), s: `${formatPercent(ec.agaRate, 1)} av lønn${ec.feriepenger ? ', feriepenger' : ''} og pensjonsinnskudd` };
       case 'forskudd': return { l: 'Forskuddsskatt for 2026', v: formatMoney(se.total), s: `fire terminer à omtrent ${formatMoney(se.perTerm)} · ${P.forskuddsskatt_terms.join(', ')}` };
+      case 'pensjon': return { l: 'Pensjon etter skatt per måned', v: formatMoney(pt.monthlyNet), s: `skatt ${formatMoney(pt.totalTax)} i 2026 · ${formatPercent(pt.effective)} av pensjonen · skattefradrag ${formatMoney(pt.skattefradrag)}` };
       case 'formue': return { l: 'Formuesskatt for 2026', v: formatMoney(fs.tax), s: `skattepliktig formue over bunnfradraget: ${formatMoney(fs.taxable)}` };
       default: return { l: `Lønn etter skatt ${per}`, v: formatMoney(pp.net), s: `${formatMoney(pp.gross)} brutto − skatt ${formatMoney(pp.tax)} · ${formatPercent(A.effective)} i gjennomsnitt` };
     }
   })();
   const copy = async () => { try { await navigator.clipboard.writeText(`${head.l}: ${head.v}\n${window.location.href}`); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* indisponible */ } };
-  const incomeLabel = mode === 'feriepenger' ? 'Feriepengegrunnlag (lønn opptjent i 2026)' : mode === 'forskudd' ? 'Overskudd fra næring per år' : mode === 'formue' ? 'Nettoformue (skattemessig verdi)' : 'Bruttolønn per år';
+  const incomeLabel = mode === 'feriepenger' ? 'Feriepengegrunnlag (lønn opptjent i 2026)' : mode === 'forskudd' ? 'Overskudd fra næring per år' : mode === 'formue' ? 'Nettoformue (skattemessig verdi)' : mode === 'pensjon' ? 'Alderspensjon før skatt i 2026' : 'Bruttolønn per år';
   const taxModes: Mode[] = ['lonn', 'skatt', 'etterSkatt', 'netto', 'timelonn', 'skattekort'];
 
   return (
@@ -113,6 +118,11 @@ export default function NoCalculator({ mode = 'lonn', initialGross = 600000, ini
             <NumberField id="fr" label="Andre fradrag (renter m.m.)" value={ded} onChange={setDed} unit="kr" max={10000000} />
             <Toggle id="tz" label="Finnmark eller Nord-Troms?" options={YN} value={tz} onChange={setTz} />
           </div>}
+          {mode === 'pensjon' && <div className="grid grid-cols-2 gap-3">
+            <NumberField id="mnd" label="Måneder med pensjon i 2026" value={months} onChange={setMonths} unit="mnd" min={1} max={12} help="12 hvis du hadde pensjon hele året" />
+            <SelectField id="ug" label="Uttaksgrad" value={grad} onChange={setGrad} options={GRAD_OPTS} />
+          </div>}
+          {mode === 'pensjon' && <NumberField id="r" label="Renteutgifter per år" value={interest} onChange={setInterest} unit="kr" max={5000000} />}
           {mode === 'formue' && <Toggle id="gift" label="Gift og samlet skattlagt?" options={YN} value={married} onChange={setMarried} />}
           <p className="text-xs text-navy-500">Beregnet i nettleseren din · ingenting sendes · gratis</p>
         </form>
@@ -155,6 +165,17 @@ export default function NoCalculator({ mode = 'lonn', initialGross = 600000, ini
                 <Row l="Trinnskatt" v={formatMoney(se.trinnskatt)} />
                 <Row l="Forskuddsskatt i alt" v={formatMoney(se.total)} bold accent />
                 <Row l="Per termin (fire terminer)" v={formatMoney(se.perTerm)} />
+              </tbody></table>
+            ) : mode === 'pensjon' ? (
+              <table className="mt-2 w-full text-sm"><tbody className="divide-y divide-navy-100">
+                <Row l="Pensjon i 2026" v={formatMoney(pt.pension)} />
+                <Row l={`Minstefradrag 40 % (maks ${formatMoney(P.minstefradrag.pension_max)})`} v={formatMoney(pt.minstefradrag)} />
+                <Row l="Skatt på alminnelig inntekt 22 %" v={formatMoney(pt.skattAlminnelig)} />
+                <Row l="Trinnskatt" v={formatMoney(pt.trinnskatt)} />
+                <Row l={`Trygdeavgift ${formatPercent(P.trygdeavgift.pension, 1)}`} v={formatMoney(pt.trygdeavgift)} />
+                <Row l="Skattefradrag for pensjonsinntekt" v={`− ${formatMoney(pt.skattefradrag)}`} />
+                <Row l="Skatt i alt" v={formatMoney(pt.totalTax)} bold />
+                <Row l="Pensjon etter skatt per år" v={formatMoney(pt.net)} bold accent />
               </tbody></table>
             ) : mode === 'formue' ? (
               <table className="mt-2 w-full text-sm"><tbody className="divide-y divide-navy-100">

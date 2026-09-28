@@ -4,7 +4,7 @@
 
 ## Kalkulatorer
 - [Lønnskalkulator 2026](https://etterskatt.com/nb/): lønn etter skatt, trinnskatt, trygdeavgift, tabelltrekk per måned.
-- [Skattekalkulator](https://etterskatt.com/nb/skattekalkulator/), [skattekort](https://etterskatt.com/nb/skattekort/), [netto til brutto](https://etterskatt.com/nb/netto-lonn/).
+- [Skattekalkulator](https://etterskatt.com/nb/skattekalkulator/), [skattekalkulator for pensjonister](https://etterskatt.com/nb/skattekalkulator-pensjonist/), [skattekort](https://etterskatt.com/nb/skattekort/), [netto til brutto](https://etterskatt.com/nb/netto-lonn/).
 - [Feriepenger](https://etterskatt.com/nb/feriepenger-kalkulator/), [overtid](https://etterskatt.com/nb/overtid-kalkulator/), [timelønn](https://etterskatt.com/nb/timelonn-kalkulator/).
 - [Kostnad per ansatt](https://etterskatt.com/nb/kostnad-ansatt/), [arbeidsgiveravgift](https://etterskatt.com/nb/arbeidsgiveravgift/), [forskuddsskatt](https://etterskatt.com/nb/forskuddsskatt/), [formuesskatt](https://etterskatt.com/nb/formuesskatt/).
 

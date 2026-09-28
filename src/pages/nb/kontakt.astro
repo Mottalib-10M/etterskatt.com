@@ -5,8 +5,8 @@ import { route } from '../../i18n/routes';
 import { breadcrumbSchema, contactPageSchema } from '../../lib/seo';
 import { CONTACT_EMAIL } from '../../data/site-config';
 const lang = 'nb';
-const title = 'Kontakt Lønn etter skatt: meld feil eller still et spørsmål';
-const description = 'Skriv til utgiveren av Lønn etter skatt for å melde en feil i et skattebeløp, spørre om metoden eller få kalkulatoren gratis til ditt eget nettsted i dag.';
+const title = 'Kontakt EtterSkatt.com: meld feil eller still et spørsmål';
+const description = 'Skriv til utgiveren av EtterSkatt.com for å melde en feil i et skattebeløp, spørre om metoden eller få kalkulatoren gratis til ditt eget nettsted i dag.';
 const jsonLd = [contactPageSchema({ name: title, description, path: route('contact', lang), lang }), breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Kontakt', path: route('contact', lang) }])];
 ---
 <PageLayout title={title} description={description} lang={lang} jsonLd={jsonLd} breadcrumbs={[{ label: 'Kontakt' }]}>

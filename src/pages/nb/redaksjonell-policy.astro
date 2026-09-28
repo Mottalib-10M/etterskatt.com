@@ -4,8 +4,8 @@ import { route } from '../../i18n/routes';
 import { breadcrumbSchema, webPageSchema } from '../../lib/seo';
 import { REVIEW_CYCLE_MONTHS } from '../../data/site-config';
 const lang = 'nb';
-const title = 'Redaksjonell policy, Lønn etter skatt: kilder og rettelser';
-const description = 'Slik velger Lønn etter skatt kildene sine, kontrollerer hver skattesats, daterer oppdateringer og retter feil, og hvor ofte hele nettstedet gjennomgås.';
+const title = 'Redaksjonell policy, EtterSkatt.com: kilder og rettelser';
+const description = 'Slik velger EtterSkatt.com kildene sine, kontrollerer hver skattesats, daterer oppdateringer og retter feil, og hvor ofte hele nettstedet gjennomgås på nytt.';
 const jsonLd = [webPageSchema({ name: title, description, path: route('editorial', lang), lang }), breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Redaksjonell policy', path: route('editorial', lang) }])];
 ---
 <PageLayout title={title} description={description} lang={lang} jsonLd={jsonLd} breadcrumbs={[{ label: 'Redaksjonell policy' }]}>

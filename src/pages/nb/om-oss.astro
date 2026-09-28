@@ -5,14 +5,14 @@ import { breadcrumbSchema, profilePageSchema, organizationSchema } from '../../l
 import { CONTACT_EMAIL, SITE_FOUNDED } from '../../data/site-config';
 import { P } from '../../lib/tables';
 const lang = 'nb';
-const title = 'Om Lønn etter skatt: hvem som står bak og hvordan vi jobber';
-const description = 'Lønn etter skatt utgis av Radif Partners. Les hvorfor vi laget en skatte- og lønnskalkulator for Norge, hvordan den finansieres og hvordan du melder feil.';
+const title = 'Om EtterSkatt.com: hvem som står bak og hvordan vi jobber';
+const description = 'EtterSkatt.com utgis av Radif Partners. Les hvorfor vi laget en skatte- og lønnskalkulator for Norge, hvordan den finansieres og hvordan du melder feil.';
 const jsonLd = [profilePageSchema({ path: route('about', lang), lang }), organizationSchema(lang), breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Om oss', path: route('about', lang) }])];
 ---
 <PageLayout title={title} description={description} lang={lang} jsonLd={jsonLd} breadcrumbs={[{ label: 'Om oss' }]} showAuthor={false}>
   <header class="mb-6"><h1 class="text-3xl font-bold text-navy-900 md:text-4xl">Om nettstedet</h1></header>
   <div class="prose prose-slate max-w-none" data-author="Radif Partners">
-    <p>Lønn etter skatt utgis av <strong>Radif Partners</strong>, en uavhengig utgiver av gratis lønns- og skattekalkulatorer for flere land. Nettstedet ble startet i {SITE_FOUNDED} for å gi lønnstakere, arbeidsgivere og næringsdrivende i Norge en kalkulator som følger Skatteetatens satser for inntektsåret linje for linje, og som forklarer hvert steg: trinnskatt, trygdeavgift, minstefradrag, personfradrag, tabelltrekk og feriepenger.</p>
+    <p>EtterSkatt.com utgis av <strong>Radif Partners</strong>, en uavhengig utgiver av gratis lønns- og skattekalkulatorer for flere land. Nettstedet ble startet i {SITE_FOUNDED} for å gi lønnstakere, arbeidsgivere og næringsdrivende i Norge en kalkulator som følger Skatteetatens satser for inntektsåret linje for linje, og som forklarer hvert steg: trinnskatt, trygdeavgift, minstefradrag, personfradrag, tabelltrekk og feriepenger.</p>
     <h2>Hvorfor vi laget kalkulatoren</h2>
     <p>Mange kalkulatorer viser bare ett tall, lønn etter skatt, uten å vise hvordan det er beregnet eller hva som skjer i juni og desember. Vi ville lage en kalkulator der hver skattepost står for seg, der tabelltrekket i en vanlig måned vises ved siden av snittet for året, og der satsene er hentet direkte fra Skatteetaten med dato for når de ble kontrollert.</p>
     <h2>Slik jobber vi</h2>

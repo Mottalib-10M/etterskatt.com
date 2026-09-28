@@ -1,6 +1,6 @@
 {
- "name": "Lønn etter skatt",
- "short_name": "Lønn etter skatt",
+ "name": "EtterSkatt.com",
+ "short_name": "EtterSkatt",
  "description": "Skattekalkulator og lønnskalkulator 2026: lønn etter skatt, trinnskatt, trygdeavgift, skattekort, feriepenger og arbeidsgiveravgift.",
  "start_url": "/nb/",
  "display": "standalone",

@@ -1,6 +1,6 @@
 /** Configuration centrale du site (générée par new-site.py). */
 export const SITE_URL = "https://etterskatt.com";
-export const SITE_NAMES: Record<string, string> = {"nb": "Lønn etter skatt"};
+export const SITE_NAMES: Record<string, string> = {"nb": "EtterSkatt.com"};
 export const LANG_TAGS: Record<string, string> = {"nb": "nb-NO"};
 export const OG_LOCALES: Record<string, string> = {"nb": "nb_NO"};
 export const LOCALE_TAG = 'nb-NO';

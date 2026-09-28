@@ -1,4 +1,4 @@
-# Lønn etter skatt
+# EtterSkatt.com
 
 > Gratis lønns- og skattekalkulatorer for Norge for inntektsåret 2026, utgitt av Radif Partners. Alle satser er hentet fra Skatteetaten, NAV, SSB og Arbeidstilsynet, med kilde og dato på hver side. Beregningene skjer i nettleseren.
 

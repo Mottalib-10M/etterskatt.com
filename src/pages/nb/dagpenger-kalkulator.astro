@@ -1,0 +1,53 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { dagpenger, seksG, compute } from '../../lib/engine/no';
+const D = P.nav.dagpenger; const G = P.grunnbelop.from_2026_05_01;
+const ex = dagpenger({ income: 550000 });
+const rows = [210000, 300000, 450000, 550000, 700000, 819294, 1000000].map((g) => { const d = dagpenger({ income: g }); return [formatMoney(g), formatMoney(d.perYear), formatMoney(d.perMonth), formatMoney(d.perDay), `${d.weeks} uker`, formatMoney(Math.round(compute({ gross: d.perYear }).annual.net / 12))]; });
+const faqs = [
+  { q: 'Hvor mye får jeg i dagpenger?', a: `Dagpengene er ${formatPercent(D.rate, 1)} av inntekten din før du ble arbeidsledig, og inntekt over seks ganger grunnbeløpet, ${formatMoney(seksG)}, regnes ikke med. Med ${formatMoney(550000)} i inntekt får du ${formatMoney(ex.perYear)} på årsbasis, ${formatMoney(ex.perMonth)} i måneden før skatt. Forsørger du barn under 18 år, får du ${formatMoney(D.child_per_day)} ekstra per barn per dag.` },
+  { q: 'Hva må jeg ha tjent for å få dagpenger?', a: `Minst ${formatMoney(Math.round(D.min_12m_g * G))} de siste 12 månedene, som er 1,5 ganger grunnbeløpet, eller minst ${formatMoney(Math.round(D.min_36m_g * G))} til sammen de siste 36 månedene. Du må også ha fått arbeidstiden redusert med minst 50 %, være registrert som arbeidssøker hos NAV og sende meldekort hver 14. dag.` },
+  { q: 'Hvor lenge kan jeg få dagpenger?', a: `I inntil ${D.weeks_long} uker hvis du har tjent minst ${formatMoney(Math.round(D.long_from_g * G))}, to ganger grunnbeløpet, de siste 12 månedene eller i snitt de siste 36. Har du tjent mindre enn det, er perioden ${D.weeks_short} uker. Har du nylig mottatt dagpenger, fortsetter du på ukene som sto igjen.` },
+  { q: 'Får jeg dagpenger hvis jeg sier opp selv?', a: 'Ja, men du må som regel vente lenger. Har du sagt opp uten rimelig grunn, eller selv er skyld i at du mistet jobben, får du ikke dagpenger de første 18 ukene. I tillegg kommer de vanlige tre ventedagene. NAV vurderer hva som er rimelig grunn, for eksempel helseproblemer eller flytting med ektefelle.' },
+];
+---
+<Guide id="dagpenger" title="Dagpengekalkulator 2026: 62,4 % av inntekten opp til 6 G" h1="Dagpengekalkulator: hva får du når du er arbeidsledig?"
+  description="Regn ut dagpengene dine i 2026: 62,4 % av inntekten opp til 6 G, 819 294 kr. Se beløp per måned og dag, minsteinntekten på 1,5 G og stønadsperioden din."
+  intro="Dagpenger erstatter en del av inntekten når du blir arbeidsledig eller permittert. Legg inn inntekten din de siste tolv månedene."
+  resume={`Dagpenger er en delvis erstatning for tapt arbeidsinntekt når du er arbeidsledig eller permittert. Du får ${formatPercent(D.rate, 1)} av dagpengegrunnlaget, som er inntekten de siste 12 månedene eller gjennomsnittet av de siste 36, etter hva som er høyest. Inntekt over seks ganger grunnbeløpet, ${formatMoney(seksG)}, regnes ikke med. For å ha rett må du ha tjent minst ${formatMoney(Math.round(D.min_12m_g * G))} de siste 12 månedene eller ${formatMoney(Math.round(D.min_36m_g * G))} de siste 36. Med en inntekt på ${formatMoney(550000)} utgjør dagpengene ${formatMoney(ex.perMonth)} i måneden før skatt, ${formatMoney(ex.perDay)} per dag fem dager i uken. Stønadsperioden er ${D.weeks_long} uker for dem som har tjent minst ${formatMoney(Math.round(D.long_from_g * G))}, og ${D.weeks_short} uker ellers. Foreldre får et barnetillegg på ${formatMoney(D.child_per_day)} per barn per dag.`}
+  faqs={faqs} related={['sykepenger', 'foreldrepenger', 'etterSkatt', 'bonus', 'skattekort', 'snittlonn']} sources={[SRC.nav_dagpenger, SRC.grunnbelop, SRC.trygdeavgift]}>
+  <MiniSim client:visible kind="dagpenger" lang={lang} href={route('etterSkatt', lang)} />
+  <h2>Dagpenger ved ulike inntekter</h2>
+  <ContentTable headers={['Inntekt siste 12 måneder', 'Dagpenger per år', 'Per måned', 'Per dag', 'Periode', 'Utbetalt per måned etter skatt']} align={['r', 'r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Kolonnen til høyre viser omtrent hva som blir igjen etter skatt dersom dagpengene er eneste inntekt gjennom et helt år. Fordi skatten faller når inntekten faller, er nedgangen i utbetalt beløp mindre enn de 37,6 prosentene du mister før skatt. Med {formatMoney(550000)} i tidligere lønn går nettoinntekten fra {formatMoney(Math.round(compute({ gross: 550000 }).annual.net / 12))} til {formatMoney(Math.round(compute({ gross: ex.perYear }).annual.net / 12))} i måneden.</p>
+
+  <h2>Dagpengegrunnlaget</h2>
+  <p>NAV henter inntekten din fra a-ordningen. Lønn, feriepenger utbetalt i perioden, sykepenger, foreldrepenger og tidligere dagpenger regnes med. Næringsinntekt regnes ikke med. Inntekten oppjusteres med endringen i grunnbeløpet, slik at inntekt fra tidligere år ikke taper seg i verdi. Dagsatsen er 2,4 promille av grunnlaget, og siden dagpenger betales for fem dager i uken, gir det {formatPercent(D.rate, 1)} over et år.</p>
+
+  <h2>Ventetid og meldekort</h2>
+  <p>De tre første dagene du er arbeidsledig, er ventedager uten utbetaling. De må være opptjent innenfor en periode på 15 dager etter at du søkte. Deretter betales dagpengene etterskuddsvis for 14 dager om gangen, på grunnlag av meldekortet du sender. På meldekortet fører du timer du har jobbet, og dagpengene reduseres time for time. Jobber du mer enn halvparten av den tidligere arbeidstiden i en meldeperiode, faller dagpengene bort for den perioden.</p>
+
+  <h2>Permittering</h2>
+  <p>Ved permittering betaler arbeidsgiveren lønn i arbeidsgiverperioden på 15 arbeidsdager. Deretter kan du få dagpenger, etter de samme reglene for sats og minsteinntekt. Arbeidsgiveren kan fritas fra lønnsplikten i inntil 26 uker innenfor en periode på 18 måneder. Du må stå tilmeldt NAV som arbeidssøker også mens du er permittert.</p>
+
+  <h2>Skatt på dagpenger</h2>
+  <p>Dagpenger er skattepliktige som lønn, med trygdeavgift på {formatPercent(P.trygdeavgift.wage, 1)}, og NAV trekker skatt etter skattekortet. Har du tabellkort basert på lønnen du hadde, blir trekket fort for høyt. Endre skattekortet og oppgi forventet inntekt for året, så får du riktigere utbetaling underveis. Det opptjenes ikke feriepenger av dagpenger. Den gamle ordningen med ferietillegg ble avviklet i 2022.</p>
+
+  <h2>Sluttpakke og dagpenger</h2>
+  <p>Får du sluttvederlag eller etterlønn som dekker lønn for en periode etter at du sluttet, har du ikke rett til dagpenger før den perioden er over. Et rent engangsbeløp som ikke er knyttet til et bestemt antall måneder, kan også utsette dagpengene. Oppgi alltid sluttavtalen i søknaden. <a href={route('bonus', lang)}>Siden om skatt på bonus</a> forklarer hvordan en sluttpakke skattlegges.</p>
+
+  <h2>Hvis du blir syk eller får barn</h2>
+  <p>Blir du syk mens du mottar dagpenger, kan du få sykepenger i stedet, beregnet av dagpengene. Det samme gjelder foreldrepenger: tiden med dagpenger teller som opptjening, og grunnlaget blir dagpengenivået. <a href={route('sykepenger', lang)}>Sykepengekalkulatoren</a> og <a href={route('foreldrepenger', lang)}>foreldrepengekalkulatoren</a> viser hva de ytelsene gir.</p>
+  <h2>Arbeidstid, deltid og dagpenger</h2>
+  <p>Dagpengene tar utgangspunkt i hvor mye arbeidstid du har mistet. NAV fastsetter en vanlig arbeidstid for deg, normalt gjennomsnittet de siste tolv månedene, opp til 37,5 timer i uken. Har du mistet halve stillingen, får du halvparten av fulle dagpenger. Tar du en deltidsjobb mens du er arbeidsledig, reduseres utbetalingen med timene du jobber, ikke med lønnen du får. En time arbeid til høy timelønn koster deg derfor like mye i dagpenger som en time til lav lønn, og det lønner seg alltid å ta det arbeidet som finnes.</p>
+
+  <h2>Krav om å være reell arbeidssøker</h2>
+  <p>For å beholde dagpengene må du være villig til å ta ethvert arbeid du er i stand til å utføre, hvor som helst i Norge, på heltid eller deltid. Unntak gis for helse, omsorg for små barn og alder over 60 år. Sier du nei til et tilbud om arbeid eller et tiltak uten rimelig grunn, kan dagpengene stanses i 18 uker første gang. Du kan studere på deltid ved siden av dagpenger etter søknad, men som hovedregel ikke på fulltid.</p>
+</Guide>

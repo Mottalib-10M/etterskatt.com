@@ -1,0 +1,56 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { bsuFradrag } from '../../lib/engine/no';
+const B = P.bsu;
+const ex = bsuFradrag({ saved: B.max_year, age: 25 });
+const rows = [5000, 10000, 15000, 20000, B.max_year, 40000].map((s) => { const b = bsuFradrag({ saved: s, age: 25 }); return [formatMoney(s), formatMoney(b.counted), formatMoney(b.credit)]; });
+const years = Math.ceil(B.max_total / B.max_year);
+const faqs = [
+  { q: 'Hvor mye får jeg i skattefradrag for BSU?', a: `${formatPercent(B.rate, 0)} av det du sparer i løpet av året, opp til ${formatMoney(B.max_year)}. Sparer du hele beløpet, blir skatten ${formatMoney(ex.credit)} lavere. Fradraget trekkes direkte fra skatten, ikke fra inntekten, og er derfor verdt like mye uansett hvor mye du tjener, så lenge du betaler minst så mye i skatt.` },
+  { q: 'Hva er aldersgrensen for BSU?', a: `Du kan spare i BSU med skattefradrag til og med det året du fyller ${B.age_limit} år. Etter det kan du ikke sette inn mer, men pengene kan stå på kontoen med den gode renten så lenge du vil. Det er ingen nedre aldersgrense, men du må ha skatt å trekke fradraget fra.` },
+  { q: 'Får jeg BSU-fradrag hvis jeg eier bolig?', a: 'Nei. Skattefradraget gis bare til dem som ikke eier bolig ved utgangen av inntektsåret. Eier du primærbolig eller sekundærbolig, alene eller sammen med andre, kan du fortsatt spare på kontoen, men uten fradrag. Kjøper du bolig i løpet av året, gis det ikke fradrag for det året.' },
+  { q: 'Hva kan BSU-pengene brukes til?', a: 'Til kjøp av bolig eller til nedbetaling av lån på bolig du har kjøpt etter at du opprettet kontoen. Bruker du pengene til noe annet, må du betale tilbake skattefradraget du har fått, som et tillegg i skatten det året. Renten på kontoen beholder du uansett.' },
+];
+---
+<Guide id="bsu" title="BSU skattefradrag 2026: 2 750 kr tilbake, regler og grenser" h1="BSU 2026: skattefradrag, grenser og regler"
+  description="BSU gir 10 % skattefradrag på opptil 27 500 kr i året, altså 2 750 kr, til og med året du fyller 33. Se regler, aldersgrense, totalgrensen på 300 000 kr."
+  intro="Boligsparing for ungdom gir skattefradrag og høy rente. Legg inn hva du sparer i år, og se hva du får tilbake på skatten."
+  resume={`Boligsparing for ungdom, BSU, er en sparekonto for dem som skal kjøpe sin første bolig. Du får et fradrag i skatten på ${formatPercent(B.rate, 0)} av det du setter inn i løpet av året, opp til ${formatMoney(B.max_year)}. Fullt innskudd gir ${formatMoney(ex.credit)} lavere skatt. Du kan spare til og med det året du fyller ${B.age_limit} år, og samlet innskudd kan ikke overstige ${formatMoney(B.max_total)}, noe som tar ${years} år med fullt beløp. Skattefradraget gis bare til dem som ikke eier bolig, og det kan ikke bli større enn skatten du ellers skulle betalt. Pengene må brukes til kjøp av bolig eller nedbetaling av boliglån. Brukes de til noe annet, må fradraget betales tilbake. Bankene gir vanligvis sin beste sparerente på BSU-kontoer.`}
+  faqs={faqs} related={['fradrag', 'rentefradrag', 'skatt', 'frikort', 'personfradrag', 'ips']} sources={[SRC.bsu_sats, SRC.bsu, SRC.forskudd_2026]}>
+  <MiniSim client:visible kind="bsu" lang={lang} href={route('skatt', lang)} />
+  <h2>Skattefradrag etter sparebeløp</h2>
+  <ContentTable headers={['Spart i året', 'Beløp som teller', 'Skattefradrag']} align={['r', 'r', 'r']} rows={rows} />
+  <p>Innskudd over {formatMoney(B.max_year)} i året er ikke mulig på kontoen. Siste rad viser bare at fradraget stopper ved {formatMoney(ex.credit)}. Det er innskuddet som gir fradrag, ikke rentene som legges til.</p>
+
+  <h2>Hvorfor fradraget er verdt mer enn renten</h2>
+  <p>Et skattefradrag på {formatPercent(B.rate, 0)} tilsvarer en avkastning på ti prosent det første året pengene står inne, i tillegg til bankens rente. Ingen annen sparing gir det samme uten risiko. Setter du inn {formatMoney(B.max_year)} i desember, får du {formatMoney(ex.credit)} tilbake i skatteoppgjøret et halvt år senere. Derfor lønner det seg å fylle årets kvote selv om du må flytte penger fra en annen sparekonto.</p>
+  <p>Fradraget gjelder for året innskuddet er gjort. Kvoten kan ikke flyttes mellom år, så et år uten innskudd er tapt.</p>
+
+  <h2>Du må ha skatt å trekke fra</h2>
+  <p>BSU-fradraget er et fradrag i skatt, og det kan ikke overstige skatten på alminnelig inntekt. Tjener du under frikortgrensen på {formatMoney(P.frikort_limit)}, betaler du lite eller ingen slik skatt, og fradraget blir tilsvarende mindre. For å utnytte hele fradraget på {formatMoney(ex.credit)} må du ha en lønn på omtrent {formatMoney(Math.round((P.personfradrag + ex.credit / P.alminnelig.rate) / (1 - P.minstefradrag.rate) / 1000) * 1000)} eller mer. Fradraget kan ikke overføres til foreldre eller ektefelle, og ubrukt fradrag går tapt.</p>
+
+  <h2>Regelen om boligeiere</h2>
+  <p>Siden 2021 gis skattefradraget bare til dem som ikke eier bolig. Det avgjørende er om du står som eier ved utgangen av året. Eier du en liten andel av en bolig sammen med foreldre, regnes du som boligeier. Fritidsbolig regnes ikke som bolig i denne sammenhengen. Har du allerede kjøpt, kan kontoen fortsatt brukes til å betale ned på lånet, og renten er ofte høyere enn boliglånsrenten etter skatt.</p>
+
+  <h2>Totalgrensen og tiden det tar</h2>
+  <p>Samlet innskudd kan være {formatMoney(B.max_total)}, renter ikke medregnet. Med fullt årlig innskudd bruker du {years} år på å fylle kontoen. Starter du som 22-åring, er den full året du fyller {22 + years - 1}. Starter du senere, rekker du ikke taket før aldersgrensen, men skattefradraget er det samme per år. Samlet skattefradrag over {years} år er {formatMoney(Math.round(B.max_total * B.rate))}.</p>
+
+  <h2>Bytte bank og rente</h2>
+  <p>Du kan bare ha én BSU-konto, men du kan flytte den til en annen bank uten å miste rettigheter. Enkelte banker krever at du har lønnskonto eller andre produkter hos dem for å gi best rente. Rentene på BSU er skattepliktige som andre renteinntekter, med 22 %.</p>
+
+  <h2>BSU sammen med andre fradrag</h2>
+  <p>BSU-fradraget kommer i tillegg til fradragene i alminnelig inntekt, som <a href={route('rentefradrag', lang)}>rentefradraget</a> etter boligkjøpet. For unge med lav inntekt er rekkefølgen viktig: personfradraget og minstefradraget reduserer skatten først, og BSU-fradraget trekkes fra det som er igjen. <a href={route('skatt', lang)}>Skattekalkulatoren</a> viser hva du betaler i skatt, og <a href={route('fradrag', lang)}>oversikten over fradrag</a> hva annet du kan kreve.</p>
+  <h2>BSU for studenter og lærlinger</h2>
+  <p>Mange unge tjener for lite til å utnytte hele fradraget. En student med {formatMoney(120000)} i lønn fra deltidsjobb betaler nesten ingen skatt på alminnelig inntekt, og får da bare en liten del av fradraget, uansett hvor mye som settes inn. Innskuddet er likevel ikke bortkastet: renten er god, og totalgrensen på {formatMoney(B.max_total)} fylles opp. Stipend fra Lånekassen er skattefritt og gir ikke grunnlag for fradrag. Lærlinger og andre med full lønn utnytter som regel fradraget fullt ut fra første år.</p>
+  <p>Foreldre og besteforeldre kan sette inn penger på kontoen. Fradraget går til kontoeieren, ikke til den som betaler, og gaven er ikke skattepliktig. For en familie som vil hjelpe til med boligkjøp, er BSU derfor en måte å gi som samtidig senker skatten til den unge.</p>
+
+  <h2>Når kontoen er full eller du har fylt 33</h2>
+  <p>Etter det året du fyller {B.age_limit}, eller når innskuddene har nådd {formatMoney(B.max_total)}, kan du ikke sette inn mer. Pengene kan stå videre på samme vilkår. Noen banker tilbyr en tilleggskonto med tilsvarende rente og uten skattefradrag for dem som vil spare mer til bolig. Velger du å ta ut pengene uten å kjøpe bolig, legges tidligere skattefradrag til i skatten for uttaksåret, så det lønner seg å la kontoen stå til boligkjøpet er en realitet.</p>
+</Guide>

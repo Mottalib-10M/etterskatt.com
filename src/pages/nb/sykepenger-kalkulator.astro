@@ -1,0 +1,54 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { sykepenger, seksG, compute } from '../../lib/engine/no';
+const N = P.nav.sykepenger; const G = P.grunnbelop.from_2026_05_01;
+const ex = sykepenger({ gross: 600000 }); const hi = sykepenger({ gross: 1000000 });
+const rows = [300000, 450000, 600000, 819294, 1000000, 1300000].map((g) => { const s = sykepenger({ gross: g }); return [formatMoney(g), formatMoney(s.perMonth), formatMoney(s.perDay), formatMoney(s.lossPerMonth), formatMoney(Math.round(compute({ gross: s.perYear }).annual.net / 12))]; });
+const faqs = [
+  { q: 'Hvor mye får jeg i sykepenger?', a: `Som arbeidstaker får du 100 % av inntekten din, opp til seks ganger grunnbeløpet, som er ${formatMoney(seksG)} i året. Tjener du ${formatMoney(600000)}, får du ${formatMoney(ex.perMonth)} i måneden før skatt, det samme som lønnen. Tjener du mer enn taket, dekker NAV bare opp til taket, med mindre arbeidsgiveren betaler resten.` },
+  { q: 'Hvem betaler sykepengene, arbeidsgiveren eller NAV?', a: `Arbeidsgiveren betaler de første ${N.employer_days} kalenderdagene, kalt arbeidsgiverperioden. Fra dag 17 betaler NAV. Mange arbeidsgivere fortsetter likevel å utbetale lønn som vanlig og får pengene refundert fra NAV, slik at du ikke merker overgangen på lønnsslippen. Dette kalles forskuttering og er vanlig i både offentlig og privat sektor.` },
+  { q: 'Hvor lenge kan jeg få sykepenger?', a: `I inntil ${N.max_weeks} uker. Har du vært helt arbeidsfør i 26 uker etter at du sist fikk sykepenger, starter en ny periode. Er du fortsatt syk når sykepengene tar slutt, kan du søke arbeidsavklaringspenger, som utgjør 66 % av inntekten opp til seks ganger grunnbeløpet.` },
+  { q: 'Betaler jeg skatt av sykepenger?', a: `Ja. Sykepenger til arbeidstakere skattlegges som lønn, med trygdeavgift på ${formatPercent(P.trygdeavgift.wage, 1)}, og det trekkes skatt etter skattekortet. Når NAV betaler direkte til deg, opptjener du feriepenger fra NAV bare for de første 48 sykepengedagene i året. Betaler arbeidsgiveren lønn under sykdom, opptjener du feriepenger som vanlig.` },
+];
+---
+<Guide id="sykepenger" title="Sykepengekalkulator 2026: 100 % av lønn opp til 6 G" h1="Sykepengekalkulator: hva får du utbetalt når du er syk?"
+  description="Regn ut sykepengene dine i 2026. Arbeidstakere får 100 % av inntekten opp til 6 G, 819 294 kr. Se beløp per måned og dag, arbeidsgiverperioden og varighet."
+  intro="Sykepenger erstatter lønnen når du er sykmeldt, opp til et tak. Legg inn årslønnen din og se hva du får."
+  resume={`Sykepenger skal erstatte inntekten når du ikke kan jobbe på grunn av sykdom eller skade. Arbeidstakere får 100 % av sykepengegrunnlaget, som er den aktuelle månedsinntekten regnet om til årsinntekt, men NAV dekker ikke inntekt over seks ganger grunnbeløpet. Med et grunnbeløp på ${formatMoney(G)} fra 1. mai 2026 er taket ${formatMoney(seksG)} i året, ${formatMoney(Math.round(seksG / 12))} i måneden. Arbeidsgiveren betaler de første ${N.employer_days} kalenderdagene, deretter overtar NAV, og du kan få sykepenger i inntil ${N.max_weeks} uker. For å ha rett må du ha vært i arbeid i minst ${N.work_weeks} uker og ha en årsinntekt på minst halvparten av grunnbeløpet, ${formatMoney(G / 2)}. En arbeidstaker med ${formatMoney(600000)} i lønn får ${formatMoney(ex.perMonth)} i måneden, mens en med ${formatMoney(1000000)} får ${formatMoney(hi.perMonth)} fra NAV og taper ${formatMoney(hi.lossPerMonth)} i måneden uten avtale om full lønn.`}
+  faqs={faqs} related={['foreldrepenger', 'dagpenger', 'feriepenger', 'etterSkatt', 'selvstendig', 'snittlonn']} sources={[SRC.nav_sykepenger, SRC.grunnbelop, SRC.trygdeavgift]}>
+  <MiniSim client:visible kind="sykepenger" lang={lang} href={route('etterSkatt', lang)} />
+  <h2>Sykepenger ved ulike lønninger</h2>
+  <ContentTable headers={['Årslønn', 'Sykepenger per måned', 'Per dag', 'Tap per måned over 6 G', 'Utbetalt per måned etter skatt']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Dagsatsen er årsgrunnlaget delt på 260, fordi sykepenger betales for fem dager i uken. Kolonnen til høyre viser omtrent hva som blir igjen etter skatt når sykepengene er eneste inntekt i året. Opp til taket er sykepengene lik lønnen, og det er først over {formatMoney(seksG)} at sykdom gir lavere inntekt.</p>
+
+  <h2>Hva sykepengegrunnlaget er</h2>
+  <p>For arbeidstakere tar arbeidsgiveren og NAV utgangspunkt i gjennomsnittlig inntekt de tre siste kalendermånedene før du ble syk, og regner den om til årsinntekt. Fast lønn, faste tillegg og provisjon regnes med. Overtid regnes ikke med dersom den ikke er en fast del av arbeidet. Avviker denne inntekten mer enn 25 % fra det som er rapportert til Skatteetaten de siste tolv månedene, fastsetter NAV grunnlaget ved skjønn.</p>
+  <p>Har du flere arbeidsgivere, legges inntektene sammen, men taket på {formatMoney(seksG)} gjelder samlet.</p>
+
+  <h2>Egenmelding og sykmelding</h2>
+  <p>Egenmelding kan brukes i opptil tre kalenderdager om gangen, fire ganger i løpet av tolv måneder, når du har vært ansatt i minst to måneder. I virksomheter med avtale om inkluderende arbeidsliv kan grensen være åtte dager. Varer fraværet lenger, trenger du sykmelding fra lege. De {N.employer_days} dagene i arbeidsgiverperioden regnes fra første fraværsdag, og helgedager telles med.</p>
+
+  <h2>Gradert sykmelding</h2>
+  <p>Kan du jobbe noe, skal sykmeldingen være gradert. Da får du lønn for den delen du jobber og sykepenger for resten, ned til 20 % sykmelding. En gradert sykmelding bruker like mange dager av de {N.max_weeks} ukene som en full, men holder deg i kontakt med arbeidsplassen, og legen skal alltid vurdere dette før full sykmelding.</p>
+
+  <h2>Selvstendig næringsdrivende og frilansere</h2>
+  <p>Selvstendig næringsdrivende får 80 % av sykepengegrunnlaget fra dag 17, og ingenting de første 16 dagene, med mindre de har tegnet tilleggsforsikring hos NAV. Forsikringen kan gi 100 % fra dag 17 eller fra første dag. Grunnlaget er gjennomsnittet av den pensjonsgivende inntekten de tre siste årene. Frilansere får 100 % fra dag 17. <a href={route('selvstendig', lang)}>Siden om skatt for næringsdrivende</a> viser hva trygdeavgiften på næringsinntekt utgjør.</p>
+
+  <h2>Inntekt over taket</h2>
+  <p>NAV betaler aldri mer enn {formatMoney(Math.round(seksG / 12))} i måneden. I staten, kommunene og mange private bedrifter med tariffavtale har de ansatte rett til full lønn under sykdom, og arbeidsgiveren dekker forskjellen. Står det ikke noe om dette i arbeidsavtalen eller tariffavtalen, er det NAV-taket som gjelder. Med {formatMoney(1000000)} i årslønn betyr det {formatMoney(hi.lossPerMonth)} mindre før skatt hver måned du er sykmeldt etter arbeidsgiverperioden.</p>
+
+  <h2>Etter 52 uker</h2>
+  <p>Når sykepengeretten er brukt opp, må du ha vært helt arbeidsfør i 26 uker for å få en ny periode. Er arbeidsevnen fortsatt nedsatt med minst halvparten, kan du ha rett til arbeidsavklaringspenger, som er 66 % av inntekten opp til seks ganger grunnbeløpet. Overgangen betyr en merkbar nedgang, og det lønner seg å søke i god tid før sykepengene stanser. <a href={route('etterSkatt', lang)}>Kalkulatoren for lønn etter skatt</a> viser hva et gitt beløp gir utbetalt.</p>
+  <h2>Eksempel: fra lønn til sykepenger</h2>
+  <p>En ansatt med {formatMoney(900000)} i årslønn blir sykmeldt i tre måneder, og arbeidsgiveren har ingen avtale om full lønn. De første {N.employer_days} dagene får hun lønn som før. Deretter betaler NAV {formatMoney(Math.round(seksG / 12))} i måneden i stedet for {formatMoney(75000)}, et bortfall på {formatMoney(sykepenger({ gross: 900000 }).lossPerMonth)} før skatt. Etter skatt er tapet mindre, siden de kronene hun mister, ville vært skattlagt med over 40 %. Mange velger en privat inntektsforsikring nettopp for inntekten over taket.</p>
+
+  <h2>Ferie, permisjon og opphold i utlandet</h2>
+  <p>Du har rett til å utsette ferie du ikke kan avvikle på grunn av sykdom. Tar du ferie mens du er sykmeldt, stanses sykepengene i feriedagene, og dagene brukes ikke av sykepengeperioden. Vil du oppholde deg i utlandet, må du som hovedregel søke NAV på forhånd for å beholde sykepengene, også innenfor EØS når oppholdet varer lenge.</p>
+</Guide>

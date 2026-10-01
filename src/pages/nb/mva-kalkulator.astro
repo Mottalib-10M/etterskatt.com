@@ -1,0 +1,52 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { mvaAdd, mvaRemove } from '../../lib/engine/no';
+const M = P.mva;
+const add = [100, 500, 1000, 5000, 20000, 100000].map((a) => [formatMoney(a, 2), formatMoney(mvaAdd(a).mva, 2), formatMoney(mvaAdd(a).inc, 2), formatMoney(mvaAdd(a, M.rate_food).inc, 2), formatMoney(mvaAdd(a, M.rate_low).inc, 2)]);
+const rem = [125, 500, 1000, 5000, 20000, 100000].map((a) => [formatMoney(a, 2), formatMoney(mvaRemove(a).mva, 2), formatMoney(mvaRemove(a).ex, 2)]);
+const faqs = [
+  { q: 'Hvordan regner jeg ut mva?', a: `For å legge til 25 % mva ganger du beløpet uten mva med 1,25: ${formatMoney(1000)} blir ${formatMoney(mvaAdd(1000).inc)}. For å finne mva i et beløp som allerede inkluderer avgiften, ganger du med 0,2: ${formatMoney(1250)} inneholder ${formatMoney(mvaRemove(1250).mva)} i mva. Deler du beløpet med mva på 1,25, får du prisen uten mva.` },
+  { q: 'Hvorfor er mva-andelen 20 % og ikke 25 %?', a: `Fordi de 25 prosentene regnes av prisen uten avgift. Når avgiften er lagt på, utgjør den 25 av 125 deler av totalen, altså 20 %. Trekker du 25 % fra ${formatMoney(1250)}, får du ${formatMoney(1250 * 0.75, 2)}, som er feil. For matvarer er andelen 15 av 115, omtrent 13,04 %, og for den lave satsen 12 av 112, omtrent 10,71 %.` },
+  { q: 'Når må jeg registrere meg i Merverdiavgiftsregisteret?', a: `Når den avgiftspliktige omsetningen din har passert ${formatMoney(M.threshold)} i løpet av en periode på tolv måneder. Grensen gjelder omsetning, ikke overskudd, og perioden er rullerende, ikke kalenderåret. Fram til du er registrert, skal du ikke legge mva på fakturaene. For veldedige og allmennyttige organisasjoner er grensen høyere.` },
+  { q: 'Hvilke varer og tjenester har lavere mva?', a: `Matvarer og alkoholfrie drikkevarer har ${formatPercent(M.rate_food, 0)}. Persontransport, overnatting, kinobilletter, idrettsarrangementer, fornøyelsesparker og kringkasting har ${formatPercent(M.rate_low, 0)}. Servering på restaurant har full sats på ${formatPercent(M.rate, 0)}, mens mat som tas med, har ${formatPercent(M.rate_food, 0)}. Bøker, aviser og elbiler opp til en beløpsgrense har nullsats.` },
+];
+---
+<Guide id="mva" title="Mva-kalkulator 2026: legg til eller trekk fra 25 % mva" h1="Mva-kalkulator: regn med og uten merverdiavgift"
+  description="Regn ut mva i Norge i 2026: legg til eller trekk fra 25 %, 15 % for matvarer eller 12 % for transport og overnatting. Med formler og registreringsgrense."
+  intro="Den alminnelige mva-satsen er 25 %. Legg inn et beløp, velg sats og om beløpet er med eller uten mva."
+  resume={`Merverdiavgift, forkortet mva eller moms, er en avgift på omsetning av varer og tjenester i Norge. Den alminnelige satsen er ${formatPercent(M.rate, 0)} i 2026. Matvarer har ${formatPercent(M.rate_food, 0)}, og persontransport, overnatting, kino og en del kultur- og idrettstilbud har ${formatPercent(M.rate_low, 0)}. For å legge til 25 % mva ganger du beløpet uten avgift med 1,25: ${formatMoney(1000)} blir ${formatMoney(mvaAdd(1000).inc)}. For å finne avgiften i et beløp som inkluderer mva, ganger du med 0,2: ${formatMoney(1000)} med mva inneholder ${formatMoney(mvaRemove(1000).mva)} i avgift og ${formatMoney(mvaRemove(1000).ex)} i pris. En virksomhet må registrere seg i Merverdiavgiftsregisteret når avgiftspliktig omsetning passerer ${formatMoney(M.threshold)} på tolv måneder. Den krever da inn mva fra kundene, trekker fra mva på egne kjøp og betaler differansen til staten.`}
+  faqs={faqs} related={['selvstendig', 'forskudd', 'kostnad', 'aga', 'skatt', 'home']} sources={[SRC.mva_satser, SRC.mva, SRC.forskuddsskatt]}>
+  <MiniSim client:visible kind="mva" lang={lang} href={route('selvstendig', lang)} />
+  <h2>Legge til mva</h2>
+  <ContentTable headers={['Uten mva', 'Mva 25 %', 'Med 25 %', 'Med 15 %', 'Med 12 %']} align={['r', 'r', 'r', 'r', 'r']} rows={add} />
+  <p>Priser mellom næringsdrivende oppgis vanligvis uten mva, og avgiften legges til på fakturaen. Priser til forbrukere skal alltid oppgis med mva.</p>
+
+  <h2>Finne mva i et beløp med 25 %</h2>
+  <ContentTable headers={['Med mva', 'Herav mva', 'Uten mva']} align={['r', 'r', 'r']} rows={rem} />
+  <p>Første rad er kontrollen: {formatMoney(125)} inneholder nøyaktig {formatMoney(25)}. Denne regnemåten bruker du når du skal bokføre et kjøp ut fra kvitteringen, eller når en kunde ber om prisen uten avgift.</p>
+
+  <h2>Hvem skal beregne mva</h2>
+  <p>Alle som driver næringsvirksomhet med avgiftspliktig omsetning over {formatMoney(M.threshold)} på tolv måneder, enten det er enkeltpersonforetak, aksjeselskap eller en forening. Grensen regnes fra første krone du omsetter, og den måneden du passerer den, må du søke om registrering. Fakturaer du sender før registreringen er på plass, kan etterfaktureres med mva for beløpet som overstiger grensen.</p>
+  <p>Det er mulig å forhåndsregistrere seg dersom du har store innkjøp før omsetningen kommer i gang, slik at du får fradrag for inngående mva fra starten.</p>
+
+  <h2>Unntak og fritak</h2>
+  <p>Noen tjenester er unntatt fra mva-loven. Da skal det ikke beregnes mva, og du får heller ikke fradrag for mva på kostnadene: helsetjenester, undervisning, finansielle tjenester, utleie av bolig og omsetning av fast eiendom. Andre varer og tjenester er fritatt, med nullsats: eksport, bøker og aviser, og elbiler opp til en beløpsgrense. Her beregnes 0 % utgående mva, men du beholder fradragsretten for inngående mva. Forskjellen mellom unntak og fritak betyr mye for lønnsomheten i virksomheter med store innkjøp.</p>
+
+  <h2>Mva-meldingen</h2>
+  <p>Registrerte virksomheter leverer mva-melding seks ganger i året, for to måneder om gangen, med frist én måned og ti dager etter terminens utløp. Fristen for mai og juni er likevel 31. august. Virksomheter med omsetning under én million kroner kan søke om årlig levering, med frist 10. mars året etter. I meldingen fører du opp utgående mva på salg og inngående mva på kjøp, og differansen betales eller utbetales.</p>
+
+  <h2>Mva og skatt i enkeltpersonforetak</h2>
+  <p>Mva du krever inn, er ikke inntekt, og mva du betaler på kostnader, er ikke en utgift når du er registrert. Skatten beregnes av tallene uten mva. Fakturerer du {formatMoney(mvaAdd(600000).inc)} i løpet av året, er {formatMoney(600000)} omsetning og {formatMoney(mvaAdd(600000).mva)} statens penger. Det er lurt å sette avgiften på en egen konto. <a href={route('selvstendig', lang)}>Siden om skatt for næringsdrivende</a> viser skatten på overskuddet, og <a href={route('forskudd', lang)}>forskuddsskatten</a> betales i fire terminer.</p>
+
+  <h2>Import og kjøp fra utlandet</h2>
+  <p>Ved import av varer skal det beregnes mva av varens verdi inkludert frakt og toll. For forbrukere kreves avgiften inn av nettbutikken eller transportøren, og fribeløpet for småsendinger er fjernet. Kjøper en norsk virksomhet tjenester fra utlandet som kan leveres digitalt, skal den selv beregne norsk mva, såkalt omvendt avgiftsplikt, og føre beløpet i mva-meldingen.</p>
+  <h2>Krav til fakturaen</h2>
+  <p>En faktura med mva skal vise selgerens navn og organisasjonsnummer etterfulgt av bokstavene MVA, kjøperens navn, dato, fortløpende fakturanummer, hva som er levert, beløpet uten mva, mva-beløpet for hver sats og totalsummen. Er du ikke registrert, skal du ikke skrive MVA etter organisasjonsnummeret og ikke legge avgift på. Har du ved en feil krevd inn mva uten å være registrert, skal beløpet betales til staten eller tilbake til kjøperen. Regnskapsmateriale som dokumenterer avgiften, skal oppbevares i fem år. For kontantsalg til forbrukere er det tilstrekkelig med kvittering fra et godkjent kassasystem.</p>
+</Guide>

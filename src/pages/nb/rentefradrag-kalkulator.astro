@@ -1,0 +1,55 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { fradragVerdi } from '../../lib/engine/no';
+const r = P.alminnelig.rate;
+const ex = fradragVerdi(3500000 * 0.054);
+const rows = [1500000, 2500000, 3500000, 5000000, 7000000].map((g) => { const ren = g * 0.054; return [formatMoney(g), formatMoney(ren), formatMoney(fradragVerdi(ren)), formatMoney(fradragVerdi(ren) / 12), formatMoney(ren - fradragVerdi(ren))]; });
+const rates = [0.04, 0.05, 0.055, 0.06, 0.07, 0.1, 0.2].map((x) => [formatPercent(x, 1), formatPercent(x * (1 - r), 2)]);
+const faqs = [
+  { q: 'Hvor mye får jeg igjen på skatten for renter på lån?', a: `${formatPercent(r, 0)} av renteutgiftene dine. Renter på gjeld er fradragsberettiget i alminnelig inntekt, og skattesatsen på alminnelig inntekt er ${formatPercent(r, 0)}. Betaler du ${formatMoney(3500000 * 0.054)} i renter på et år, blir skatten ${formatMoney(ex)} lavere. I tiltakssonen i Finnmark og Nord-Troms er satsen ${formatPercent(P.alminnelig.rate_tiltakssone, 1)}.` },
+  { q: 'Må jeg føre opp rentene selv i skattemeldingen?', a: 'Vanligvis ikke. Norske banker og finansforetak rapporterer gjeld og renter direkte til Skatteetaten, og tallene er forhåndsutfylt. Du må selv føre opp renter på private lån, lån i utlandet og lån fra arbeidsgiver hvis de mangler. Kontroller at beløpene stemmer med årsoppgaven fra banken.' },
+  { q: 'Hvordan fordeles rentefradraget mellom samboere?', a: 'Rentene rapporteres på den som står som låntaker, og ved felles lån fordeles de likt. Ektefeller kan fordele renter og gjeld fritt seg imellom i skattemeldingen. Samboere kan også endre fordelingen, men skal i utgangspunktet føre det hver av dem faktisk har betalt. Fradraget er bare verdt noe for den som har skatt å trekke det fra.' },
+  { q: 'Gir kredittkort og forbrukslån også rentefradrag?', a: 'Ja. Alle renter på gjeld gir fradrag, uavhengig av hva lånet er brukt til: boliglån, billån, studielån, forbrukslån og kredittkort. Også forsinkelsesrenter og etableringsgebyr som er en del av lånekostnaden, gir fradrag. Rentetillegg på restskatt og renter som bare er påløpt, men ikke betalt, gir ikke fradrag.' },
+];
+---
+<Guide id="rentefradrag" title="Rentefradrag 2026: kalkulator for skatt spart på lån" h1="Rentefradrag: hva renter på lån gir tilbake på skatten"
+  description="Rentefradraget gir 22 % av renteutgiftene tilbake på skatten i 2026. Regn ut hva boliglånet gir i lavere skatt, rente etter skatt og fordeling mellom samboere."
+  intro="Renter på lån reduserer skatten med 22 %. Legg inn lån og rente, så ser du hva fradraget er verdt og hva lånet koster etter skatt."
+  resume={`Renteutgifter på gjeld kan trekkes fra i alminnelig inntekt i Norge, og siden skattesatsen på alminnelig inntekt er ${formatPercent(r, 0)}, reduserer hver rentekrone skatten med 22 øre. Fradraget gjelder alle typer lån: boliglån, billån, studielån, forbrukslån og kredittkortgjeld. Det er ingen øvre grense. Et boliglån på ${formatMoney(3500000)} med 5,4 % rente gir ${formatMoney(3500000 * 0.054)} i renter på et år og ${formatMoney(ex)} i lavere skatt, omtrent ${formatMoney(ex / 12)} i måneden. Renten etter skatt er dermed ${formatPercent(0.054 * (1 - r), 2)} i stedet for 5,4 %. Bankene rapporterer rentene til Skatteetaten, så fradraget kommer automatisk i skattemeldingen. Fradraget reduserer bare skatten på alminnelig inntekt, ikke trygdeavgift og trinnskatt, og forutsetter at du har skatt å trekke det fra.`}
+  faqs={faqs} related={['fradrag', 'skattekort', 'restskatt', 'bsu', 'formue', 'skatt']} sources={[SRC.bank_lan, SRC.alminnelig, SRC.forskudd_2026]}>
+  <MiniSim client:visible kind="rente" lang={lang} href={route('skatt', lang)} />
+  <h2>Rentefradrag ved 5,4 % rente</h2>
+  <ContentTable headers={['Lån', 'Renter per år', 'Lavere skatt per år', 'Per måned', 'Rentekostnad etter skatt']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Tabellen regner med et avdragsfritt år for enkelhets skyld. På et annuitetslån faller rentedelen etter hvert som lånet betales ned, og fradraget faller tilsvarende.</p>
+
+  <h2>Rente før og etter skatt</h2>
+  <ContentTable headers={['Nominell rente', 'Rente etter skatt']} align={['r', 'r']} rows={rates} />
+  <p>Renten etter skatt er den riktige å sammenligne med avkastning på sparing. En sparekonto med 4 % rente gir {formatPercent(0.04 * (1 - r), 2)} etter skatt, siden renteinntekter skattlegges med {formatPercent(r, 0)}. Å betale ned et lån med 5,4 % rente gir altså bedre avkastning enn kontoen, men dårligere enn et forbrukslån koster.</p>
+
+  <h2>Rentefradraget og skattekortet</h2>
+  <p>Fradraget kan hentes ut løpende. Når du oppgir forventede renteutgifter i skattekortet, senkes skattetrekket hver måned. Etter et boligkjøp eller en renteøkning bør du derfor oppdatere skattekortet, ellers låner du i praksis penger rentefritt til staten til skatteoppgjøret kommer. Det motsatte gjelder når renten faller eller lånet betales ned: står det for høye renter i skattekortet, blir trekket for lavt, og du får <a href={route('restskatt', lang)}>restskatt</a>.</p>
+
+  <h2>Hvem har nytte av fradraget</h2>
+  <p>Fradraget reduserer alminnelig inntekt. Har du ikke annen inntekt enn en lav lønn eller studiestøtte, kan personfradraget på {formatMoney(P.personfradrag)} og minstefradraget allerede ha brakt skatten på alminnelig inntekt ned mot null, og da gir rentene lite eller ingenting. Ektefeller bør legge rentene på den som har høyest alminnelig inntekt etter andre fradrag. Underskudd i alminnelig inntekt kan fremføres til senere år.</p>
+
+  <h2>Avdragsfrihet, rammelån og refinansiering</h2>
+  <p>Fradraget følger rentene du faktisk har betalt i kalenderåret. Avdragsfrihet gir høyere renter og dermed høyere fradrag, men også høyere kostnad totalt. På et rammelån får du fradrag for rentene på det beløpet du har trukket opp. Ved refinansiering av dyr gjeld inn i boliglånet faller både rentekostnaden og fradraget, og nettoeffekten er alltid positiv så lenge renten går ned.</p>
+
+  <h2>Gjeld og formuesskatt</h2>
+  <p>Gjelden trekkes også fra når nettoformuen beregnes. For dem som betaler <a href={route('formue', lang)}>formuesskatt</a>, har lånet derfor en dobbel virkning. Gjeld knyttet til primærbolig og andre eiendeler som verdsettes lavt, kan imidlertid bli redusert i formuesberegningen, slik at ikke hele lånet kommer til fradrag.</p>
+
+  <h2>Studielån og lån fra arbeidsgiver</h2>
+  <p>Renter på studielån gir fradrag i året de betales, ikke mens lånet er rentefritt under utdanningen. Har du et rimelig lån fra arbeidsgiveren, skattlegges fordelen ved lav rente som lønn, beregnet mot en normrente som fastsettes annenhver måned, og du får fradrag både for de rentene du betaler og for den beregnede fordelen. <a href={route('fradrag', lang)}>Oversikten over fradrag</a> viser de øvrige fradragene i alminnelig inntekt.</p>
+  <h2>Eksempel: første år med boliglån</h2>
+  <p>Et par kjøper bolig i juni og tar opp {formatMoney(4000000)} i lån med 5,4 % rente. Det første året betaler de renter for sju måneder, om lag {formatMoney(Math.round(4000000 * 0.054 * 7 / 12 / 1000) * 1000)}, og skatten blir {formatMoney(fradragVerdi(4000000 * 0.054 * 7 / 12))} lavere til sammen. Året etter gjelder fradraget tolv måneder og er verdt {formatMoney(fradragVerdi(4000000 * 0.054))}. Har ikke skattekortet blitt endret ved kjøpet, kommer det første årets fradrag som penger til gode i skatteoppgjøret året etter. Etableringsgebyret er en del av lånekostnaden og kan føres som fradrag det året det betales.</p>
+
+  <h2>Kan rentefradraget endres?</h2>
+  <p>Satsen følger skatten på alminnelig inntekt. Den var 28 % fram til 2013 og er trappet ned til {formatPercent(r, 0)}, der den har ligget siden 2019. Hver nedgang har gjort lån litt dyrere etter skatt og sparing litt gunstigere. En endring må vedtas av Stortinget i statsbudsjettet og gjelder da fra årsskiftet. For et lån med lang løpetid er det derfor fornuftig å regne på hva økonomien tåler også med et lavere fradrag, på samme måte som bankene regner med en høyere rente når de vurderer lånesøknaden.</p>
+</Guide>

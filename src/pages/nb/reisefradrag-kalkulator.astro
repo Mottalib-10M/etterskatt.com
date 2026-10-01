@@ -1,0 +1,54 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { reisefradrag } from '../../lib/engine/no';
+const R = P.reisefradrag;
+const ex = reisefradrag({ kmOneWay: 30 });
+const rows = [10, 15, 20, 30, 50, 80, 120].map((k) => { const x = reisefradrag({ kmOneWay: k }); return [`${k} km`, formatNumber(x.km), formatMoney(x.gross), formatMoney(x.fradrag), formatMoney(x.saved)]; });
+const be = ex.breakEvenKm;
+const faqs = [
+  { q: 'Hvor mye får jeg i reisefradrag?', a: `${formatMoney(R.rate_per_km, 2)} per kilometer for reisen mellom hjem og arbeid, tur-retur, for hver dag du reiser. Fra summen trekkes en egenandel på ${formatMoney(R.threshold)}. Med 30 km hver vei og 230 arbeidsdager blir fradraget ${formatMoney(ex.fradrag)}, og skatten ${formatMoney(ex.saved)} lavere.` },
+  { q: 'Hvor lang reisevei må jeg ha for å få reisefradrag?', a: `Omtrent ${formatNumber(Math.ceil(be * 10) / 10, 1)} km hver vei med 230 arbeidsdager i året. Da er avstandsfradraget akkurat lik egenandelen på ${formatMoney(R.threshold)}. Har du kortere vei, får du ikke fradrag. Reiser du færre dager, for eksempel på grunn av hjemmekontor, må avstanden være tilsvarende lengre.` },
+  { q: 'Får jeg reisefradrag når jeg går, sykler eller kjører kollektivt?', a: 'Ja. Fradraget beregnes etter avstand, uavhengig av hvordan du reiser og hva reisen faktisk koster. Det gis for korteste strekning langs vei eller med rutegående transport. Den som sykler tre mil til jobb, har rett til samme fradrag som den som kjører bil.' },
+  { q: 'Kommer reisefradraget automatisk i skattemeldingen?', a: 'Nei, du må legge det inn selv. Skatteetaten kjenner ikke reiseveien din. I skattemeldingen oppgir du adresse hjemme og på arbeidsstedet, antall dager og avstand, og fradraget beregnes for deg. Du kan også legge det inn i skattekortet for å få lavere skattetrekk gjennom året.' },
+];
+---
+<Guide id="reisefradrag" title="Reisefradrag 2026: kalkulator med sats på 1,90 kr per km" h1="Reisefradrag: regn ut fradraget for reise mellom hjem og arbeid"
+  description="Reisefradraget i 2026 er 1,90 kr per km, med egenandel på 12 000 kr og øvre grense på 120 000 kr. Regn ut fradraget ditt og hva det gir i lavere skatt."
+  intro="Lang reisevei til jobb gir fradrag i skatten. Legg inn avstanden én vei og antall arbeidsdager."
+  resume={`Reisefradraget er et fradrag i alminnelig inntekt for reiser mellom hjem og fast arbeidssted. I 2026 er satsen ${formatMoney(R.rate_per_km, 2)} per kilometer, og fradraget gis for den delen av beløpet som overstiger en egenandel på ${formatMoney(R.threshold)}. Det er en øvre grense på ${formatMoney(R.max)} før egenandelen trekkes fra. Avstanden regnes tur-retur for hver dag du reiser, vanligvis 230 dager i året for en heltidsansatt. Med 30 km hver vei blir beregnet beløp ${formatMoney(ex.gross)}, fradraget etter egenandel ${formatMoney(ex.fradrag)} og skatten ${formatMoney(ex.saved)} lavere, siden fradraget er verdt ${formatPercent(P.alminnelig.rate, 0)}. Fradraget er uavhengig av transportmiddel og faktiske kostnader. Det må føres opp av deg selv i skattemeldingen. Med kortere reisevei enn omtrent ${formatNumber(Math.ceil(be), 0)} km får du ikke fradrag.`}
+  faqs={faqs} related={['fradrag', 'skattekort', 'minstefradrag', 'rentefradrag', 'skatt', 'restskatt']} sources={[SRC.reisefradrag, SRC.alminnelig, SRC.forskudd_2026]}>
+  <MiniSim client:visible kind="reise" lang={lang} href={route('skatt', lang)} />
+  <h2>Reisefradrag etter avstand, 230 arbeidsdager</h2>
+  <ContentTable headers={['Avstand én vei', 'Kilometer i året', 'Beregnet beløp', 'Fradrag etter egenandel', 'Lavere skatt']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>De to første radene gir ikke fradrag, fordi beløpet ikke når egenandelen. Fra omtrent {formatNumber(Math.ceil(be), 0)} km øker fradraget med {formatMoney(R.rate_per_km * 2 * 230)} for hver ekstra kilometer, og skatten faller med {formatMoney(R.rate_per_km * 2 * 230 * P.alminnelig.rate)}.</p>
+
+  <h2>Hvor mange dager kan du regne med</h2>
+  <p>For en vanlig fulltidsstilling brukes 230 dager, der ferie og helligdager allerede er trukket fra. Har du vært borte mer enn 15 dager på grunn av sykdom, permisjon eller liknende, skal dagene reduseres. Det samme gjelder dager med hjemmekontor: det er bare dagene du faktisk reiser som teller. Jobber du deltid tre dager i uken, er det omtrent 138 dager. Reiser du hjem i lunsjen og tilbake, teller dagen bare én gang.</p>
+
+  <h2>Hvilken avstand som gjelder</h2>
+  <p>Avstanden er korteste strekning langs vei eller rutegående transport mellom boligen og det faste arbeidsstedet, ikke nødvendigvis veien du kjører. Bruker du en lengre, men raskere rute, for eksempel motorvei, godtas den dersom den er den naturlige reiseveien. Har du flere arbeidssteder, regnes reisen til hovedarbeidsstedet som arbeidsreise, mens reiser mellom arbeidsstedene er yrkesreiser som dekkes på annen måte.</p>
+
+  <h2>Bompenger og ferge</h2>
+  <p>Utgifter til bompenger og ferge kan komme i tillegg til avstandsfradraget, men bare når du bruker bil fordi den gir en tidsbesparelse på minst to timer om dagen sammenlignet med kollektivtransport, eller når offentlig transport ikke finnes, og når utgiftene overstiger en beløpsgrense fastsatt av Skatteetaten. Utgiftene må kunne dokumenteres. Disse utgiftene inngår i samme regnestykke som avstandsfradraget, før egenandelen på {formatMoney(R.threshold)} trekkes fra.</p>
+
+  <h2>Pendlere og besøksreiser</h2>
+  <p>Bor du borte fra hjemmet på grunn av arbeidet, kan besøksreisene hjem gi fradrag etter samme sats. Arbeidsreiser og besøksreiser legges sammen, egenandelen trekkes fra én gang, og grensen på {formatMoney(R.max)} gjelder samlet. Flybilletter kan føres med faktisk kostnad i stedet for kilometersats. Fradrag for kost og losji på arbeidsstedet følger egne regler, og gis bare de første 24 månedene og ikke for kost dersom du har kokemuligheter.</p>
+
+  <h2>Fradraget kommer i tillegg til minstefradraget</h2>
+  <p>Mange tror reiseutgifter er dekket av minstefradraget. Det er de ikke. Reisefradraget er et eget fradrag og gis ved siden av <a href={route('minstefradrag', lang)}>minstefradraget</a>. Dekker arbeidsgiveren reisen med et månedskort eller fri bil, kan du ikke i tillegg kreve fradrag for den samme reisen, og fordelen er skattepliktig.</p>
+
+  <h2>Legg det inn i skattekortet</h2>
+  <p>Venter du til skattemeldingen, får du pengene tilbake over ett år etter at reisene startet. Legger du reisefradraget inn i skattekortet, reduseres trekket fra neste lønning. For {formatMoney(ex.saved)} i lavere skatt betyr det omtrent {formatMoney(ex.saved / 10.5)} mer utbetalt i hver av månedene med ordinært trekk. <a href={route('skatt', lang)}>Skattekalkulatoren</a> viser den samlede skatten med fradraget lagt til som annet fradrag.</p>
+  <h2>Hjemmekontor og reisefradrag</h2>
+  <p>Etter at hjemmekontor ble vanlig, er antall reisedager det punktet flest fører feil. Jobber du hjemme to dager i uken, reiser du omtrent 138 dager i året, ikke 230. Med 30 km hver vei gir det {formatMoney(reisefradrag({ kmOneWay: 30, days: 138 }).fradrag)} i fradrag, mot {formatMoney(ex.fradrag)} ved full oppmøtetid. For dager på hjemmekontor finnes et eget standardfradrag for dem som har et rom som bare brukes til arbeid, men det gis innenfor minstefradraget og har sjelden betydning for lønnstakere.</p>
+
+  <h2>Samkjøring og firmabil</h2>
+  <p>Kjører flere sammen, får hver av dem fullt reisefradrag etter sin egen avstand, fordi fradraget ikke avhenger av faktiske kostnader. Har du firmabil og blir skattlagt for fordelen ved privat bruk, får du reisefradrag på vanlig måte for arbeidsreisen. Dekker arbeidsgiveren derimot reisen direkte, for eksempel med gratis busskort eller arbeidsgiverbetalt parkering og drivstoff uten fordelsbeskatning, faller fradraget bort for den delen. Bytter du jobb eller bosted i løpet av året, regner du hver periode for seg og legger beløpene sammen før egenandelen trekkes fra én gang. Ta vare på dokumentasjon for avstand og antall dager, for eksempel arbeidsavtale og oversikt over hjemmekontordager, i tilfelle Skatteetaten ber om det.</p>
+</Guide>

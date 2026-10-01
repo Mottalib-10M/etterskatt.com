@@ -1,0 +1,56 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { utleieSkatt, korttidsutleie } from '../../lib/engine/no';
+const U = P.utleie; const r = P.alminnelig.rate;
+const ex = utleieSkatt({ rent: 180000, costs: 60000 });
+const rows = ([[120000, 30000], [180000, 60000], [240000, 80000], [300000, 120000], [150000, 170000]] as const).map(([a, c]) => { const x = utleieSkatt({ rent: a, costs: c }); return [formatMoney(a), formatMoney(c), formatMoney(x.profit), formatMoney(x.tax), formatMoney(x.net)]; });
+const short = [10000, 15000, 30000, 55000, 100000].map((a) => { const k = korttidsutleie(a); return [formatMoney(a), formatMoney(k.taxable), formatMoney(k.tax)]; });
+const faqs = [
+  { q: 'Er det skatt på utleie av egen bolig?', a: `Ikke når du selv bruker minst halvparten av boligen, regnet etter utleieverdi. Da er leieinntekten skattefri uansett beløp, for eksempel ved utleie av hybel eller sokkelleilighet. Leier du ut hele eller mer enn halve boligen, er inntekten skattefri bare hvis den ikke overstiger ${formatMoney(U.whole_home_free)} i året.` },
+  { q: 'Hvor mye skatt er det på utleie av sekundærbolig?', a: `${formatPercent(r, 0)} av overskuddet, det vil si leieinntektene minus kostnader som kommunale avgifter, forsikring, vedlikehold og fellesutgifter. Med ${formatMoney(180000)} i leie og ${formatMoney(60000)} i kostnader blir overskuddet ${formatMoney(ex.profit)} og skatten ${formatMoney(ex.tax)}. Rentene på lånet trekkes fra som vanlig rentefradrag.` },
+  { q: 'Hvordan skattlegges korttidsutleie og Airbnb?', a: `Leier du ut egen bolig i perioder på under ${U.short_days} dager, er ${formatMoney(U.short_free)} i året skattefritt. Av det overskytende er ${formatPercent(U.short_share, 0)} skattepliktig, uten fradrag for kostnader. Leier du ut for ${formatMoney(55000)}, blir ${formatMoney(korttidsutleie(55000).taxable)} skattepliktig og skatten ${formatMoney(korttidsutleie(55000).tax)}.` },
+  { q: 'Når blir utleie regnet som næringsvirksomhet?', a: 'Som hovedregel når du leier ut fem boenheter eller flere, eller når utleien av næringslokaler overstiger om lag 500 kvadratmeter. Korttidsutleie med stort omfang og mye egeninnsats kan også bli næring. Da skattlegges overskuddet som næringsinntekt, med trygdeavgift og trinnskatt i tillegg.' },
+];
+---
+<Guide id="utleie" title="Skatt på utleie 2026: egen bolig, sekundærbolig og Airbnb" h1="Skatt på utleie: når leieinntekten er skattefri, og når den ikke er det"
+  description="Skatt på utleie av bolig i 2026: skattefritt når du bruker minst halve boligen selv, 22 % av overskuddet på sekundærbolig, og egne regler for korttidsutleie."
+  intro="Om leieinntekten er skattepliktig, avhenger av hva du leier ut og hvor lenge. Legg inn leie og kostnader for en utleiebolig."
+  resume={`Leieinntekter fra bolig skattlegges ulikt etter hva som leies ut. Leier du ut en del av boligen du selv bor i, og selv bruker minst halvparten regnet etter utleieverdi, er hele leieinntekten skattefri. Leier du ut hele boligen, eller mer enn halvparten, er inntekten skattefri bare når den er på ${formatMoney(U.whole_home_free)} eller mindre i året. For sekundærbolig og andre rene utleieboliger er overskuddet skattepliktig fra første krone, med ${formatPercent(r, 0)}: ${formatMoney(180000)} i leie og ${formatMoney(60000)} i kostnader gir ${formatMoney(ex.tax)} i skatt. For korttidsutleie av egen bolig, under ${U.short_days} dager per leieforhold, er ${formatMoney(U.short_free)} skattefritt, og ${formatPercent(U.short_share, 0)} av det overskytende skattlegges. Utleie av fem boenheter eller mer regnes normalt som næringsvirksomhet.`}
+  faqs={faqs} related={['rentefradrag', 'formue', 'restskatt', 'aksjer', 'selvstendig', 'fradrag']} sources={[SRC.utleie, SRC.alminnelig, SRC.formue, SRC.bank_lan]}>
+  <MiniSim client:visible kind="utleie" lang={lang} href={route('skatt', lang)} />
+  <h2>Skatt på utleie av sekundærbolig</h2>
+  <ContentTable headers={['Leieinntekter', 'Kostnader', 'Overskudd', 'Skatt 22 %', 'Igjen etter skatt']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Siste rad viser et år med underskudd, for eksempel etter et større vedlikehold. Underskuddet trekkes fra annen alminnelig inntekt og reduserer skatten på lønn med {formatPercent(r, 0)} av beløpet.</p>
+
+  <h2>Korttidsutleie av egen bolig</h2>
+  <ContentTable headers={['Leieinntekter i året', 'Skattepliktig beløp', 'Skatt']} align={['r', 'r', 'r']} rows={short} />
+  <p>Regelen gjelder når hvert leieforhold varer under {U.short_days} dager. Sjablongen på {formatPercent(1 - U.short_share, 0)} skal dekke kostnadene, og du kan ikke kreve fradrag for faktiske utgifter i tillegg. Utleieplattformene rapporterer inntektene til Skatteetaten.</p>
+
+  <h2>Halvpartsregelen for egen bolig</h2>
+  <p>Vurderingen gjøres etter utleieverdi, ikke areal. En sokkelleilighet på 50 kvadratmeter i et hus på 180 er klart under halvparten. Leier du ut to hybler i en leilighet og beholder ett rom selv, kan utleieverdien av den delen du leier ut, være høyest, og da er inntekten skattepliktig. I en tomannsbolig der du bor i den ene delen, er utleie av den andre delen skattefri. Leier du ut hele boligen en del av året, for eksempel under et utenlandsopphold, gjelder grensen på {formatMoney(U.whole_home_free)}. Overskrides den, er hele inntekten skattepliktig, ikke bare det som ligger over.</p>
+
+  <h2>Hvilke kostnader gir fradrag</h2>
+  <p>For skattepliktig utleie trekkes kommunale avgifter, eiendomsskatt, forsikring, felleskostnader, annonsering, megler eller utleiefirma, strøm du dekker, og vedlikehold fra. Vedlikehold er arbeid som bringer boligen tilbake til tidligere stand: maling, nytt gulv av samme standard, utskifting av et gammelt kjøkken med et tilsvarende. Påkostning, som hever standarden utover det den var, gir ikke fradrag nå, men legges til inngangsverdien. Har du selv bodd i boligen, begrenses vedlikeholdsfradraget de første årene. Møbler og inventar under {formatMoney(P.avskrivning_min)} trekkes fra i sin helhet i kjøpsåret, dyrere inventar avskrives med 20 % årlig.</p>
+  <p>Renter på lånet trekkes ikke fra i utleieregnskapet. De gir <a href={route('rentefradrag', lang)}>rentefradrag</a> på vanlig måte, med samme sats.</p>
+
+  <h2>Fritidsbolig</h2>
+  <p>Leier du ut en hytte som du også bruker selv, er de første {formatMoney(U.short_free)} skattefrie, og {formatPercent(U.short_share, 0)} av resten skattepliktig, uten fradrag for kostnader. Bruker du ikke hytta selv i rimelig omfang, regnes den som utleiehytte, og overskuddet skattlegges som for sekundærbolig.</p>
+
+  <h2>Formuesskatt og gevinst ved salg</h2>
+  <p>En sekundærbolig verdsettes til 100 % av beregnet markedsverdi i grunnlaget for <a href={route('formue', lang)}>formuesskatt</a>, mot 25 % for primærbolig. Gevinst ved salg av utleiebolig er skattepliktig med {formatPercent(r, 0)}, fordi kravet om egen botid ikke er oppfylt. For boligen du selv har bodd i, er gevinsten skattefri når du har eid den i mer enn ett år og bodd der i minst ett av de to siste årene.</p>
+
+  <h2>Skattemelding og forskudd</h2>
+  <p>Skattepliktig utleie føres i skattemeldingen med inntekter og kostnader for hver bolig. Det trekkes ikke skatt underveis, så uten tiltak blir resultatet <a href={route('restskatt', lang)}>restskatt</a>. Legg forventet overskudd inn i skattekortet, eller betal forskuddsskatt. Depositum er ikke inntekt, men beløp du beholder ved utflytting for å dekke skader eller ubetalt leie, er det.</p>
+  <h2>Eksempel: sokkelleilighet og hel bolig</h2>
+  <p>Leier du ut sokkelleiligheten i huset du bor i for {formatMoney(12000)} i måneden, er de {formatMoney(144000)} i året skattefrie, fordi du selv bruker den største delen av boligen. Flytter du ut i ett år og leier ut hele huset for {formatMoney(25000)} i måneden, er hele leien på {formatMoney(300000)} skattepliktig, med fradrag for kostnader. Med {formatMoney(70000)} i kostnader blir skatten {formatMoney(utleieSkatt({ rent: 300000, costs: 70000 }).tax)}. Regelen om skattefri gevinst ved salg kan likevel stå seg, hvis du har bodd i boligen minst ett av de to siste årene før salget.</p>
+
+  <h2>Leiekontrakt og depositum</h2>
+  <p>Skatteplikten følger inntekten, ikke kontrakten, men en skriftlig leieavtale gjør dokumentasjonen enkel. Depositum skal stå på en egen konto i leietakerens navn og er ikke din inntekt. Strøm, internett og kommunale avgifter som leietakeren betaler til deg, er en del av leieinntekten, og de tilsvarende utgiftene er fradragsberettiget ved skattepliktig utleie.</p>
+</Guide>

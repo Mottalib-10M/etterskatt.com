@@ -1,0 +1,49 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { bonusSkatt, compute } from '../../lib/engine/no';
+const ex = bonusSkatt({ gross: 700000, bonus: 50000 });
+const rows = [450000, 600000, 700000, 850000, 1000000, 1500000].map((g) => { const b = bonusSkatt({ gross: g, bonus: 50000 }); return [formatMoney(g), formatPercent(compute({ gross: g }).annual.effective, 1), formatPercent(b.rate, 1), formatMoney(b.tax), formatMoney(b.net)]; });
+const sizes = [10000, 25000, 50000, 100000, 250000].map((b) => { const x = bonusSkatt({ gross: 700000, bonus: b }); return [formatMoney(b), formatMoney(x.tax), formatMoney(x.net), formatPercent(x.rate, 1)]; });
+const faqs = [
+  { q: 'Hvor mye skatt er det på bonus?', a: `Bonus skattlegges som vanlig lønn, og fordi den kommer på toppen av årslønnen, blir den skattlagt med marginalskatten din. Med ${formatMoney(700000)} i årslønn gir en bonus på ${formatMoney(50000)} ${formatMoney(ex.tax)} i skatt, altså ${formatPercent(ex.rate, 1)}, og du sitter igjen med ${formatMoney(ex.net)}. Det finnes ingen egen bonusskatt.` },
+  { q: 'Hvorfor ble det trukket så mye skatt av bonusen min?', a: 'Arbeidsgiveren trekker skatt av bonus etter skattekortet ditt. Har du tabelltrekk, brukes ofte en høyere trekkprosent på ekstra utbetalinger, fordi tabellen forutsetter jevn lønn. Trekket er et forskudd. Ble det trukket for mye, får du pengene tilbake i skatteoppgjøret året etter, eller du kan endre skattekortet.' },
+  { q: 'Får jeg feriepenger av bonus?', a: `Ja, i de fleste tilfeller. Bonus som er knyttet til din egen arbeidsinnsats, er arbeidsvederlag og inngår i feriepengegrunnlaget, med ${formatPercent(P.feriepenger.rate, 1)} etter ferieloven. Bonus som utbetales uavhengig av innsats og fravær, for eksempel en lik andel av overskuddet til alle ansatte, gir normalt ikke feriepenger.` },
+  { q: 'Er sluttpakke skattepliktig?', a: 'Ja. Sluttvederlag og etterlønn er skattepliktig som lønn i året de utbetales, med trygdeavgift og trinnskatt. Fordi beløpet ofte er stort og kommer i tillegg til årets lønn, havner mye av det i de høyeste trinnene. Får du utbetalingen fordelt over to kalenderår, kan samlet skatt bli lavere.' },
+];
+---
+<Guide id="bonus" title="Skatt på bonus 2026: slik beregnes skatten på bonusen" h1="Skatt på bonus: hva sitter du igjen med?"
+  description="Bonus skattlegges som lønn, med marginalskatten din. Regn ut skatt på bonus, sluttpakke og ekstra utbetalinger i 2026, og se hva du faktisk får utbetalt."
+  intro="En bonus kommer på toppen av lønnen og skattlegges derfor hardere enn resten. Legg inn årslønn og bonus, så ser du hva som blir igjen."
+  resume={`Bonus er skattepliktig som lønn i Norge. Det finnes ingen særskilt skattesats for bonus, men siden bonusen kommer på toppen av den vanlige årslønnen, blir hele beløpet skattlagt med marginalskatten: 22 % skatt på alminnelig inntekt, ${formatPercent(P.trygdeavgift.wage, 1)} trygdeavgift og trinnskatt etter hvilket trinn lønnen når. For en årslønn på ${formatMoney(700000)} er marginalskatten ${formatPercent(compute({ gross: 700000 }).annual.marginal, 1)}, og en bonus på ${formatMoney(50000)} gir ${formatMoney(ex.tax)} i skatt og ${formatMoney(ex.net)} utbetalt. Til sammenligning er gjennomsnittsskatten på hele lønnen ${formatPercent(compute({ gross: 700000 }).annual.effective, 1)}. Skattetrekket arbeidsgiveren gjør når bonusen utbetales, er bare et forskudd. Den endelige skatten fastsettes i skatteoppgjøret, der for mye trukket skatt betales tilbake. Sluttvederlag, etterlønn og andre engangsbeløp følger de samme reglene, og det samme gjør provisjon, tantieme og overskuddsdeling.`}
+  faqs={faqs} related={['lonnsokning', 'skatt', 'trinnskatt', 'skattekort', 'feriepenger', 'restskatt']} sources={[SRC.forskudd_2026, SRC.trinnskatt, SRC.trygdeavgift, SRC.skattekort]}>
+  <MiniSim client:visible kind="bonus" lang={lang} href={route('skatt', lang)} />
+  <h2>Skatt på en bonus på {formatMoney(50000)} ved ulike lønninger</h2>
+  <ContentTable headers={['Årslønn', 'Gjennomsnittsskatt på lønnen', 'Skatt på bonusen', 'Skatt i kroner', 'Utbetalt']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Forskjellen mellom de to prosentkolonnene er grunnen til at bonus oppleves som hardt skattlagt. Lønnen din er fordelt på alle trinnene, fra de første kronene som er nesten skattefrie på grunn av personfradraget og minstefradraget, til de siste som skattlegges høyest. Bonusen ligger i sin helhet øverst.</p>
+
+  <h2>Ulike bonusbeløp på {formatMoney(700000)} i lønn</h2>
+  <ContentTable headers={['Bonus', 'Skatt', 'Utbetalt', 'Skatteprosent']} align={['r', 'r', 'r', 'r']} rows={sizes} />
+  <p>Prosenten stiger når bonusen blir stor nok til å krysse et nytt trinn. Fra {formatMoney(P.trinnskatt[2].from)} er trinnskatten {formatPercent(P.trinnskatt[2].rate, 1)}, og fra {formatMoney(P.trinnskatt[3].from)} er den {formatPercent(P.trinnskatt[3].rate, 1)}. En bonus som løfter samlet inntekt over en av disse grensene, får den høyere satsen bare på den delen som ligger over.</p>
+
+  <h2>Skattetrekket er ikke den endelige skatten</h2>
+  <p>Når bonusen utbetales, trekker arbeidsgiveren forskuddstrekk etter skattekortet. Med prosentkort trekkes den samme prosenten som ellers, og trekket blir ofte for lavt i forhold til marginalskatten. Med tabellkort skal arbeidsgiveren bruke tabellen på samlet utbetaling i perioden eller trekke etter den høyere prosenten som står på skattekortet for inntekt utover vanlig lønn. Uansett metode er trekket et forskudd. Skatten beregnes på nytt i skatteoppgjøret på grunnlag av alt du tjente i året.</p>
+  <p>Vet du at du får en stor bonus, kan du endre skattekortet på forhånd og oppgi forventet årsinntekt inkludert bonusen. Da fordeles trekket jevnere, og du unngår både for høyt trekk i bonusmåneden og restskatt året etter.</p>
+
+  <h2>Bonus i juni og desember</h2>
+  <p>Tabelltrekket er lagt opp slik at det ikke trekkes skatt av feriepenger som er opptjent året før, og at det trekkes halv skatt i desember. Disse lettelsene gjelder den vanlige lønnen og feriepengene, ikke bonus. En bonus som utbetales i juni eller desember, trekkes for skatt som i enhver annen måned. Den samlede skatten for året er den samme uansett når bonusen kommer.</p>
+
+  <h2>Bonus, pensjon og andre ordninger</h2>
+  <p>Bonus er pensjonsgivende inntekt i folketrygden og teller med i grunnlaget for sykepenger, foreldrepenger og dagpenger, innenfor taket på seks ganger grunnbeløpet. Om bonusen også gir innskudd i tjenestepensjonen, avhenger av pensjonsavtalen i bedriften: loven tillater at varierende tillegg holdes utenfor. Arbeidsgiveren betaler arbeidsgiveravgift av bonusen, som av annen lønn.</p>
+
+  <h2>Kan bonusen gis på en annen måte?</h2>
+  <p>Noen arbeidsgivere tilbyr ekstra innskudd i pensjonsordningen eller aksjer i stedet for kontant bonus. Ekstra pensjonsinnskudd innenfor lovens rammer skattlegges ikke nå, men ved uttak som pensjon. Aksjer til ansatte er skattepliktige som lønn for fordelen du får, etter at ordningen med skattefri rabatt ble fjernet. Gavekort og naturalytelser er skattepliktige fra første krone når de er belønning for arbeid. I praksis er kontant bonus med ordinært skattetrekk det enkleste, og <a href={route('skatt', lang)}>skattekalkulatoren</a> viser hva du betaler i skatt for hele året med bonusen lagt til.</p>
+  <h2>Eksempel: bonus som krysser et trinn</h2>
+  <p>En ansatt med {formatMoney(700000)} i årslønn får {formatMoney(100000)} i bonus. De første {formatMoney(P.trinnskatt[2].from - 700000)} av bonusen ligger under grensen for trinn 3 og skattlegges med 33,6 %. Resten skattlegges med {formatPercent(P.alminnelig.rate + P.trygdeavgift.wage + P.trinnskatt[2].rate, 1)}. Samlet skatt på bonusen blir {formatMoney(bonusSkatt({ gross: 700000, bonus: 100000 }).tax)}, og utbetalingen {formatMoney(bonusSkatt({ gross: 700000, bonus: 100000 }).net)}. Arbeidsgiverens kostnad er høyere enn bonusen: med arbeidsgiveravgift på {formatPercent(P.aga.zones['1'], 1)} i sone 1 koster {formatMoney(100000)} i bonus {formatMoney(100000 * (1 + P.aga.zones['1']))}, før feriepenger og pensjon. Av det arbeidsgiveren legger ut, går dermed godt over halvparten til skatt og avgift når bonusen ligger i de øverste trinnene.</p>
+</Guide>

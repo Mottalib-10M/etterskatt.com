@@ -1,0 +1,54 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { restskatt } from '../../lib/engine/no';
+const R = P.restskatt;
+const ex = restskatt({ amount: 20000 });
+const rows = [800, 5000, 20000, 50000, 100000].map((a) => { const x = restskatt({ amount: a }); return [formatMoney(a), formatMoney(x.rente), formatMoney(x.total), String(x.invoices), formatMoney(x.perInvoice)]; });
+const faqs = [
+  { q: 'Når må restskatten betales?', a: `Får du skatteoppgjøret før 1. juli, er fristen ${R.first_due} for den første fakturaen og ${R.second_due} for den andre. Får du skatteoppgjøret senere, er fristen tre uker etter oppgjørsdatoen for den første og åtte uker for den andre. Restskatt under ${formatMoney(R.split_from)} betales i én faktura.` },
+  { q: 'Hvor mye renter kommer på restskatten?', a: `For inntektsåret 2025 er rentetillegget ${formatPercent(R.rentetillegg_2025, 2)} av restskatten, beregnet fra 1. juli i inntektsåret til forfall for første termin. På en restskatt på ${formatMoney(20000)} blir det ${formatMoney(ex.rente)}. Rentetillegget er ikke fradragsberettiget. Betaler du etter fristen, kommer forsinkelsesrenter i tillegg.` },
+  { q: 'Hvordan unngår jeg renter på restskatten?', a: `Betal inn tilleggsforskudd senest ${R.prepay_by} året etter inntektsåret. Da regnes beløpet som forskudd på skatt, og du slipper rentetillegget på den delen som er dekket. Betaler du for mye, får du det tilbake i skatteoppgjøret med rentegodtgjørelse. Tilleggsforskudd betales med KID-nummer som du lager hos Skatteetaten.` },
+  { q: 'Hva skjer hvis jeg ikke kan betale restskatten?', a: 'Betaler du ikke den første fakturaen innen fristen, forfaller hele restskatten umiddelbart, og det løper forsinkelsesrenter på alt. Klarer du ikke å betale, bør du ta kontakt med Skatteetaten før fristen og søke om betalingsavtale. Uten avtale kan kravet bli trukket i lønnen din.' },
+];
+---
+<Guide id="restskatt" title="Restskatt 2026: frister, renter og hvordan unngå baksmell" h1="Restskatt: frister, renter og hva du må betale"
+  description="Restskatt i skatteoppgjøret 2026: betalingsfrister 20. august og 24. september, rentetillegg på 3,12 %, tilleggsforskudd innen 31. mai og betalingsavtale."
+  intro="Restskatt er skatten du skylder når forskuddstrekket gjennom året var for lavt. Legg inn beløpet og se hva du må betale, og når."
+  resume={`Restskatt, ofte kalt baksmell, oppstår når skatten som er trukket eller betalt gjennom inntektsåret, er lavere enn den skatten som fastsettes i skatteoppgjøret. Restskatt på ${formatMoney(R.split_from)} eller mer deles i to like fakturaer. For dem som får skatteoppgjøret før 1. juli, er fristene ${R.first_due} og ${R.second_due}. Ellers er fristene tre og åtte uker etter at skatteoppgjøret kom. På restskatten beregnes et rentetillegg, som for inntektsåret 2025 er ${formatPercent(R.rentetillegg_2025, 2)}: en restskatt på ${formatMoney(20000)} koster ${formatMoney(ex.rente)} i renter, og du betaler ${formatMoney(ex.perInvoice)} på hver faktura. Rentetillegget kan unngås ved å betale tilleggsforskudd innen ${R.prepay_by}. Betales ikke første faktura i tide, forfaller hele beløpet, og det løper forsinkelsesrenter fram til betaling skjer.`}
+  faqs={faqs} related={['skattekort', 'forskudd', 'skatt', 'fradrag', 'bonus', 'rentefradrag']} sources={[SRC.restskatt, SRC.restskatt_rente, SRC.skattekort, SRC.forskuddsskatt]}>
+  <MiniSim client:visible kind="restskatt" lang={lang} href={route('skatt', lang)} />
+  <h2>Restskatt med rentetillegg</h2>
+  <ContentTable headers={['Restskatt', 'Rentetillegg', 'Å betale', 'Fakturaer', 'Per faktura']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Rentetillegget fastsettes på nytt for hvert inntektsår og følger rentenivået. Det beregnes for perioden fra 1. juli i inntektsåret til forfall for første termin året etter, og legges automatisk på beløpet i skatteoppgjøret.</p>
+
+  <h2>Hvorfor du får restskatt</h2>
+  <p>Skattekortet bygger på opplysninger om forventet inntekt, gjeld og fradrag. Stemmer ikke disse med virkeligheten, blir trekket feil. De vanligste årsakene er lønnsøkning eller bonus som ikke lå inne i skattekortet, lavere renteutgifter enn antatt fordi lånet er nedbetalt eller renten har falt, flere arbeidsgivere som hver for seg trekker for lite, gevinst ved salg av aksjer eller fond, og inntekt fra utleie. Pensjonister og andre med ytelser fra NAV ved siden av lønn opplever ofte det samme, fordi hver utbetaler trekker som om den var alene.</p>
+  <p>Prosentkort gir oftere restskatt enn tabellkort når inntekten varierer, fordi prosenten er fast uansett hvor mye du tjener i måneden.</p>
+
+  <h2>Betal før 31. mai og slipp renter</h2>
+  <p>Ser du av skattemeldingen at du vil få restskatt, kan du betale beløpet inn som tilleggsforskudd. Innbetalinger som er gjort senest {R.prepay_by}, regnes med når skatten avregnes, og det beregnes ikke rentetillegg på den delen. På en restskatt på {formatMoney(50000)} sparer du {formatMoney(restskatt({ amount: 50000 }).rente)}. KID-nummeret for tilleggsforskudd lager du på Skatteetatens nettside, og det er viktig å velge riktig inntektsår.</p>
+
+  <h2>Forsinkelsesrenter og tvangsinnkreving</h2>
+  <p>Forsinkelsesrenten er vesentlig høyere enn rentetillegget og fastsettes av Finansdepartementet to ganger i året. Den løper fra forfall til beløpet er betalt. Blir kravet stående, sender Skatteetaten varsel og kan deretter trekke i lønn eller trygd uten å gå veien om namsmannen. Et utleggstrekk settes normalt slik at du beholder nok til livsopphold. En betalingsavtale, inngått før eller kort etter forfall, stopper ikke rentene, men hindrer tvangsinnkreving så lenge avtalen holdes.</p>
+
+  <h2>Slik unngår du restskatt neste år</h2>
+  <p>Gå inn på skattekortet tidlig i året og etter hver større endring: ny jobb, lønnsoppgjør, endret lån, salg av verdipapirer. Legg inn forventet årsinntekt, renteutgifter og fradrag. Tabellkort bør brukes hos hovedarbeidsgiveren og prosentkort hos de andre. Har du inntekt som det ikke trekkes skatt av, for eksempel utleie eller honorarer, kan du be om høyere trekk eller betale <a href={route('forskudd', lang)}>forskuddsskatt</a>. <a href={route('skatt', lang)}>Skattekalkulatoren</a> viser hva årets skatt blir, slik at du kan sammenligne med det som trekkes.</p>
+
+  <h2>Penger til gode</h2>
+  <p>De fleste får penger tilbake, ikke restskatt. Tilgodebeløpet utbetales noen dager etter at skatteoppgjøret er klart, med en rentegodtgjørelse beregnet på tilsvarende måte som rentetillegget. Beløp under 100 kroner utbetales ikke. Skylder du det offentlige penger, for eksempel bidrag eller andre skattekrav, motregnes tilgodebeløpet før det utbetales.</p>
+
+  <h2>Hvis skatteoppgjøret endres</h2>
+  <p>Retter du skattemeldingen etter at skatteoppgjøret er klart, eller Skatteetaten endrer fastsettingen, får du et nytt skatteoppgjør. Restskatt etter en endring deles ikke i to fakturaer, men må betales i sin helhet innen tre uker. Du kan endre opplysninger i skattemeldingen i tre år etter leveringsfristen, og <a href={route('fradrag', lang)}>oversikten over fradrag</a> viser hva som er verdt å sjekke.</p>
+  <h2>Eksempel: lønnsøkning og lavere rente i samme år</h2>
+  <p>En lønnstaker med prosentkort på 30 % får et tillegg på {formatMoney(60000)} midt i året, og betaler samtidig {formatMoney(25000)} mindre i renter enn skattekortet forutsatte. Tillegget trekkes med 30 %, mens marginalskatten er 33,6 %, og de lavere rentene gir {formatMoney(25000 * P.alminnelig.rate)} mer i skatt. Samlet mangler det omtrent {formatMoney(Math.round(60000 * 0.036 / 2 + 25000 * P.alminnelig.rate))} i trekk. Beløpet er ikke dramatisk, men det kommer som en faktura i august, med rentetillegg. En oppdatering av skattekortet i løpet av noen minutter ville fordelt det over årets gjenstående lønninger.</p>
+
+  <h2>Restskatt for pensjonister og studenter</h2>
+  <p>Pensjonister som tar ut alderspensjon ved siden av arbeid, får ofte restskatt det første året, fordi NAV og arbeidsgiveren bruker hver sin del av skattekortet uten å kjenne samlet inntekt. Studenter med frikort som tjener over grensen, opplever det motsatte: 50 % trekk av det overskytende og penger tilbake året etter. I begge tilfeller er løsningen den samme, et skattekort som bygger på hele årets forventede inntekt. Skattekortet kan endres så ofte du vil, og endringen sendes automatisk til arbeidsgiveren og NAV.</p>
+</Guide>

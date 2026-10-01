@@ -1,0 +1,57 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { aksjeskatt } from '../../lib/engine/no';
+const A = P.aksjer; const r = P.alminnelig.rate;
+const ex = aksjeskatt({ gain: 100000 });
+const rows = [10000, 50000, 100000, 250000, 1000000].map((g) => { const x = aksjeskatt({ gain: g }); return [formatMoney(g), formatMoney(g * (A.faktor - 1)), formatMoney(x.tax), formatMoney(x.net)]; });
+const sk = aksjeskatt({ gain: 100000, skjerming: 9000 });
+const faqs = [
+  { q: 'Hvor mye skatt er det på aksjegevinst?', a: `${formatPercent(A.rate, 2)} i 2026. Gevinsten ganges først med ${formatNumber(A.faktor, 2)} og skattlegges deretter med ${formatPercent(r, 0)} som alminnelig inntekt. En gevinst på ${formatMoney(100000)} gir dermed ${formatMoney(ex.tax)} i skatt. Samme sats gjelder for utbytte, og tap gir fradrag med samme prosent.` },
+  { q: 'Hva er skjermingsfradrag?', a: `Et fradrag som skal skjerme en avkastning tilsvarende risikofri rente fra den høye skatten på aksjer. Det beregnes hvert år som aksjens skjermingsgrunnlag, i hovedsak kostprisen, ganget med en skjermingsrente som Skatteetaten fastsetter. Fradraget trekkes fra utbytte og gevinst. Du må eie aksjen 31. desember for å få årets fradrag.` },
+  { q: 'Hvordan slipper jeg skatt når jeg bytter aksjer og fond?', a: 'Med en aksjesparekonto. Inne på kontoen kan du selge og kjøpe børsnoterte aksjer og aksjefond i EØS uten at gevinsten skattlegges. Skatten kommer først når du tar ut mer enn du har satt inn. Utbytte som går inn på kontoen, skattlegges heller ikke før uttak.' },
+  { q: 'Er det skatt på aksjer som har falt i verdi?', a: `Nei, et tap er fradragsberettiget når det er realisert, altså når aksjene er solgt. Fradraget er verdt ${formatPercent(A.rate, 2)} av tapet og reduserer skatten på annen inntekt. Et tap du ikke har realisert, gir ikke fradrag, men lavere kurs 1. januar reduserer formuesverdien av aksjene.` },
+];
+---
+<Guide id="aksjer" title="Skatt på aksjer 2026: 37,84 % på gevinst og utbytte" h1="Skatt på aksjer: gevinst, utbytte og skjermingsfradrag"
+  description="Skatt på aksjegevinst og utbytte er 37,84 % i 2026. Regn ut skatten etter skjermingsfradrag, og se reglene for aksjesparekonto, fond, tap og formuesskatt."
+  intro="Gevinst og utbytte fra aksjer skattlegges høyere enn annen kapitalinntekt. Legg inn gevinsten og se skatten."
+  resume={`Gevinst ved salg av aksjer og utbytte fra aksjer skattlegges i Norge med ${formatPercent(A.rate, 2)} i 2026. Satsen fremkommer ved at beløpet ganges med en oppjusteringsfaktor på ${formatNumber(A.faktor, 2)} og deretter skattlegges som alminnelig inntekt med ${formatPercent(r, 0)}. En gevinst på ${formatMoney(100000)} gir ${formatMoney(ex.tax)} i skatt, og du sitter igjen med ${formatMoney(ex.net)}. Tap ved salg gir fradrag med samme sats. Før skatten beregnes, trekkes skjermingsfradraget fra, et beløp som tilsvarer en risikofri avkastning på det du betalte for aksjene. Aksjefond med mer enn 80 % aksjer skattlegges på samme måte, mens rentefond og bankinnskudd skattlegges med ${formatPercent(r, 0)}. På en aksjesparekonto utsettes skatten til du tar ut mer enn du har satt inn. Verdien av aksjene inngår i tillegg i grunnlaget for formuesskatt.`}
+  faqs={faqs} related={['formue', 'restskatt', 'ips', 'utleie', 'fradrag', 'skatt']} sources={[SRC.aksjer_faktor, SRC.aksjer, SRC.alminnelig, SRC.formue]}>
+  <MiniSim client:visible kind="aksjer" lang={lang} href={route('skatt', lang)} />
+  <h2>Skatt på gevinst og utbytte</h2>
+  <ContentTable headers={['Gevinst eller utbytte', 'Oppjustering i skattemeldingen', 'Skatt', 'Igjen etter skatt']} align={['r', 'r', 'r', 'r']} rows={rows} />
+  <p>I skattemeldingen står gevinsten og oppjusteringen som to linjer. For {formatMoney(100000)} ser du {formatMoney(100000)} og et tillegg på {formatMoney(100000 * (A.faktor - 1))}, til sammen {formatMoney(100000 * A.faktor)} som skattlegges med {formatPercent(r, 0)}. Tabellen er uten skjermingsfradrag.</p>
+
+  <h2>Hvorfor satsen er høyere enn 22 %</h2>
+  <p>Et aksjeselskap betaler {formatPercent(r, 0)} skatt av overskuddet før det deles ut. Når eieren i tillegg betaler {formatPercent(A.rate, 2)} av utbyttet, blir samlet skatt på selskapets inntekt {formatPercent(r + (1 - r) * A.rate, 1)}, omtrent på nivå med den høyeste marginalskatten på lønn. Oppjusteringsfaktoren er verktøyet som holder de to nivåene sammen, og den er endret flere ganger siden den ble innført.</p>
+
+  <h2>Skjermingsfradraget i praksis</h2>
+  <p>Har du betalt {formatMoney(300000)} for aksjene dine og skjermingsrenten er 3 %, er årets skjermingsfradrag {formatMoney(9000)}. Selger du med {formatMoney(100000)} i gevinst, betaler du skatt av {formatMoney(sk.taxable)}, og skatten blir {formatMoney(sk.tax)} i stedet for {formatMoney(ex.tax)}. Ubenyttet skjerming fra tidligere år følger aksjen og legges til. Skjermingen kan ikke gjøre en gevinst om til et tap, og ubrukt skjerming faller bort når aksjen selges. Skatteetaten beregner fradraget automatisk for børsnoterte aksjer og fond registrert i Norge.</p>
+
+  <h2>Aksjesparekonto</h2>
+  <p>På en aksjesparekonto kan du handle børsnoterte aksjer og aksjefond hjemmehørende i EØS uten skatt på hver transaksjon. Du kan når som helst ta ut det du har satt inn, uten skatt. Først når uttakene overstiger innskuddene, skattlegges det overskytende med {formatPercent(A.rate, 2)}, etter skjerming. Kontoen egner seg for den som bytter fond eller aksjer underveis. For den som kjøper ett fond og sitter rolig i tretti år, er forskjellen mindre.</p>
+
+  <h2>Fond: aksjeandelen bestemmer</h2>
+  <p>Fond med mer enn 80 % aksjer skattlegges fullt ut som aksjer. Fond med mindre enn 20 % aksjer skattlegges som renter, med {formatPercent(r, 0)}. Kombinasjonsfond deles forholdsmessig etter aksjeandelen ved årets inngang. Rentedelen har ikke skjermingsfradrag og kan ikke ligge på aksjesparekonto. For lange pensjonssparere finnes <a href={route('ips', lang)}>IPS</a>, der uttak skattlegges med {formatPercent(r, 0)}.</p>
+
+  <h2>Tap, fradrag og tidspunkt</h2>
+  <p>Gevinst og tap regnes for det året aksjene selges. Tap trekkes fra andre gevinster og fra annen alminnelig inntekt, også lønn, og er verdt {formatPercent(A.rate, 2)}. Selges aksjer i desember for å realisere et tap, gjelder fradraget for det året, forutsatt at salget er reelt. Ved salg av en del av en beholdning brukes først-inn-først-ut-prinsippet: de eldste aksjene regnes som solgt først.</p>
+
+  <h2>Utenlandske aksjer</h2>
+  <p>Gevinst og utbytte fra utenlandske aksjer skattlegges i Norge med samme sats. Mange land trekker kildeskatt av utbyttet, ofte 15 %, som du kan kreve fradrag for i norsk skatt opp til det skatteavtalen tillater. Utenlandske aksjer rapporteres ikke alltid automatisk, og må da føres opp selv, med kurs i norske kroner på kjøps- og salgsdagen.</p>
+
+  <h2>Formuesskatt og restskatt</h2>
+  <p>Børsnoterte aksjer og aksjefond verdsettes til 80 % av kursverdien 1. januar i grunnlaget for <a href={route('formue', lang)}>formuesskatt</a>. En stor gevinst gir sjelden forskuddstrekk, og resultatet er ofte <a href={route('restskatt', lang)}>restskatt</a> året etter. Betaler du tilleggsforskudd innen 31. mai, slipper du rentetillegg.</p>
+  <h2>Eksempel: salg av fond etter ti år</h2>
+  <p>Du har satt {formatMoney(200000)} i et globalt indeksfond som nå er verdt {formatMoney(400000)}. Gevinsten er {formatMoney(200000)}. Gjennom ti år har du samlet opp skjermingsfradrag på til sammen {formatMoney(30000)}. Skattepliktig gevinst blir {formatMoney(170000)}, og skatten {formatMoney(aksjeskatt({ gain: 200000, skjerming: 30000 }).tax)}. Uten skjerming ville den vært {formatMoney(aksjeskatt({ gain: 200000 }).tax)}. Selger du halvparten, regnes halve gevinsten og halve skjermingen. Lå fondet på en aksjesparekonto, kunne du i stedet tatt ut innskuddet på {formatMoney(200000)} skattefritt og latt gevinsten stå videre.</p>
+
+  <h2>Arv, gave og ansatteaksjer</h2>
+  <p>Arver du aksjer eller får dem i gave, overtar du giverens inngangsverdi og ubenyttede skjermingsfradrag. Gevinsten regnes altså fra det giveren betalte, ikke fra verdien da du fikk dem. Aksjer du får kjøpe billig av arbeidsgiveren, skattlegges som lønn for rabatten, og markedsverdien på kjøpstidspunktet blir inngangsverdien din.</p>
+</Guide>

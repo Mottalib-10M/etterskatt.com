@@ -1,0 +1,53 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { foreldrefradrag } from '../../lib/engine/no';
+const F = P.foreldrefradrag;
+const ex = foreldrefradrag({ children: 2, cost: 44000 });
+const rows = [1, 2, 3, 4].map((n) => { const f = foreldrefradrag({ children: n, cost: 999999 }); return [`${n} barn`, formatMoney(f.max), formatMoney(f.saved), formatMoney(f.saved / 12)]; });
+const faqs = [
+  { q: 'Hvor mye er foreldrefradraget i 2026?', a: `Opptil ${formatMoney(F.first)} for ett barn og ${formatMoney(F.each_additional)} for hvert barn utover det første. For to barn er grensen ${formatMoney(F.first + F.each_additional)}, for tre ${formatMoney(F.first + 2 * F.each_additional)}. Fradraget er verdt ${formatPercent(P.alminnelig.rate, 0)} av beløpet, så to barn med utgifter over grensen gir ${formatMoney(ex.saved)} lavere skatt.` },
+  { q: 'Hvilke utgifter gir foreldrefradrag?', a: 'Dokumenterte utgifter til pass og stell av barn: barnehage, skolefritidsordning, dagmamma, praktikant og barnevakt. Også aktiviteter som har karakter av barnepass, som leksehjelp og ferieklubb i skoleferien, kan regnes med. Utgifter til mat, bleier og vanlig fritidsaktivitet som fotball eller korps regnes ikke med.' },
+  { q: 'Til hvilken alder gjelder foreldrefradraget?', a: 'For barn som er 11 år eller yngre ved utgangen av inntektsåret. Fradraget gjelder altså til og med året barnet fyller 11. For barn som er 12 år eller eldre og har særskilt behov for omsorg og pleie, gis fradraget også, med grenser på 25 000 kr for ett barn og 15 000 kr per barn utover det første.' },
+  { q: 'Hvem av foreldrene får fradraget?', a: 'Gifte foreldre og samboere med felles barn får fradraget fordelt likt, hvis de ikke ber om en annen fordeling i skattemeldingen. Det lønner seg å legge det på den som har skatt å trekke det fra. For foreldre som ikke bor sammen, går fradraget til den som barnet er folkeregistrert hos, eller deles ved delt bosted.' },
+];
+---
+<Guide id="foreldrefradrag" title="Foreldrefradrag 2026: 15 000 kr for ett barn, 25 000 for to" h1="Foreldrefradrag 2026: fradrag for barnehage, SFO og barnepass"
+  description="Foreldrefradraget i 2026 er opptil 15 000 kr for ett barn og 10 000 kr for hvert barn utover det første. Se hvilke utgifter som teller og hva du sparer i skatt."
+  intro="Utgifter til barnehage, SFO og annet barnepass gir fradrag i skatten. Legg inn antall barn og utgiftene deres."
+  resume={`Foreldrefradraget er et fradrag i alminnelig inntekt for dokumenterte utgifter til pass og stell av barn. I 2026 er grensen ${formatMoney(F.first)} for ett barn og ${formatMoney(F.each_additional)} for hvert barn utover det første, altså ${formatMoney(F.first + F.each_additional)} for to barn og ${formatMoney(F.first + 2 * F.each_additional)} for tre. Fradraget gjelder for barn som er 11 år eller yngre ved utgangen av året, og for eldre barn med særskilt omsorgsbehov. Siden skattesatsen på alminnelig inntekt er ${formatPercent(P.alminnelig.rate, 0)}, gir fullt fradrag for to barn ${formatMoney(ex.saved)} lavere skatt. Barnehager og skolefritidsordninger rapporterer foreldrebetalingen til Skatteetaten, og beløpet er som regel forhåndsutfylt i skattemeldingen. Utgifter til dagmamma, barnevakt og kjøring til barnepass må du føre opp selv, og du må kunne dokumentere dem.`}
+  faqs={faqs} related={['fradrag', 'foreldrepenger', 'reisefradrag', 'skatt', 'skattekort', 'personfradrag']} sources={[SRC.foreldrefradrag, SRC.foreldrefradrag_regler, SRC.alminnelig]}>
+  <MiniSim client:visible kind="foreldrefradrag" lang={lang} href={route('skatt', lang)} />
+  <h2>Høyeste foreldrefradrag etter antall barn</h2>
+  <ContentTable headers={['Antall barn under 12 år', 'Høyeste fradrag', 'Lavere skatt per år', 'Per måned']} align={['l', 'r', 'r', 'r']} rows={rows} />
+  <p>Grensen gjelder samlet for husholdningen, ikke per forelder. Med makspris i barnehage, som er {formatMoney(1200)} i måneden i de fleste kommuner fra august 2025, betaler en familie med ett barn om lag {formatMoney(1200 * 11)} i året og får fradrag for hele beløpet. Kostpenger i barnehagen regnes ikke med.</p>
+
+  <h2>Hva som regnes som pass og stell</h2>
+  <p>Kjernen er betaling for at noen passer barnet mens foreldrene er på arbeid eller i utdanning: barnehage, SFO, aktivitetsskole, dagmamma, praktikant og au pair. Fradraget gis også for barnevakt på kveldstid og for betaling til besteforeldre eller andre private, forutsatt at betalingen er reell og kan dokumenteres. Utgifter til idrett, musikkskole og andre fritidsaktiviteter regnes som hovedregel ikke med, men organiserte tilbud i skoleferier, som sommerskole og ferieklubb, kan godtas når formålet er tilsyn.</p>
+
+  <h2>Kjøring til barnehage og SFO</h2>
+  <p>Må du kjøre en omvei for å levere og hente barnet, regnes merkostnaden som en utgift til barnepass. Satsen er {formatMoney(P.reisefradrag.rate_per_km, 2)} per kilometer for omveien, eller faktiske utgifter til kollektivtransport. To kilometer ekstra hver vei i 220 dager gir {formatMoney(P.reisefradrag.rate_per_km * 4 * 220)}. Beløpet legges til de øvrige utgiftene, innenfor den samme øvre grensen. For familier som allerede når grensen med barnehagebetalingen, har det ingen betydning.</p>
+
+  <h2>Dokumentasjon</h2>
+  <p>Beløp fra barnehage og SFO kommer inn automatisk. For private ordninger må du oppbevare kvitteringer eller kontoutskrifter som viser hvem som er betalt, hvor mye og for hva. Betaler du en privatperson for barnepass, kan du få plikter som arbeidsgiver, med rapportering av lønnen. Skatteetaten har en forenklet ordning for privatpersoner som betaler for arbeid i eget hjem, og små beløp er unntatt fra rapportering.</p>
+
+  <h2>Fordeling mellom foreldrene</h2>
+  <p>Fradraget er bare verdt noe for den som betaler skatt på alminnelig inntekt. Er en av foreldrene student eller hjemmeværende uten inntekt, bør hele fradraget føres på den andre. Det gjøres ved å endre fordelingen i skattemeldingen. For foreldre som har flyttet fra hverandre, følger fradraget barnets folkeregistrerte adresse. Ved delt bosted, der barnet bor omtrent like mye hos begge, deles fradraget mellom foreldrene.</p>
+
+  <h2>Enslige forsørgere</h2>
+  <p>Enslige forsørgere har samme grenser for foreldrefradraget. I tillegg har de utvidet barnetrygd, og de kan ha rett til stønad til barnetilsyn fra NAV, som dekker en del av utgiftene. Utgifter som er dekket av slik stønad, kan ikke samtidig føres som foreldrefradrag.</p>
+
+  <h2>Få fradraget inn i skattekortet</h2>
+  <p>Foreldrefradraget kan legges inn i skattekortet, slik at trekket går ned gjennom året. For {formatMoney(ex.saved)} i lavere skatt er det omtrent {formatMoney(ex.saved / 10.5)} mer i hver lønning med ordinært trekk. <a href={route('foreldrepenger', lang)}>Foreldrepengekalkulatoren</a> viser inntekten i permisjonstiden, og <a href={route('fradrag', lang)}>oversikten over fradrag</a> viser de øvrige fradragene familier kan kreve.</p>
+  <h2>Når barnet fyller 12 år</h2>
+  <p>Fradraget faller bort fra og med året barnet fyller 12, selv om familien fortsatt har utgifter til tilsyn. Unntaket er barn med særskilt behov for omsorg og pleie, der fradraget fortsetter med grensene 25 000 kr for ett barn og 15 000 kr for hvert barn utover det første i 2026. Behovet må kunne dokumenteres, for eksempel med legeerklæring eller vedtak om hjelpestønad. For søsken der det eldste har passert aldersgrensen, regnes bare barna under 12 år med når grensen beregnes.</p>
+
+  <h2>Eksempel: to barn i barnehage og SFO</h2>
+  <p>En familie har ett barn i barnehage og ett på SFO. Barnehagen koster {formatMoney(1200 * 11)} i året, og SFO for et skolebarn om lag {formatMoney(30000)}, avhengig av kommune og trinn. Samlede utgifter er {formatMoney(1200 * 11 + 30000)}, grensen for to barn er {formatMoney(F.first + F.each_additional)}, og fradraget blir derfor {formatMoney(F.first + F.each_additional)}. Skatten faller med {formatMoney(ex.saved)}. De utgiftene som ligger over grensen, gir ingen skattefordel, og det samme gjelder søskenmoderasjon og redusert foreldrebetaling: fradraget følger det familien faktisk har betalt. Har familien bare ett barn i barnehage, vil utgiftene ofte ligge under grensen på {formatMoney(F.first)}, og da er det utgiftene, ikke grensen, som bestemmer fradraget. Ta derfor med alle dokumenterte utgifter, også barnevakt og ferietilbud, før du godkjenner skattemeldingen.</p>
+</Guide>

@@ -6,6 +6,9 @@
 - [Lønnskalkulator 2026](https://etterskatt.com/nb/): lønn etter skatt, trinnskatt, trygdeavgift, tabelltrekk per måned.
 - [Skattekalkulator](https://etterskatt.com/nb/skattekalkulator/), [skattekalkulator for pensjonister](https://etterskatt.com/nb/skattekalkulator-pensjonist/), [skattekort](https://etterskatt.com/nb/skattekort/), [netto til brutto](https://etterskatt.com/nb/netto-lonn/).
 - [Feriepenger](https://etterskatt.com/nb/feriepenger-kalkulator/), [overtid](https://etterskatt.com/nb/overtid-kalkulator/), [timelønn](https://etterskatt.com/nb/timelonn-kalkulator/).
+- [Sykepengekalkulator](https://etterskatt.com/nb/sykepenger-kalkulator/), [foreldrepengekalkulator](https://etterskatt.com/nb/foreldrepenger-kalkulator/), [dagpengekalkulator](https://etterskatt.com/nb/dagpenger-kalkulator/).
+- [Skatt på bonus](https://etterskatt.com/nb/skatt-pa-bonus/), [lønnsøkning etter skatt](https://etterskatt.com/nb/lonnsokning-kalkulator/), [mva-kalkulator](https://etterskatt.com/nb/mva-kalkulator/), [restskatt](https://etterskatt.com/nb/restskatt/).
+- [BSU](https://etterskatt.com/nb/bsu-skattefradrag/), [rentefradrag](https://etterskatt.com/nb/rentefradrag-kalkulator/), [reisefradrag](https://etterskatt.com/nb/reisefradrag-kalkulator/), [foreldrefradrag](https://etterskatt.com/nb/foreldrefradrag/), [IPS](https://etterskatt.com/nb/ips-skattefradrag/), [skatt på aksjer](https://etterskatt.com/nb/skatt-pa-aksjer/), [skatt på utleie](https://etterskatt.com/nb/skatt-pa-utleie/).
 - [Kostnad per ansatt](https://etterskatt.com/nb/kostnad-ansatt/), [arbeidsgiveravgift](https://etterskatt.com/nb/arbeidsgiveravgift/), [forskuddsskatt](https://etterskatt.com/nb/forskuddsskatt/), [formuesskatt](https://etterskatt.com/nb/formuesskatt/).
 
 ## Data

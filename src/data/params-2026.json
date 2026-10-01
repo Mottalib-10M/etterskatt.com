@@ -1,7 +1,7 @@
 {
   "_lisezmoi": "Tous les paramètres légaux vivent ici, jamais en dur (RECETTE-SITE.md §4). Inntektsåret 2026 = 1. januar til 31. desember 2026. Chaque valeur a été lue sur la source citée, à la date retrieved_at. En cas d'écart entre pages Skatteetaten, la note Forskuddsutskrivingen 2026 fait foi.",
   "year": 2026,
-  "retrieved_at": "2026-09-27",
+  "retrieved_at": "2026-10-01",
   "valid_from": "2026-01-01",
   "valid_to": "2026-12-31",
   "sources": {
@@ -118,6 +118,102 @@
       "label": {
         "nb": "Skatteetaten: skattefradrag for mottakere av alderspensjon og AFP"
       }
+    },
+    "nav_sykepenger": {
+      "url": "https://www.nav.no/sykepenger",
+      "label": {
+        "nb": "NAV: Sykepenger"
+      }
+    },
+    "nav_foreldrepenger": {
+      "url": "https://www.nav.no/foreldrepenger",
+      "label": {
+        "nb": "NAV: Foreldrepenger"
+      }
+    },
+    "nav_dagpenger": {
+      "url": "https://www.nav.no/dagpenger",
+      "label": {
+        "nb": "NAV: Dagpenger"
+      }
+    },
+    "mva_satser": {
+      "url": "https://www.skatteetaten.no/satser/merverdiavgift/",
+      "label": {
+        "nb": "Skatteetaten: Merverdiavgift, satser 2026"
+      }
+    },
+    "mva": {
+      "url": "https://www.skatteetaten.no/bedrift-og-organisasjon/avgifter/mva/",
+      "label": {
+        "nb": "Skatteetaten: Merverdiavgift for bedrifter"
+      }
+    },
+    "bsu_sats": {
+      "url": "https://www.skatteetaten.no/satser/fradrag-for-boligsparing-for-ungdom-bsu/",
+      "label": {
+        "nb": "Skatteetaten: Fradrag for boligsparing for ungdom (BSU), satser 2026"
+      }
+    },
+    "reisefradrag": {
+      "url": "https://www.skatteetaten.no/satser/fradrag-for-reiser-mellom-hjem-og-arbeid/",
+      "label": {
+        "nb": "Skatteetaten: Fradrag for reiser mellom hjem og arbeid, satser 2026"
+      }
+    },
+    "foreldrefradrag": {
+      "url": "https://www.skatteetaten.no/satser/foreldrefradrag-kostnader-til-pass-og-stell-av-barn/",
+      "label": {
+        "nb": "Skatteetaten: Foreldrefradrag, satser 2026"
+      }
+    },
+    "foreldrefradrag_regler": {
+      "url": "https://www.skatteetaten.no/person/skatt/hjelp-til-riktig-skatt/familie-og-helse/barn/foreldrefradrag/",
+      "label": {
+        "nb": "Skatteetaten: Foreldrefradrag, regler"
+      }
+    },
+    "ips": {
+      "url": "https://www.skatteetaten.no/satser/maksimalt-arlig-fradrag-for-innbetaling-til-individuell-pensjonsordning/",
+      "label": {
+        "nb": "Skatteetaten: Maksimalt årlig fradrag for innbetaling til individuell pensjonsordning"
+      }
+    },
+    "aksjer_faktor": {
+      "url": "https://www.skatteetaten.no/satser/faktor-for-oppjustering-av-gevinsttap-eller-utbytte-pa-aksjer/",
+      "label": {
+        "nb": "Skatteetaten: Faktor for oppjustering av gevinst, tap eller utbytte på aksjer"
+      }
+    },
+    "aksjer": {
+      "url": "https://www.skatteetaten.no/person/skatt/hjelp-til-riktig-skatt/aksjer-og-verdipapirer/",
+      "label": {
+        "nb": "Skatteetaten: Aksjer og verdipapirer"
+      }
+    },
+    "utleie": {
+      "url": "https://www.skatteetaten.no/person/skatt/hjelp-til-riktig-skatt/bolig-og-eiendeler/bolig-eiendom-tomt/utleie/",
+      "label": {
+        "nb": "Skatteetaten: Utleie av bolig og fritidseiendom"
+      }
+    },
+    "restskatt": {
+      "url": "https://www.skatteetaten.no/person/skatt/skatteoppgjor/restskatt/",
+      "label": {
+        "nb": "Skatteetaten: Restskatt, betalingsfrister"
+      }
+    },
+    "restskatt_rente": {
+      "url": "https://www.skatteetaten.no/satser/rentesatser-pa-tilgodebelop-restskatt-og-resterende-skatt/",
+      "label": {
+        "nb": "Skatteetaten: Rentesatser på tilgodebeløp og restskatt"
+      }
+    },
+    "bank_lan": {
+      "url": "https://www.skatteetaten.no/person/skatt/hjelp-til-riktig-skatt/bank-og-lan/",
+      "label": {
+        "nb": "Skatteetaten: Bank og lån, renter og gjeld"
+      }
     }
   },
   "alminnelig": {
@@ -166,7 +262,9 @@
   "frikort_limit": 100000,
   "mva": {
     "threshold": 50000,
-    "rate": 0.25
+    "rate": 0.25,
+    "rate_food": 0.15,
+    "rate_low": 0.12
   },
   "avskrivning_min": 30000,
   "fagforening_max": 8700,
@@ -270,5 +368,52 @@
     "sats1": 0.167,
     "trinn2": 436050,
     "sats2": 0.06
+  },
+  "nav": {
+    "cap_g": 6,
+    "sykepenger": {
+      "employer_days": 16,
+      "max_weeks": 52,
+      "min_income_g": 0.5,
+      "work_weeks": 4
+    },
+    "foreldrepenger": {
+      "weeks_100": 49,
+      "weeks_80": 61.2,
+      "weeks_80_label": "61 uker og 1 dag",
+      "quota_100": 15,
+      "quota_80": 19,
+      "before_birth": 3
+    },
+    "dagpenger": {
+      "rate": 0.624,
+      "min_12m_g": 1.5,
+      "min_36m_g": 3,
+      "long_from_g": 2,
+      "weeks_short": 52,
+      "weeks_long": 104,
+      "child_per_day": 38,
+      "days_per_year": 260
+    }
+  },
+  "ips": {
+    "max": 15000
+  },
+  "aksjer": {
+    "faktor": 1.72,
+    "rate": 0.3784
+  },
+  "utleie": {
+    "whole_home_free": 20000,
+    "short_free": 15000,
+    "short_share": 0.85,
+    "short_days": 30
+  },
+  "restskatt": {
+    "split_from": 1000,
+    "rentetillegg_2025": 0.0312,
+    "first_due": "20. august",
+    "second_due": "24. september",
+    "prepay_by": "31. mai"
   }
 }

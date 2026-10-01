@@ -1,0 +1,53 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { ipsFradrag } from '../../lib/engine/no';
+const I = P.ips; const r = P.alminnelig.rate;
+const ex = ipsFradrag(I.max);
+const rows = [3000, 6000, 10000, I.max, 25000].map((d) => { const x = ipsFradrag(d); return [formatMoney(d), formatMoney(x.fradrag), formatMoney(x.saved), formatMoney(d - x.saved)]; });
+const grow = (years: number, rate = 0.05) => { let s = 0; for (let k = 0; k < years; k++) s = (s + I.max) * (1 + rate); return s; };
+const yrs = [10, 20, 30].map((y) => [`${y} år`, formatMoney(I.max * y), formatMoney(ex.saved * y), formatMoney(Math.round(grow(y) / 1000) * 1000), formatMoney(Math.round(grow(y) * (1 - r) / 1000) * 1000)]);
+const faqs = [
+  { q: 'Hvor mye skattefradrag gir IPS?', a: `Du får fradrag i alminnelig inntekt for innskudd på opptil ${formatMoney(I.max)} i året. Med en skattesats på ${formatPercent(r, 0)} blir skatten ${formatMoney(ex.saved)} lavere når du sparer hele beløpet. Sparingen koster deg dermed ${formatMoney(I.max - ex.saved)} i året etter skatt.` },
+  { q: 'Når kan jeg ta ut pengene fra IPS?', a: 'Tidligst fra du fyller 62 år. Utbetalingen må fordeles over minst ti år og vare minst til du fyller 80 år. Er saldoen lav, kan utbetalingstiden kortes ned slik at årlig utbetaling blir om lag 20 % av grunnbeløpet. Pengene kan ikke tas ut før, heller ikke til boligkjøp eller ved arbeidsledighet.' },
+  { q: 'Hvordan skattlegges utbetalinger fra IPS?', a: `Som alminnelig inntekt, med ${formatPercent(r, 0)}. Det beregnes verken trygdeavgift eller trinnskatt, slik det gjøres for vanlig pensjon. Skatten ved uttak er dermed den samme satsen som fradraget ga ved innskudd. Gevinsten ligger i at avkastningen ikke skattlegges underveis og at det ikke er formuesskatt på saldoen.` },
+  { q: 'Lønner IPS seg sammenlignet med aksjesparekonto?', a: 'IPS gir utsatt skatt på hele beløpet og fritak for formuesskatt, til gjengjeld er pengene bundet til 62 år. Aksjesparekonto gir fri tilgang, men gevinsten skattlegges med 37,84 % ved uttak. For dem som betaler formuesskatt eller har lang tid til pensjon, kommer IPS ofte best ut.' },
+];
+---
+<Guide id="ips" title="IPS skattefradrag 2026: spar 15 000 kr og få 3 300 tilbake" h1="IPS 2026: skattefradrag for individuell pensjonssparing"
+  description="Individuell pensjonssparing gir fradrag for opptil 15 000 kr i året i 2026, altså 3 300 kr lavere skatt. Se regler for uttak fra 62 år, skatt og formuesskatt."
+  intro="IPS er pensjonssparing med skattefradrag. Legg inn årets innskudd og se hva du får igjen på skatten."
+  resume={`Individuell pensjonssparing, IPS, er en ordning der du sparer til egen pensjon med skattefordel. Innskudd på opptil ${formatMoney(I.max)} i året gir fradrag i alminnelig inntekt, og siden skattesatsen er ${formatPercent(r, 0)}, reduseres skatten med ${formatMoney(ex.saved)} ved fullt innskudd. Avkastningen skattlegges ikke mens pengene står i ordningen, og saldoen er unntatt fra formuesskatt. Pengene er bundet til du fyller 62 år og utbetales deretter over minst ti år. Utbetalingene skattlegges som alminnelig inntekt med ${formatPercent(r, 0)}, uten trygdeavgift og trinnskatt. Fradraget gis for året innskuddet er gjort, og banken eller forvalteren rapporterer det til Skatteetaten. Beløpsgrensen omfatter også kostnader til forvaltning. Den gamle IPS-ordningen fra før 2017 har egne regler og høyere skatt ved uttak. Ordningen kan brukes fra du fyller 18 år, og du kan spare i den til du er 75.`}
+  faqs={faqs} related={['fradrag', 'pensjonist', 'formue', 'aksjer', 'bsu', 'skatt']} sources={[SRC.ips, SRC.alminnelig, SRC.formue]}>
+  <MiniSim client:visible kind="ips" lang={lang} href={route('skatt', lang)} />
+  <h2>Skattefradrag etter innskudd</h2>
+  <ContentTable headers={['Innskudd i året', 'Fradrag som teller', 'Lavere skatt', 'Kostnad etter skatt']} align={['r', 'r', 'r', 'r']} rows={rows} />
+  <p>Innskudd over {formatMoney(I.max)} gir ikke fradrag, og de fleste tilbydere tar ikke imot mer. Siste rad viser hvorfor: de ekstra kronene ville blitt bundet uten skattefordel og likevel skattlagt ved uttak.</p>
+
+  <h2>Slik virker skattefordelen</h2>
+  <p>Fradraget ved innskudd og skatten ved uttak har samme sats. Fordelen er derfor ikke at du slipper skatt, men at du får investere beløpet før skatt. De {formatMoney(ex.saved)} du får tilbake hvert år, kan du sette inn året etter eller spare ved siden av. I tillegg skattlegges ikke utbytte og gevinst inne i ordningen, så du kan bytte fond uten skatt. Den tredje fordelen er formuesskatten: saldoen holdes utenfor nettoformuen, noe som for dem som betaler formuesskatt, er verdt opptil {formatPercent(P.formue.high_rate, 1)} av beløpet hvert år.</p>
+
+  <h2>Fullt innskudd i mange år</h2>
+  <ContentTable headers={['Spareperiode', 'Innskudd i alt', 'Skattefradrag i alt', 'Saldo ved 5 % årlig avkastning', 'Etter 22 % skatt ved uttak']} align={['l', 'r', 'r', 'r', 'r']} rows={yrs} />
+  <p>Avkastningen på 5 % er et regneeksempel, ikke et løfte. Kolonnen til høyre viser saldoen etter skatt dersom alt ble skattlagt med {formatPercent(r, 0)}. I virkeligheten utbetales pengene over minst ti år, mens resten fortsatt står investert.</p>
+
+  <h2>Bindingstiden er prisen</h2>
+  <p>Pengene kan ikke tas ut før 62 år. Dør du før det, går saldoen til etterlatte som barnepensjon eller etterlattepensjon, og ellers til dødsboet. Du kan flytte IPS-avtalen mellom tilbydere uten skatt. Den som har boliglån eller sparer til bolig, bør veie bindingen mot friheten i annen sparing. <a href={route('bsu', lang)}>BSU</a> gir for eksempel et direkte fradrag i skatten på 10 % for unge uten bolig, og er som regel førstevalget for dem.</p>
+
+  <h2>Utbetaling og samordning med annen pensjon</h2>
+  <p>Utbetalingene fra IPS regnes ikke som pensjonsinntekt i folketrygdens forstand. De gir ikke rett til skattefradraget for pensjonsinntekt, men de reduserer det heller ikke direkte. Fordi beløpene inngår i alminnelig inntekt, kan de likevel påvirke inntektsprøvde ordninger som bostøtte. <a href={route('pensjonist', lang)}>Skattekalkulatoren for pensjonister</a> viser skatten på alderspensjonen, og IPS-utbetalingen kommer i tillegg med {formatPercent(r, 0)}.</p>
+
+  <h2>Hvem ordningen passer for</h2>
+  <p>IPS passer best for dem som har god råd i hverdagen, lang sparehorisont og nytte av fritaket for formuesskatt. For dem med lav inntekt, som ikke betaler skatt på alminnelig inntekt utover personfradraget, er fradraget lite verdt. Selvstendig næringsdrivende har i tillegg en egen ordning med innskuddspensjon for foretaket, der de kan spare en prosentandel av næringsinntekten med fradrag. De to ordningene kan kombineres.</p>
+
+  <h2>Frist og praktisk gjennomføring</h2>
+  <p>Innskuddet må være registrert hos tilbyderen innen utgangen av året, i praksis noen dager før nyttår. Mange velger fast månedlig sparing på {formatMoney(I.max / 12)} for å spre kjøpene. Fradraget kommer forhåndsutfylt i skattemeldingen, og du kan legge det inn i skattekortet for å få lavere trekk. <a href={route('fradrag', lang)}>Oversikten over fradrag</a> viser hvordan det virker sammen med de andre fradragene.</p>
+  <h2>Kostnadene avgjør resultatet</h2>
+  <p>Skattefordelen er den samme hos alle tilbydere, men forvaltningshonoraret er det ikke. Et indeksfond med 0,2 % i årlig kostnad og et aktivt fond med 1,5 % gir svært ulik saldo etter tretti år, og forskjellen kan være større enn hele skattefordelen. Kostnadene regnes med i beløpsgrensen på {formatMoney(I.max)}. Sammenlign derfor prisene før du oppretter avtalen, og husk at den kan flyttes til en billigere tilbyder uten skatt og uten at bindingstiden påvirkes. Velg også aksjeandel etter hvor lenge det er til uttak: en lang horisont tåler svingninger, mens de siste årene før 62 bør risikoen trappes ned, slik mange tilbydere gjør automatisk i livssyklusprofiler. Et enkelt valg for de fleste er et billig, globalt indeksfond de første tiårene, og en gradvis overgang til rentefond de siste ti årene før utbetalingen starter.</p>
+</Guide>

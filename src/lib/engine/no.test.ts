@@ -68,3 +68,20 @@ describe('alderspensjonist 2026', () => {
   });
 });
 
+
+import { sykepenger, foreldrepenger, dagpenger, mvaAdd, mvaRemove, bsuFradrag, reisefradrag, foreldrefradrag, ipsFradrag, restskatt, bonusSkatt, lonnsokning, aksjeskatt, utleieSkatt, korttidsutleie, seksG } from './no';
+describe('Pages ajoutées le 2026-10-01 (NAV, Skatteetaten)', () => {
+  it('6 G = 819 294 kr (chiffre publié par NAV)', () => expect(seksG).toBe(819294));
+  it('sykepenger : plafonnés à 6 G', () => { expect(sykepenger({ gross: 600000 }).perYear).toBe(600000); const s = sykepenger({ gross: 1000000 }); expect(s.perYear).toBe(819294); expect(s.capped).toBe(true); expect(sykepenger({ gross: 50000 }).eligible).toBe(false); });
+  it('foreldrepenger : 49 semaines à 100 %, 61 semaines et 1 jour à 80 %', () => { const a = foreldrepenger({ gross: 600000 }); expect(a.weeks).toBe(49); expect(a.total).toBeCloseTo(600000 / 260 * 245, -1); const b = foreldrepenger({ gross: 600000, grad: 80 }); expect(b.perMonth).toBe(40000); expect(Math.abs(b.total - a.total)).toBeLessThan(1000); });
+  it('dagpenger : 62,4 % jusqu’à 6 G ; seuil 1,5 G = 204 824 kr (NAV)', () => { expect(dagpenger({ income: 500000 }).perYear).toBe(312000); expect(dagpenger({ income: 500000 }).weeks).toBe(104); expect(dagpenger({ income: 250000 }).weeks).toBe(52); expect(dagpenger({ income: 200000 }).eligible).toBe(false); expect(dagpenger({ income: 1 }).minIncome).toBe(204824); expect(dagpenger({ income: 500000, children: 2 }).perYear).toBe(312000 + 2 * 38 * 260); });
+  it('MVA : 1 000 kr + 25 % = 1 250 kr ; 1 250 kr contient 250 kr ; matvarer 15 %', () => { expect(mvaAdd(1000).inc).toBe(1250); expect(mvaRemove(1250).mva).toBe(250); expect(mvaAdd(100, 0.15).inc).toBe(115); expect(mvaRemove(112, 0.12).ex).toBe(100); });
+  it('BSU : 2 750 kr au maximum, rien après 33 ans ni avec un logement', () => { expect(bsuFradrag({ saved: 27500, age: 25 }).credit).toBe(2750); expect(bsuFradrag({ saved: 40000, age: 25 }).credit).toBe(2750); expect(bsuFradrag({ saved: 27500, age: 34 }).credit).toBe(0); expect(bsuFradrag({ saved: 27500, age: 25, ownsHome: true }).credit).toBe(0); });
+  it('reisefradrag : 30 km × 2 × 230 jours × 1,90 kr − 12 000 kr', () => { const r = reisefradrag({ kmOneWay: 30 }); expect(r.gross).toBe(26220); expect(r.fradrag).toBe(14220); expect(r.saved).toBe(3128); expect(reisefradrag({ kmOneWay: 10 }).fradrag).toBe(0); expect(reisefradrag({ kmOneWay: 200 }).gross).toBe(120000); });
+  it('foreldrefradrag : 15 000 + 10 000 par enfant suivant', () => { expect(foreldrefradrag({ children: 1, cost: 40000 }).fradrag).toBe(15000); expect(foreldrefradrag({ children: 3, cost: 40000 }).fradrag).toBe(35000); expect(foreldrefradrag({ children: 2, cost: 12000 }).saved).toBe(2640); });
+  it('IPS : 15 000 kr → 3 300 kr d’impôt en moins', () => expect(ipsFradrag(20000).saved).toBe(3300));
+  it('restskatt : 3,12 % et deux factures à partir de 1 000 kr', () => { const r = restskatt({ amount: 20000 }); expect(r.rente).toBe(624); expect(r.invoices).toBe(2); expect(r.perInvoice).toBe(10312); expect(restskatt({ amount: 500 }).invoices).toBe(1); });
+  it('bonus : imposé au taux marginal', () => { const b = bonusSkatt({ gross: 700000, bonus: 50000 }); expect(b.rate).toBeGreaterThan(0.33); expect(b.rate).toBeLessThan(0.48); expect(lonnsokning({ gross: 600000, percent: 0.05 }).extra).toBe(30000); });
+  it('actions : 37,84 % après skjermingsfradrag', () => { expect(aksjeskatt({ gain: 100000 }).tax).toBe(37840); expect(aksjeskatt({ gain: 100000, skjerming: 5000 }).tax).toBe(35948); });
+  it('utleie : 22 % du bénéfice ; courte durée 85 % au-delà de 15 000 kr', () => { expect(utleieSkatt({ rent: 180000, costs: 60000 }).tax).toBe(26400); expect(utleieSkatt({ rent: 50000, costs: 60000 }).tax).toBe(0); expect(korttidsutleie(55000).taxable).toBe(34000); expect(korttidsutleie(10000).tax).toBe(0); });
+});

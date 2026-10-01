@@ -1,0 +1,55 @@
+---
+import MiniSim from "../../components/calc/MiniSim";
+import Guide from "../../components/Guide.astro";
+import ContentTable from "../../components/ContentTable.astro";
+import { route } from "../../i18n/routes";
+import { P } from "../../lib/tables";
+import { SRC } from "../../lib/sources";
+import { formatMoney, formatPercent, formatNumber } from "../../lib/format";
+const lang = "nb";
+import { foreldrepenger, seksG } from '../../lib/engine/no';
+const F = P.nav.foreldrepenger; const G = P.grunnbelop.from_2026_05_01;
+const a = foreldrepenger({ gross: 600000 }); const b = foreldrepenger({ gross: 600000, grad: 80 });
+const rows = [350000, 500000, 600000, 819294, 1000000].map((g) => { const x = foreldrepenger({ gross: g }); const y = foreldrepenger({ gross: g, grad: 80 }); return [formatMoney(g), formatMoney(x.perMonth), formatMoney(x.total), formatMoney(y.perMonth), formatMoney(y.total)]; });
+const kvoter = [['Før termin, til mor', '3 uker', '3 uker'], ['Mødrekvote', `${F.quota_100} uker`, `${F.quota_80} uker`], ['Fedrekvote eller medmorkvote', `${F.quota_100} uker`, `${F.quota_80} uker`], ['Fellesperiode', '16 uker', '20 uker og 1 dag'], ['Samlet', `${F.weeks_100} uker`, F.weeks_80_label]];
+const faqs = [
+  { q: 'Hvor mye får jeg i foreldrepenger?', a: `Foreldrepengene beregnes av inntekten din, opp til seks ganger grunnbeløpet, ${formatMoney(seksG)}. Med ${formatMoney(600000)} i årslønn får du ${formatMoney(a.perMonth)} i måneden før skatt ved 100 % dekningsgrad i ${F.weeks_100} uker, eller ${formatMoney(b.perMonth)} i måneden ved 80 % i ${F.weeks_80_label}.` },
+  { q: 'Lønner det seg med 80 eller 100 prosent foreldrepenger?', a: `Samlet utbetaling er nå nesten lik. Med ${formatMoney(600000)} i lønn gir 100 % i alt ${formatMoney(a.total)} og 80 % i alt ${formatMoney(b.total)}. Valget handler derfor om tid og månedsbudsjett: lengre permisjon med lavere månedlig utbetaling, eller kortere med full lønn. Valget gjelder begge foreldrene og kan ikke endres etterpå.` },
+  { q: 'Hva kreves for å få foreldrepenger?', a: `Du må ha hatt pensjonsgivende inntekt i minst seks av de ti siste månedene før permisjonen starter, og inntekten må på årsbasis tilsvare minst halvparten av grunnbeløpet, ${formatMoney(G / 2)}. Sykepenger, dagpenger og foreldrepenger teller som inntekt. Har du ikke rett, kan du få engangsstønad.` },
+  { q: 'Må far ta fedrekvoten?', a: `Fedrekvoten på ${F.quota_100} uker, eller ${F.quota_80} uker ved 80 %, er forbeholdt far eller medmor og kan ikke overføres til mor, bortsett fra ved sykdom og noen få andre unntak. Tas den ikke ut før barnet fyller tre år, faller ukene bort. Kvoten kan tas sammenhengende, deles opp eller kombineres med delvis arbeid.` },
+];
+---
+<Guide id="foreldrepenger" title="Foreldrepengekalkulator 2026: 100 % eller 80 % av lønn" h1="Foreldrepengekalkulator: hva får dere utbetalt i permisjonen?"
+  description="Regn ut foreldrepengene i 2026: 49 uker med 100 % eller 61 uker og 1 dag med 80 %, tak på 6 G, 819 294 kr. Se beløp per måned, samlet sum og kvotene deres."
+  intro="Foreldrepenger erstatter lønnen under permisjonen, opp til et tak. Velg dekningsgrad og legg inn årslønnen."
+  resume={`Foreldrepenger gis til foreldre som har vært i arbeid, og skal erstatte inntekten under foreldrepermisjonen. Dere velger mellom 100 % dekningsgrad i ${F.weeks_100} uker og 80 % i ${F.weeks_80_label}. Beløpet beregnes av inntekten til hver forelder, men NAV dekker ikke inntekt over seks ganger grunnbeløpet, som er ${formatMoney(seksG)} med grunnbeløpet på ${formatMoney(G)} fra 1. mai 2026. En forelder med ${formatMoney(600000)} i årslønn får ${formatMoney(a.perMonth)} i måneden før skatt ved 100 % og ${formatMoney(b.perMonth)} ved 80 %. Perioden er delt i en mødrekvote og en fedrekvote på ${F.quota_100} uker hver ved 100 %, tre uker til mor før termin og en fellesperiode på 16 uker. For å ha rett må du ha hatt inntekt i minst seks av de ti siste månedene. Foreldrepenger skattlegges som lønn.`}
+  faqs={faqs} related={['sykepenger', 'dagpenger', 'foreldrefradrag', 'feriepenger', 'etterSkatt', 'lonn']} sources={[SRC.nav_foreldrepenger, SRC.grunnbelop, SRC.trygdeavgift]}>
+  <MiniSim client:visible kind="foreldrepenger" lang={lang} href={route('etterSkatt', lang)} />
+  <h2>Foreldrepenger ved ulike lønninger</h2>
+  <ContentTable headers={['Årslønn', '100 %: per måned', '100 %: samlet', '80 %: per måned', '80 %: samlet']} align={['r', 'r', 'r', 'r', 'r']} rows={rows} />
+  <p>Samlet sum er regnet for hele stønadsperioden, som om én forelder tok alt. I praksis deler foreldrene perioden, og hver får foreldrepenger av sin egen inntekt. Over {formatMoney(seksG)} øker ikke utbetalingen fra NAV, men mange arbeidsgivere, blant annet staten og kommunene, betaler full lønn i permisjonen.</p>
+
+  <h2>Slik er ukene fordelt</h2>
+  <ContentTable headers={['Del av perioden', 'Ved 100 %', 'Ved 80 %']} align={['l', 'r', 'r']} rows={kvoter} />
+  <p>De tre ukene før termin og de seks første ukene etter fødselen er forbeholdt mor av medisinske grunner. Fellesperioden kan foreldrene dele som de vil. Når far eller medmor tar ut fellesperiode, må mor være i arbeid, utdanning eller annen godkjent aktivitet. For kvotene stilles det ikke slike krav.</p>
+
+  <h2>Hvordan grunnlaget beregnes</h2>
+  <p>NAV bruker som hovedregel gjennomsnittet av inntekten de tre siste kalendermånedene før permisjonen starter, slik arbeidsgiveren har rapportert den. Har du fått lønnsøkning rett før, teller den nye lønnen. Selvstendig næringsdrivende får beregnet foreldrepenger av gjennomsnittlig pensjonsgivende inntekt de tre siste årene. Har du hatt sykepenger eller dagpenger, bygger grunnlaget på inntekten som lå til grunn for den ytelsen.</p>
+
+  <h2>100 % eller 80 %: regnestykket</h2>
+  <p>Fram til 2024 tapte familier på å velge 80 %. Etter at perioden ble forlenget til {F.weeks_80_label}, er samlet utbetaling tilnærmet lik. Forskjellen ligger i månedsbeløpet: med {formatMoney(600000)} i lønn er det {formatMoney(a.perMonth - b.perMonth)} mindre i måneden med 80 %, mot om lag tolv uker lengre tid hjemme. Et alternativ er å velge 100 % og ta ulønnet permisjon etterpå, som gir samme inntekt og lar dere bestemme lengden selv, men uten opptjening av pensjon og sykepengerett i den ulønnede delen dersom den varer lenge.</p>
+
+  <h2>Skatt og feriepenger</h2>
+  <p>Foreldrepenger er skattepliktig inntekt, med trygdeavgift på {formatPercent(P.trygdeavgift.wage, 1)} som for lønn, og NAV trekker skatt etter skattekortet ditt. NAV betaler feriepenger på {formatPercent(P.feriepenger.rate, 1)} av foreldrepengene for de første 12 ukene ved 100 %, eller 15 ukene ved 80 %. For resten av perioden opptjener du ikke feriepenger fra NAV, og året etter en lang permisjon blir feriepengene derfor lavere enn vanlig. Betaler arbeidsgiveren lønn i permisjonen, opptjener du feriepenger av den.</p>
+
+  <h2>Engangsstønad og far uten egen rett</h2>
+  <p>Har mor ikke opptjent rett til foreldrepenger, får hun en engangsstønad, et fast beløp per barn som fastsettes av Stortinget. Far kan likevel ha rett til foreldrepenger på egen opptjening, men da uten fedrekvote, og med krav til mors aktivitet for det meste av perioden. Reglene for dette er ulike for barn født før og etter 2. august 2022, og NAVs planlegger viser hva som gjelder for dere.</p>
+
+  <h2>Planlegg med nettolønn</h2>
+  <p>Familiens budsjett i permisjonen avhenger av utbetalt beløp, ikke brutto. <a href={route('etterSkatt', lang)}>Kalkulatoren for lønn etter skatt</a> viser hva foreldrepengene gir på konto, og <a href={route('foreldrefradrag', lang)}>foreldrefradraget</a> gir lavere skatt når barnet begynner i barnehage.</p>
+  <h2>Gradert uttak og utsettelse</h2>
+  <p>Foreldrepengene kan kombineres med delvis arbeid. Jobber du 40 %, tar du ut 60 % foreldrepenger, og perioden strekkes tilsvarende ut i tid. Begge foreldrene kan ta ut foreldrepenger samtidig i deler av perioden. Når den ene tar ut av sin egen kvote, kan samlet uttak være inntil 150 %. Uttaket kan også utsettes helt, for eksempel ved fulltidsarbeid eller ferie, men alle ukene må være tatt ut før barnet fyller tre år, eller før et nytt barn utløser en ny stønadsperiode.</p>
+
+  <h2>Flere barn og adopsjon</h2>
+  <p>Ved tvillinger forlenges stønadsperioden med 17 uker ved 100 %, eller 21 uker og 1 dag ved 80 %. Ved tre eller flere barn er forlengelsen 46 uker ved 100 %. Ved adopsjon gjelder de samme ukene som ved fødsel, bortsett fra de tre ukene før termin. Blir barnet født før termin, forlenges perioden med like mange dager som barnet kom for tidlig, når fødselen skjer før uke 33.</p>
+</Guide>

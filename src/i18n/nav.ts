@@ -7,6 +7,8 @@ const L: Record<string, string> = {
   forskudd: 'Forskuddsskatt', formue: 'Formuesskatt', satser: 'Skattesatser 2026', trinnskatt: 'Trinnskatt', trygdeavgift: 'Trygdeavgift', fradrag: 'Fradrag',
   personfradrag: 'Personfradrag', minstefradrag: 'Minstefradrag', frikort: 'Frikort', halvSkatt: 'Skattefri juni og halv skatt', selvstendig: 'Skatt for næringsdrivende',
   minimumslonn: 'Minstelønn', snittlonn: 'Gjennomsnittslønn', glossary: 'Ordliste', method: 'Metode og kilder', widget: 'Bygg inn kalkulatoren',
+  bonus: 'Skatt på bonus', lonnsokning: 'Lønnsøkning etter skatt', sykepenger: 'Sykepengekalkulator', foreldrepenger: 'Foreldrepengekalkulator', dagpenger: 'Dagpengekalkulator', mva: 'Mva-kalkulator', restskatt: 'Restskatt',
+  bsu: 'BSU og skattefradrag', rentefradrag: 'Rentefradrag', reisefradrag: 'Reisefradrag', foreldrefradrag: 'Foreldrefradrag', ips: 'IPS og skattefradrag', aksjer: 'Skatt på aksjer', utleie: 'Skatt på utleie',
   about: 'Om oss', contact: 'Kontakt', editorial: 'Redaksjonell policy', privacy: 'Personvern', terms: 'Vilkår', cookies: 'Informasjonskapsler',
 };
 export const label = (id: string, _l?: Locale) => L[id] ?? id;
@@ -15,9 +17,9 @@ export const annualLabel = (a: number) => `${formatNumber(a)} kr i året`;
 export const hourlyLabel = (a: number) => `${a} kr timen`;
 export function navCategories(lang: Locale): NavCategory[] {
   return [
-    { label: 'Kalkulatorer', links: ['home', 'skatt', 'pensjonist', 'lonn', 'etterSkatt', 'netto', 'timelonn', 'skattekort', 'feriepenger', 'overtid', 'kostnad', 'aga', 'forskudd', 'formue'].map((i) => link(i, lang)) },
-    { label: 'Skatteguider', links: ['satser', 'trinnskatt', 'trygdeavgift', 'fradrag', 'personfradrag', 'minstefradrag', 'frikort', 'halvSkatt', 'selvstendig'].map((i) => link(i, lang)) },
-    { label: 'Lønn', links: ['minimumslonn', 'snittlonn'].map((i) => link(i, lang)) },
+    { label: 'Kalkulatorer', links: ['home', 'skatt', 'pensjonist', 'lonn', 'etterSkatt', 'netto', 'timelonn', 'skattekort', 'feriepenger', 'overtid', 'kostnad', 'aga', 'forskudd', 'formue', 'bonus', 'lonnsokning', 'mva'].map((i) => link(i, lang)) },
+    { label: 'Skatteguider', links: ['satser', 'trinnskatt', 'trygdeavgift', 'fradrag', 'personfradrag', 'minstefradrag', 'frikort', 'halvSkatt', 'selvstendig', 'restskatt', 'bsu', 'rentefradrag', 'reisefradrag', 'foreldrefradrag', 'ips', 'aksjer', 'utleie'].map((i) => link(i, lang)) },
+    { label: 'Lønn og ytelser', links: ['minimumslonn', 'snittlonn', 'sykepenger', 'foreldrepenger', 'dagpenger'].map((i) => link(i, lang)) },
     { label: 'Etter lønn', links: [...ANNUAL.map((a) => ({ href: route(`y-${a}`, lang), label: annualLabel(a) })), ...HOURLY.map((a) => ({ href: route(`h-${a}`, lang), label: hourlyLabel(a) }))] },
   ];
 }

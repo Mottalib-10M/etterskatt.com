@@ -25,6 +25,8 @@ export const GOOGLE_VERIFY_CODE = '';
  *  'notice' = mesure d'audience active avec information préalable et retrait (CA, AU). */
 export const CONSENT_MODE: 'opt-in' | 'notice' = 'opt-in';
 export const GA4_ID = '';
+/** Projet Microsoft Clarity (compte amradif). Vide = aucun traceur ni bandeau. */
+export const CLARITY_ID = 'yrborliavr';
 export const INDEXNOW_KEY = '9c4e2a7f1b6d43e8a5f0c3b7d2e19a64';
 
 /* ------------------------------------------------------------------------- *

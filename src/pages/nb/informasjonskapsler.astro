@@ -4,12 +4,12 @@ import { route } from '../../i18n/routes';
 import { breadcrumbSchema } from '../../lib/seo';
 const lang = 'nb';
 ---
-<PageLayout title="Informasjonskapsler på EtterSkatt.com: hva som lagres" description="Informasjonskapsler på EtterSkatt.com: ingen for kalkulatorene, Microsoft Clarity bare med ditt samtykke, og hvordan du endrer eller trekker det tilbake." lang={lang} noindex={true} jsonLd={[breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Informasjonskapsler', path: route('cookies', lang) }])]} breadcrumbs={[{ label: 'Informasjonskapsler' }]}>
+<PageLayout title="Informasjonskapsler på EtterSkatt.com: hva som lagres" description="Informasjonskapsler på EtterSkatt.com: ingen for kalkulatorene, Microsoft Clarity til besøksstatistikk uten samtykkebanner, og hvordan du blokkerer det i nettleseren." lang={lang} noindex={true} jsonLd={[breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Informasjonskapsler', path: route('cookies', lang) }])]} breadcrumbs={[{ label: 'Informasjonskapsler' }]}>
   <header class="mb-6"><h1 class="text-3xl font-bold text-navy-900 md:text-4xl">Informasjonskapsler</h1></header>
   <div class="prose prose-slate max-w-none">
     <p>Kalkulatorene bruker ingen informasjonskapsler. Tallene du skriver inn, finnes bare i siden, og i adressefeltet når du bruker delingslenken.</p>
-    <p>Til besøksstatistikk bruker vi Microsoft Clarity, og bare hvis du samtykker. Før du har valgt, lastes ingenting og ingen informasjonskapsler settes. Med samtykke registrerer Clarity hvordan sidene brukes: klikk, rulling, hvilke sider som vises og adressen deres, som anonyme øktopptak og varmekart. Det du skriver i feltene, maskeres i nettleseren før noe sendes. Clarity setter informasjonskapslene <code>_clck</code> (ett år) og <code>_clsk</code> (ett døgn), og Microsoft kan sette <code>MUID</code> og <code>CLID</code> på egne domener.</p>
-    <p>Valget ditt lagres i nettleserens lokale lagring under nøkkelen <code>consent-choice</code>, og lenken «Innstillinger for informasjonskapsler» nederst på hver side lar deg endre det når som helst. Ingen informasjonskapsler for annonser settes. Reglene i ekomloven krever samtykke før slike data lagres.</p>
+    <p>Til besøksstatistikk bruker vi Microsoft Clarity. Clarity lastes når siden åpnes; nettstedet viser ikke noe samtykkebanner. Clarity registrerer hvordan sidene brukes: klikk, rulling, hvilke sider som vises og adressen deres, som anonyme øktopptak og varmekart. Det du skriver i feltene, maskeres i nettleseren før noe sendes. Clarity setter informasjonskapslene <code>_clck</code> (ett år) og <code>_clsk</code> (ett døgn), og Microsoft kan sette <code>MUID</code> og <code>CLID</code> på egne domener.</p>
+    <p>Ingen informasjonskapsler for annonser settes. Du kan avslå besøksstatistikken ved å blokkere tredjeparts informasjonskapsler eller domenet <code>clarity.ms</code> i nettleseren, og slette nettstedsdata for å fjerne informasjonskapsler som allerede er satt. Kalkulatorene virker uten dem.</p>
     <p>Spørsmål: se <a href={route('privacy', lang)}>personvernerklæringen</a>.</p>
   </div>
 </PageLayout>

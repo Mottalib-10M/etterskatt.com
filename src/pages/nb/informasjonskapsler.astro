@@ -1,18 +1,27 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import { route } from '../../i18n/routes';
+import { GA4_ID } from '../../data/site-config';
 import { breadcrumbSchema } from '../../lib/seo';
 const lang = 'nb';
 ---
-<PageLayout title="Informasjonskapsler på EtterSkatt.com: ingen blir satt" description="EtterSkatt.com setter ingen informasjonskapsler og lagrer ikke lønn eller fradrag på enheten. Microsoft Clarity uten informasjonskapsler sjekker driften anonymt." lang={lang} noindex={true} jsonLd={[breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Informasjonskapsler', path: route('cookies', lang) }])]} breadcrumbs={[{ label: 'Informasjonskapsler' }]}>
+<PageLayout title="Informasjonskapsler på EtterSkatt.com: bare Google Analytics" description="EtterSkatt.com setter bare informasjonskapslene til Google Analytics for besøksmåling, høyst 13 måneder, uten annonser. Slik motsetter du deg dem." lang={lang} noindex={true} jsonLd={[breadcrumbSchema([{ name: 'Forside', path: route('home', lang) }, { name: 'Informasjonskapsler', path: route('cookies', lang) }])]} breadcrumbs={[{ label: 'Informasjonskapsler' }]}>
   <header class="mb-6"><h1 class="text-3xl font-bold text-navy-900 md:text-4xl">Informasjonskapsler</h1></header>
   <div class="prose prose-slate max-w-none">
-    <h2>Ingen informasjonskapsler</h2>
-    <p>EtterSkatt.com setter ingen informasjonskapsler, verken egne eller fra tredjeparter. Bruttolønnen, skattetabellen, fradragene og de andre tallene du skriver inn i lønns- og skattekalkulatorene, finnes bare i siden du har åpen (og i adressefeltet hvis du bruker delingslenken). Ingenting lagres på enheten din, heller ikke i nettleserens lokale lagring, og når fanen lukkes, er tallene borte. Derfor får du heller ikke noe banner om informasjonskapsler: det er ingenting å godta.</p>
+    <h2>Informasjonskapsler som settes</h2>
+    <p>EtterSkatt.com setter informasjonskapslene til Google Analytics for besøksmåling, og bare dem: ingen annonsekapsler, ingen kapsler fra sosiale medier. Detaljene om behandlingen står i <a href={route('privacy', lang)}>personvernerklæringen</a>.</p>
+    <table><thead><tr><th>Navn</th><th>Leverandør</th><th>Formål</th><th>Levetid</th></tr></thead><tbody>
+    <tr><td><code>_ga</code></td><td>Google Analytics</td><td>Skille besøkende fra hverandre med en tilfeldig identifikator</td><td>Høyst 13 måneder (390 dager)</td></tr>
+    <tr><td><code>_ga_{GA4_ID.replace('G-', '')}</code></td><td>Google Analytics</td><td>Holde rede på det pågående besøket</td><td>Høyst 13 måneder (390 dager)</td></tr>
+    </tbody></table>
+    <p>Levetiden forlenges ikke ved hvert besøk; Googles standard er 2 år, og nettstedet korter den ned. Formål: besøksmåling (viste sider, henvisende side, enhet, omtrentlig land). IP-adressen anonymiseres: Google Analytics 4 verken logger eller lagrer den. Ingen annonser og ingen deling med annonsører: annonselagring, annonsetilpasning og Google-signaler er slått av.</p>
+    <p>Leverandør: Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland. Dataene kan overføres til Google LLC i USA på grunnlag av EU–US Data Privacy Framework og EU-kommisjonens standardavtaler. Lagring hos Google: 14 måneder. Rettslig grunnlag: utgiverens berettigede interesse (personvernforordningen artikkel 6 nr. 1 bokstav f).</p>
+    <h2>Det du skriver inn</h2>
+    <p>Bruttolønnen, skattetabellen, fradragene og de andre tallene du skriver inn i lønns- og skattekalkulatorene, finnes bare i siden du har åpen (og i adressefeltet hvis du bruker delingslenken). Kalkulatoren lagrer ingenting på enheten din, og når fanen lukkes, er tallene borte.</p>
     <h2>Anonym kontroll av at nettstedet virker</h2>
-    <p>For å oppdage sider som ikke lastes, feil i en kalkulator eller knapper som ikke reagerer, bruker vi Microsoft Clarity i modus uten informasjonskapsler. Da setter Clarity verken <code>_clck</code>, <code>_clsk</code>, <code>MUID</code> eller <code>CLID</code>. Hver sidevisning får sin egen engangsidentifikator, besøk kobles ikke sammen, og tekst på siden og tall du skriver, maskeres før noe sendes. Det som måles, er feil, lastetider, klikk uten virkning og rulling. Utgiveren registrerer ingen personopplysninger.</p>
-    <h2>Vil du blokkere det likevel?</h2>
-    <p>Blokker domenet <code>clarity.ms</code> i nettleseren eller med en innholdsblokkerer. Kalkulatorene virker nøyaktig som før. Ingen annonser vises, og ingen andre måleverktøy brukes.</p>
-    <p>Spørsmål: se <a href={route('privacy', lang)}>personvernerklæringen</a>. Sist oppdatert 6. oktober 2026.</p>
+    <p>For å oppdage sider som ikke lastes, feil i en kalkulator eller knapper som ikke reagerer, bruker vi Microsoft Clarity i modus uten informasjonskapsler. Da setter Clarity verken <code>_clck</code>, <code>_clsk</code>, <code>MUID</code> eller <code>CLID</code>. Hver sidevisning får sin egen engangsidentifikator, besøk kobles ikke sammen, og tekst på siden og tall du skriver, maskeres før noe sendes. Det som måles, er feil, lastetider, klikk uten virkning og rulling.</p>
+    <h2>Slik motsetter du deg</h2>
+    <p>Blokker eller slett informasjonskapsler i nettleserinnstillingene, eller installer <a href="https://tools.google.com/dlpage/gaoptout" rel="nofollow noopener" target="_blank">Googles tillegg for å velge bort Google Analytics</a>. For Clarity: blokker domenet <code>clarity.ms</code> i nettleseren eller med en innholdsblokkerer. Kalkulatorene virker nøyaktig som før. Ingen annonser vises, og ingen andre måleverktøy brukes.</p>
+    <p>Spørsmål: se <a href={route('privacy', lang)}>personvernerklæringen</a>. Sist oppdatert 17. oktober 2026.</p>
   </div>
 </PageLayout>
